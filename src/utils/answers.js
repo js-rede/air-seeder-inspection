@@ -10,6 +10,10 @@ export function isAnswerComplete(step, answer, answers = {}, rowUnitCountOverrid
       return isMachineSetupComplete(answer);
    }
 
+   if (answerType === "notes") {
+      return true;
+   }
+
    if (answerType === "row_unit_distribution") {
       const rowUnitCount = getEffectiveRowUnitCount(answers["machine-setup"], rowUnitCountOverride);
       const distributionComplete = isRowUnitDistributionComplete(answer, getStepChoices(step), rowUnitCount);

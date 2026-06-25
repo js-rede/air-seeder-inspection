@@ -33,6 +33,7 @@ const ratingStyles = {
 
 function AnswerGroup({
    answerType,
+   stepSlug,
    choices = [],
    rowUnitCount = 0,
    workingRanks = 0,
@@ -193,6 +194,21 @@ function AnswerGroup({
 
    if (answerType === "machine_setup") {
       return <MachineSetupForm value={selectedAnswer} onChange={onAnswer} />;
+   }
+
+   if (answerType === "notes") {
+      return (
+         <div className="mt-6">
+            <textarea
+               id={stepSlug ? `inspection-notes-${stepSlug}` : "inspection-notes"}
+               value={selectedAnswer || ""}
+               onChange={(e) => onAnswer(e.target.value)}
+               rows={5}
+               placeholder="Optional notes…"
+               className="w-full resize-y rounded-xl border border-slate-300 bg-white p-4 text-base text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+            />
+         </div>
+      );
    }
 
    return null;

@@ -108,6 +108,7 @@ function InspectionCard({ step, selectedAnswer, onAnswer, rowUnitCount = 0, work
          {/* Answers */}
          <AnswerGroup
             answerType={answerType}
+            stepSlug={step.slug}
             choices={choices}
             rowUnitCount={rowUnitCount}
             workingRanks={effectiveWorkingRanks}

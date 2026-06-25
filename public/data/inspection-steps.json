@@ -226,9 +226,9 @@
       "step_number": 5,
       "section": "closing_system",
       "step_title": "Closing Wheel Spring and Arm Inspection",
-      "instructions": "Inspect closing wheel springs and arms on several row-units. Look for weak springs, bent arms, cracked welds, and loose hardware.",
-      "question": "How many row-units have acceptable closing wheel spring and arm condition?",
-      "answer_type": "row_unit_distribution",
+      "instructions": "Inspect closing wheel springs and arms on several row-units in each rank. Look for weak springs, bent arms, cracked welds, and loose hardware.",
+      "question": "What is the overall closing wheel spring and arm condition?",
+      "answer_type": "working_rank_selection",
       "choices": [
          {
             "label": "Good",
@@ -258,16 +258,19 @@
       "video_url": "",
       "video_caption": "",
       "image_url": "",
-      "image_caption": ""
+      "image_caption": "",
+      "question_multi_rank": "Rate the closing wheel spring and arm condition for each working rank:",
+      "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect closing wheel springs and arms on several row-units in each rank. Look for weak springs, bent arms, cracked welds, and loose hardware.",
+      "cost_multiplies_by_row_units": true
    },
    {
       "slug": "closing-wheel",
       "step_number": 6,
       "section": "closing_system",
       "step_title": "Closing Wheel Inspection",
-      "instructions": "Inspect closing wheels on several row-units. Check bearing smoothness, rubber condition, cracks, chips, and uneven wear.",
-      "question": "How many row-units have acceptable closing wheel condition?",
-      "answer_type": "row_unit_distribution",
+      "instructions": "Inspect closing wheels on several row-units in each rank. Check bearing smoothness, rubber condition, cracks, chips, and uneven wear.",
+      "question": "What is the overall closing wheel condition?",
+      "answer_type": "working_rank_selection",
       "choices": [
          {
             "label": "Good",
@@ -297,7 +300,10 @@
       "video_url": "",
       "video_caption": "",
       "image_url": "",
-      "image_caption": ""
+      "image_caption": "",
+      "question_multi_rank": "Rate the closing wheel condition for each working rank:",
+      "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect closing wheels on several row-units in each rank. Check bearing smoothness, rubber condition, cracks, chips, and uneven wear.",
+      "cost_multiplies_by_row_units": true
    },
    {
       "slug": "press-wheel-pivot",
@@ -346,9 +352,9 @@
       "step_number": 8,
       "section": "press_wheels",
       "step_title": "Press Wheel Spring and Arm Inspection",
-      "instructions": "Inspect press wheel springs and arms on several row-units. Look for weak springs, bent arms, cracked welds, and loose hardware.",
-      "question": "How many row-units have acceptable press wheel spring and arm condition?",
-      "answer_type": "row_unit_distribution",
+      "instructions": "Inspect press wheel springs and arms on several row-units in each rank. Look for weak springs, bent arms, cracked welds, and loose hardware.",
+      "question": "What is the overall press wheel spring and arm condition?",
+      "answer_type": "working_rank_selection",
       "choices": [
          {
             "label": "Good",
@@ -378,16 +384,19 @@
       "video_url": "",
       "video_caption": "",
       "image_url": "",
-      "image_caption": ""
+      "image_caption": "",
+      "question_multi_rank": "Rate the press wheel spring and arm condition for each working rank:",
+      "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect press wheel springs and arms on several row-units in each rank. Look for weak springs, bent arms, cracked welds, and loose hardware.",
+      "cost_multiplies_by_row_units": true
    },
    {
       "slug": "press-wheel",
       "step_number": 9,
       "section": "press_wheels",
       "step_title": "Press Wheel Inspection",
-      "instructions": "Inspect press wheels on several row-units. Check bearing smoothness, rubber or cast condition, cracks, and uneven wear.",
-      "question": "How many row-units have acceptable press wheel condition?",
-      "answer_type": "row_unit_distribution",
+      "instructions": "Inspect press wheels on several row-units in each rank. Check bearing smoothness, rubber or cast condition, cracks, and uneven wear.",
+      "question": "What is the overall press wheel condition?",
+      "answer_type": "working_rank_selection",
       "choices": [
          {
             "label": "Good",
@@ -417,16 +426,19 @@
       "video_url": "",
       "video_caption": "",
       "image_url": "",
-      "image_caption": ""
+      "image_caption": "",
+      "question_multi_rank": "Rate the press wheel condition for each working rank:",
+      "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect press wheels on several row-units in each rank. Check bearing smoothness, rubber or cast condition, cracks, and uneven wear.",
+      "cost_multiplies_by_row_units": true
    },
    {
       "slug": "disc-hubs",
       "step_number": 10,
       "section": "openers",
       "step_title": "Disc Hub Inspection",
-      "instructions": "Inspect disc hubs on several row-units. Check for bearing play, seal condition, wobble, and heat discoloration.",
-      "question": "How many row-units have acceptable disc hub condition?",
-      "answer_type": "row_unit_distribution",
+      "instructions": "Inspect disc hubs on several row-units in each rank. Check for bearing play, seal condition, wobble, and heat discoloration.",
+      "question": "What is the overall disc hub condition?",
+      "answer_type": "working_rank_selection",
       "quantity_label": "discs",
       "choices": [
          {
@@ -457,7 +469,10 @@
       "video_url": "",
       "video_caption": "",
       "image_url": "",
-      "image_caption": ""
+      "image_caption": "",
+      "question_multi_rank": "Rate the disc hub condition for each working rank:",
+      "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect disc hubs on several row-units in each rank. Check for bearing play, seal condition, wobble, and heat discoloration.",
+      "cost_multiplies_by_row_units": true
    },
    {
       "slug": "depth-adjustment-pivot",
@@ -506,9 +521,9 @@
       "step_number": 12,
       "section": "depth_control",
       "step_title": "Depth Arm, Cover, and Handle Inspection",
-      "instructions": "Inspect depth arms, covers, and handles on several row-units. Look for bent arms, missing covers, damaged handles, and loose hardware.",
-      "question": "How many row-units have acceptable depth arm, cover, and handle condition?",
-      "answer_type": "row_unit_distribution",
+      "instructions": "Inspect depth arms, covers, and handles on several row-units in each rank. Look for bent arms, missing covers, damaged handles, and loose hardware.",
+      "question": "What is the overall depth arm, cover, and handle condition?",
+      "answer_type": "working_rank_selection",
       "choices": [
          {
             "label": "Good",
@@ -538,16 +553,19 @@
       "video_url": "",
       "video_caption": "",
       "image_url": "",
-      "image_caption": ""
+      "image_caption": "",
+      "question_multi_rank": "Rate the depth arm, cover, and handle condition for each working rank:",
+      "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect depth arms, covers, and handles on several row-units in each rank. Look for bent arms, missing covers, damaged handles, and loose hardware.",
+      "cost_multiplies_by_row_units": true
    },
    {
       "slug": "gauge-wheel",
       "step_number": 13,
       "section": "gauge_wheels",
       "step_title": "Gauge Wheel Inspection",
-      "instructions": "Inspect gauge wheels on several row-units. Check tread condition, sidewall wear, bearing operation, and contact with opener discs.",
-      "question": "How many row-units have acceptable gauge wheel condition?",
-      "answer_type": "row_unit_distribution",
+      "instructions": "Inspect gauge wheels on several row-units in each rank. Check tread condition, sidewall wear, bearing operation, and contact with opener discs.",
+      "question": "What is the overall gauge wheel condition?",
+      "answer_type": "working_rank_selection",
       "choices": [
          {
             "label": "Good",
@@ -577,7 +595,10 @@
       "video_url": "",
       "video_caption": "",
       "image_url": "",
-      "image_caption": ""
+      "image_caption": "",
+      "question_multi_rank": "Rate the gauge wheel condition for each working rank:",
+      "instructions_multi_rank": "Evaluate gauge wheels by working rank. <br/>Inspect gauge wheels on several row-units in each rank. Check tread condition, sidewall wear, bearing operation, and contact with opener discs.",
+      "cost_multiplies_by_row_units": true
    },
    {
       "slug": "seed-boot-pivot",
@@ -626,9 +647,9 @@
       "step_number": 15,
       "section": "seed_boots",
       "step_title": "Seed Boot Inspection",
-      "instructions": "Inspect seed boots on several row-units. Check delivery surfaces for wear, cracks, and excessive material loss.",
-      "question": "How many row-units have acceptable seed boot condition?",
-      "answer_type": "row_unit_distribution",
+      "instructions": "Inspect seed boots on several row-units in each rank. Check delivery surfaces for wear, cracks, and excessive material loss.",
+      "question": "What is the overall seed boot condition?",
+      "answer_type": "working_rank_selection",
       "choices": [
          {
             "label": "Good",
@@ -658,16 +679,19 @@
       "video_url": "",
       "video_caption": "",
       "image_url": "",
-      "image_caption": ""
+      "image_caption": "",
+      "question_multi_rank": "Rate the seed boot condition for each working rank:",
+      "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect seed boots on several row-units in each rank. Check delivery surfaces for wear, cracks, and excessive material loss.",
+      "cost_multiplies_by_row_units": true
    },
    {
       "slug": "boot-springs",
       "step_number": 16,
       "section": "seed_boots",
       "step_title": "Boot Spring Inspection",
-      "instructions": "Inspect boot springs on several row-units. Look for weak, broken, or missing springs and loose hardware.",
-      "question": "How many row-units have acceptable boot spring condition?",
-      "answer_type": "row_unit_distribution",
+      "instructions": "Inspect boot springs on several row-units in each rank. Look for weak, broken, or missing springs and loose hardware.",
+      "question": "What is the overall boot spring condition?",
+      "answer_type": "working_rank_selection",
       "choices": [
          {
             "label": "Good",
@@ -697,16 +721,19 @@
       "video_url": "",
       "video_caption": "",
       "image_url": "",
-      "image_caption": ""
+      "image_caption": "",
+      "question_multi_rank": "Rate the boot spring condition for each working rank:",
+      "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect boot springs on several row-units in each rank. Look for weak, broken, or missing springs and loose hardware.",
+      "cost_multiplies_by_row_units": true
    },
    {
       "slug": "seed-tabs",
       "step_number": 17,
       "section": "seed_boots",
       "step_title": "Seed Tab Inspection",
-      "instructions": "Inspect seed tabs on several row-units. Check tab height, wear, and ability to hold seed in the furrow.",
-      "question": "How many row-units have acceptable seed tab condition?",
-      "answer_type": "row_unit_distribution",
+      "instructions": "Inspect seed tabs on several row-units in each rank. Check tab height, wear, and ability to hold seed in the furrow.",
+      "question": "What is the overall seed tab condition?",
+      "answer_type": "working_rank_selection",
       "choices": [
          {
             "label": "Good",
@@ -736,16 +763,19 @@
       "video_url": "",
       "video_caption": "",
       "image_url": "",
-      "image_caption": ""
+      "image_caption": "",
+      "question_multi_rank": "Rate the seed tab condition for each working rank:",
+      "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect seed tabs on several row-units in each rank. Check tab height, wear, and ability to hold seed in the furrow.",
+      "cost_multiplies_by_row_units": true
    },
    {
       "slug": "hoses",
       "step_number": 18,
       "section": "drill",
       "step_title": "Hose Inspection",
-      "instructions": "Inspect product hoses on the drill. Look for cracks, wear spots, loose clamps, and leaks at fittings.",
-      "question": "What is the overall hose condition on the drill?",
-      "answer_type": "selection",
+      "instructions": "Inspect product hoses on the drill by working rank. Look for cracks, wear spots, loose clamps, and leaks at fittings.",
+      "question": "What is the overall hose condition?",
+      "answer_type": "working_rank_selection",
       "choices": [
          {
             "label": "Good",
@@ -783,16 +813,19 @@
       "video_url": "",
       "video_caption": "",
       "image_url": "",
-      "image_caption": ""
+      "image_caption": "",
+      "question_multi_rank": "Rate the hose condition for each working rank:",
+      "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect product hoses on the drill by working rank. Look for cracks, wear spots, loose clamps, and leaks at fittings.",
+      "cost_multiplies_by_row_units": true
    },
    {
       "slug": "towers",
       "step_number": 19,
       "section": "drill",
       "step_title": "Tower Inspection",
-      "instructions": "Inspect towers on the drill. Check for cracks, loose hardware, worn mounting points, and product buildup.",
-      "question": "What is the overall tower condition on the drill?",
-      "answer_type": "selection",
+      "instructions": "Inspect towers on the drill by working rank. Check for cracks, loose hardware, worn mounting points, and product buildup.",
+      "question": "What is the overall tower condition?",
+      "answer_type": "working_rank_selection",
       "choices": [
          {
             "label": "Good",
@@ -830,54 +863,19 @@
       "video_url": "",
       "video_caption": "",
       "image_url": "",
-      "image_caption": ""
+      "image_caption": "",
+      "question_multi_rank": "Rate the tower condition for each working rank:",
+      "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect towers on the drill by working rank. Check for cracks, loose hardware, worn mounting points, and product buildup.",
+      "cost_multiplies_by_row_units": true
    },
    {
       "slug": "drill-notes",
       "step_number": 20,
       "section": "drill",
       "step_title": "Drill Notes",
-      "instructions": "Review the drill for any additional wear, damage, or performance issues not covered in prior steps.",
-      "question": "Are there any additional drill issues to note?",
-      "answer_type": "selection",
-      "choices": [
-         {
-            "label": "No additional issues",
-            "value": "no-issues",
-            "rating": "good",
-            "recommended_action": "No additional drill issues were noted during this inspection.",
-            "estimated_low_cost": 0,
-            "estimated_high_cost": 0
-         },
-         {
-            "label": "Minor issues to monitor",
-            "value": "minor-issues",
-            "rating": "maybe",
-            "recommended_action": "Minor drill issues were noted. Monitor during the season and plan service as needed.",
-            "estimated_low_cost": 0,
-            "estimated_high_cost": 0
-         },
-         {
-            "label": "Service recommended",
-            "value": "service-recommended",
-            "rating": "bad",
-            "recommended_action": "Additional drill issues were noted. Contact Red E to discuss recommended service.",
-            "estimated_low_cost": 500,
-            "estimated_high_cost": 5000
-         },
-         {
-            "label": "Not Sure",
-            "value": "not-sure",
-            "rating": "unknown",
-            "recommended_action": "Contact Red E for an onsite inspection or further guidance.",
-            "estimated_low_cost": 0,
-            "estimated_high_cost": 0
-         }
-      ],
-      "video_url": "",
-      "video_caption": "",
-      "image_url": "",
-      "image_caption": ""
+      "instructions": "",
+      "question": "Anything else about the drill?",
+      "answer_type": "notes"
    },
    {
       "slug": "air-cart",
@@ -931,43 +929,9 @@
       "step_number": 22,
       "section": "air_cart",
       "step_title": "Cart Notes",
-      "instructions": "Review the air cart for any additional wear, damage, or performance issues not covered in prior steps.",
-      "question": "Are there any additional air cart issues to note?",
-      "answer_type": "selection",
-      "choices": [
-         {
-            "label": "No additional issues",
-            "value": "no-issues",
-            "rating": "good",
-            "recommended_action": "No additional air cart issues were noted during this inspection.",
-            "estimated_low_cost": 0,
-            "estimated_high_cost": 0
-         },
-         {
-            "label": "Minor issues to monitor",
-            "value": "minor-issues",
-            "rating": "maybe",
-            "recommended_action": "Minor air cart issues were noted. Monitor during the season and plan service as needed.",
-            "estimated_low_cost": 0,
-            "estimated_high_cost": 0
-         },
-         {
-            "label": "Service recommended",
-            "value": "service-recommended",
-            "rating": "bad",
-            "recommended_action": "Additional air cart issues were noted. Contact Red E to discuss recommended service.",
-            "estimated_low_cost": 500,
-            "estimated_high_cost": 5000
-         },
-         {
-            "label": "Not Sure",
-            "value": "not-sure",
-            "rating": "unknown",
-            "recommended_action": "Contact Red E for an onsite inspection or further guidance.",
-            "estimated_low_cost": 0,
-            "estimated_high_cost": 0
-         }
-      ],
+      "instructions": "",
+      "question": "Anything else about the air cart?",
+      "answer_type": "notes",
       "video_url": "",
       "video_caption": "",
       "image_url": "",
