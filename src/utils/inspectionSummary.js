@@ -1,4 +1,4 @@
-import { normalizeMachineSetup } from "../data/machineCatalog";
+import { normalizeMachineSetup, getDrillSetup } from "../data/machineCatalog";
 import {
    getChoiceUnitCost,
    getChoiceValue,
@@ -27,7 +27,7 @@ export function parseInches(value) {
 }
 
 export function calculateRowUnitCount(machineSetupAnswer) {
-   const setup = normalizeMachineSetup(machineSetupAnswer);
+   const setup = getDrillSetup(machineSetupAnswer);
    const widthFeet = parseFeet(setup.width);
    const rowSpacingInches = parseInches(setup.rowSpacing);
 
@@ -65,7 +65,7 @@ export function getEffectiveRowUnitCount(machineSetupAnswer, override) {
    const overrideCount = Number(override);
    if (overrideCount > 0) return Math.round(overrideCount);
 
-   const setup = normalizeMachineSetup(machineSetupAnswer);
+   const setup = getDrillSetup(machineSetupAnswer);
    const setupCount = Number(setup.rowUnitCount);
    if (setupCount > 0) return Math.round(setupCount);
 
@@ -76,7 +76,7 @@ export function getEffectiveWorkingRanks(machineSetupAnswer, override) {
    const overrideRanks = Number(override);
    if (overrideRanks > 0) return overrideRanks;
 
-   const setup = normalizeMachineSetup(machineSetupAnswer);
+   const setup = getDrillSetup(machineSetupAnswer);
    return Number(setup.workingRanks) || 0;
 }
 

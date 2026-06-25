@@ -57,22 +57,20 @@ function InspectionWelcome({ onStart }) {
 
          <div className="space-y-4 text-lg leading-relaxed text-slate-600 lg:flex-1">
             <div>
-               This self-guided walkthrough is a step-by-step guide for inspecting your air seeder or planter. When finished,
-               this tool provides a rough estimate of what it would cost for Red E to rebuild or service your equipment.{" "}
+               This is a step-by-step guide for inspecting your air seeder or planter. After completing the inspection, this
+               tool will provide a rough estimate of what it would cost for Red E to rebuild or service your equipment.{" "}
                <span className="italic text-sm ">
                   (All price estimates are for informational purposes and are subject to change.)
                </span>
             </div>
 
             <div>
-               <div className="mb-1">
-                  To learn more about our inspections, or to schedule a free onsite inspection with our team:
-               </div>
+               <div className="mb-1">Learn more about our inspections, or schedule a free onsite inspection:</div>
                <a
                   href="https://rede.ag/inspection"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-[#e21313] bg-red-50 px-5 py-3 font-rede-geom text-sm font-semibold uppercase italic tracking-wider text-[#e21313] shadow-sm transition hover:bg-red-100">
+                  className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-slate-400 bg-neutral-100 px-5 py-3 font-rede-geom text-sm font-semibold uppercase italic tracking-wider text-slate-600 shadow-sm transition hover:bg-neutral-100">
                   <span>Free Onsite Inspections</span>
                   <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 shrink-0 -mt-px">
                      <path

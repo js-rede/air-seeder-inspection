@@ -13,6 +13,7 @@ import { calculateInspectionSummary, calculateRowUnitCount } from "./utils/inspe
 import {
    getCurrentMachineIdentity,
    isSameCurrentMachine,
+   getDrillSetup,
    normalizeMachineSetup,
    persistMachineSetupDraft,
 } from "./data/machineCatalog";
@@ -65,8 +66,8 @@ function App() {
    const currentStep = steps[currentIndex];
    const machineSetup = useMemo(() => normalizeMachineSetup(answers["machine-setup"]), [answers]);
    const calculatedRowUnitCount = useMemo(() => calculateRowUnitCount(answers["machine-setup"]), [answers]);
-   const setupWorkingRanks = Number(machineSetup.workingRanks) || 0;
-   const showWorkingRanks = machineSetup.component === "drill";
+   const setupWorkingRanks = Number(getDrillSetup(machineSetup).workingRanks) || 0;
+   const showWorkingRanks = machineSetup.component === "drill" || machineSetup.component === "both";
    const summary = useMemo(
       () => calculateInspectionSummary(steps, answers, rowUnitCountOverride, workingRanksOverride),
       [steps, answers, rowUnitCountOverride, workingRanksOverride],
@@ -78,7 +79,7 @@ function App() {
    const showCompactMachineCounts = hasStarted && !isFinished && isMainArmPivotStep && !showScorecard;
 
    function syncMachineCountOverrides(setupAnswer) {
-      const setup = normalizeMachineSetup(setupAnswer);
+      const setup = getDrillSetup(setupAnswer);
       const count = Number(setup.rowUnitCount);
       const ranks = Number(setup.workingRanks);
       setRowUnitCountOverride(count > 0 ? count : null);
@@ -105,12 +106,24 @@ function App() {
             const setup = normalizeMachineSetup(prev["machine-setup"]);
             const next = { ...setup };
 
-            if (rowUnitCount !== undefined) {
-               next.rowUnitCount = rowUnitCount ? String(rowUnitCount) : "";
-            }
+            if (setup.component === "both") {
+               next.drill = { ...setup.drill };
 
-            if (workingRanks !== undefined) {
-               next.workingRanks = workingRanks ? String(workingRanks) : "";
+               if (rowUnitCount !== undefined) {
+                  next.drill.rowUnitCount = rowUnitCount ? String(rowUnitCount) : "";
+               }
+
+               if (workingRanks !== undefined) {
+                  next.drill.workingRanks = workingRanks ? String(workingRanks) : "";
+               }
+            } else {
+               if (rowUnitCount !== undefined) {
+                  next.rowUnitCount = rowUnitCount ? String(rowUnitCount) : "";
+               }
+
+               if (workingRanks !== undefined) {
+                  next.workingRanks = workingRanks ? String(workingRanks) : "";
+               }
             }
 
             return {
@@ -131,13 +144,16 @@ function App() {
             return;
          }
 
-         if (prev.rowUnitCount !== next.rowUnitCount) {
-            const count = Number(next.rowUnitCount);
+         const prevDrill = getDrillSetup(prev);
+         const nextDrill = getDrillSetup(next);
+
+         if (prevDrill.rowUnitCount !== nextDrill.rowUnitCount) {
+            const count = Number(nextDrill.rowUnitCount);
             setRowUnitCountOverride(count > 0 ? count : null);
          }
 
-         if (prev.workingRanks !== next.workingRanks) {
-            const ranks = Number(next.workingRanks);
+         if (prevDrill.workingRanks !== nextDrill.workingRanks) {
+            const ranks = Number(nextDrill.workingRanks);
             setWorkingRanksOverride(ranks > 0 ? ranks : null);
          }
       }
