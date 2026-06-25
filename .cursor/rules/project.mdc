@@ -1,0 +1,78 @@
+---
+description: Air seeder inspection app — architecture, files, and conventions
+alwaysApply: true
+---
+
+# Project Rules
+
+This is a Vite React app embedded into WordPress through a custom plugin.
+Do not suggest rebuilding this as Next.js, HubSpot Forms, Typeform, or a spreadsheet-style UI.
+
+## Architecture
+
+- Inspection step content lives in `public/data/inspection-steps.json`.
+- React fetches and validates that JSON at runtime, then renders a guided wizard.
+- Answers are keyed by step `slug` and saved to `localStorage` as a draft.
+- Machine makes/models and disc diameter options live in `src/data/` (app logic, not step copy).
+- WordPress only hosts the built JS/CSS and provides the mount div via a plugin shortcode.
+- Completed inspection data will eventually be sent to HubSpot (not implemented yet).
+
+## Data model
+
+Each step in `inspection-steps.json` is a flat object:
+
+- `slug` — unique identifier (used as answer key)
+- `step_number` — sort order
+- `section` — grouping label (e.g. `openers`, `air_cart`)
+- `step_title`, `instructions`, `question`
+- `answer_type` — `machine_setup`, `condition`, `measurement`, `yes_no`
+- `video_url`, `video_caption`, `image_url`, `image_caption` (optional media)
+- `recommended_action`, `estimated_low_cost`, `estimated_high_cost`
+
+Access fields directly: `step.step_title`, not `step.acf.step_title`.
+
+`answer_type: "measurement"` on the Disc Opener step is rendered as a `disc_diameter` dropdown via `src/data/discDiameterOptions.js`.
+
+## Important files
+
+- `public/data/inspection-steps.json` — sales-editable step content
+- `src/App.jsx` — loads steps, wizard state, welcome vs inspection flow
+- `src/components/InspectionWelcome.jsx` — start screen
+- `src/components/InspectionHeader.jsx` — logo, progress bar
+- `src/components/InspectionCard.jsx` — step content display
+- `src/components/AnswerGroup.jsx` — answer UI by type
+- `src/components/MachineSetupForm.jsx` — machine setup dropdowns
+- `src/components/InspectionNav.jsx` — back / next navigation
+- `src/components/Loading.jsx`
+- `src/data/machineCatalog.js` — manufacturers, models, widths, spacings
+- `src/data/discDiameterOptions.js` — disc diameter dropdown options
+- `src/utils/validateSteps.js` — required-field validation on load
+- `src/utils/answers.js` — answer completion checks
+- `src/utils/storage.js` — localStorage draft persistence
+- `src/utils/selectClass.js` — shared dropdown styling
+- `src/index.css`
+
+## React mount point
+
+```js
+document.getElementById("air-seeder-inspection-root");
+```
+
+## WordPress integration
+
+The application is loaded through a custom WordPress plugin.
+
+Shortcode:
+
+```
+[air_seeder_inspection]
+```
+
+After `npm run build`, deploy the `dist/` folder (including `dist/data/inspection-steps.json`) with the plugin.
+
+## Style preferences
+
+- Use Tailwind.
+- Use Red E red: `#e21313`.
+- Use `rede-inspection-geom` font (`.font-rede-geom`) where appropriate.
+- Keep UI mobile-friendly.

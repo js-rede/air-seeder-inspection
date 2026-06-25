@@ -1,0 +1,353 @@
+export const EQUIPMENT_TYPES = [
+   { value: "air_seeder", label: "Air Seeder" },
+   { value: "planter", label: "Planter" },
+];
+
+export const AIR_SEEDER_COMPONENTS = [
+   { value: "drill", label: "Drill" },
+   { value: "cart", label: "Air Cart" },
+];
+
+export const DRILL_WIDTHS = [
+   "27 ft",
+   "30 ft",
+   "36 ft",
+   "40 ft",
+   "42 ft",
+   "42.5 ft",
+   "44 ft",
+   "50 ft",
+   "56 ft",
+   "60 ft",
+   "70 ft",
+   "80 ft",
+   "90 ft",
+];
+
+export const ROW_SPACINGS = ["7.5 in", "10 in", "12 in", "12.5 in", "15 in", "20 in"];
+
+export const WORKING_RANKS = [
+   { value: "1", label: "1 rank" },
+   { value: "2", label: "2 ranks" },
+   { value: "3", label: "3 ranks" },
+   { value: "4", label: "4 ranks" },
+];
+
+export const CART_TANK_SIZES = [
+   "265 bu",
+   "300 bu",
+   "350 bu",
+   "430 bu",
+   "500 bu",
+   "550 bu",
+   "650 bu",
+   "750 bu",
+   "850 bu",
+   "1050 bu",
+];
+
+const DRILL_MODELS = {
+   "John Deere": [
+      "1890 No-Till Air Drill",
+      "N500 / N500C Series",
+      "N500F Series",
+      "P500 Series",
+      "P600 Series",
+      "H500 / H500F Series",
+      "1830 / 1835 SFP",
+      "730 Air Disk Drill",
+      "Other",
+   ],
+   "Case IH": [
+      "Precision Disk 500DS",
+      "Precision Disk 550",
+      "Precision Disk 550T",
+      "Flex Hoe 400",
+      "Flex Hoe 700",
+      "Flex Hoe 900",
+      "Other",
+   ],
+   Bourgault: ["3310", "3330", "3335", "3420", "5710", "5810", "6550ST", "Other"],
+   Morris: ["Quantum", "Contour II", "Maxim II", "Other"],
+   Väderstad: ["Seed Hawk 40 Series", "Seed Hawk 45 Series", "Seed Hawk 50 Series", "Seed Hawk XL", "NZ Drill", "Other"],
+   SeedMaster: ["Ultra Pro", "Ultra Sr", "XP Series", "Other"],
+   "Flexi-Coil": ["5000 Series", "6000 Series", "Other"],
+   "Great Plains": ["3S-4010", "3S-5000", "Other"],
+   "New Holland": ["P2070", "P2080", "Other"],
+   Amity: ["Other"],
+   Concord: ["Other"],
+   "K-Hart": ["Spyder", "Other"],
+   Pillar: ["Stealth Flex Disc Drill", "DH Series Disc Drill", "Other"],
+   Other: ["Other"],
+};
+
+const CART_MODELS = {
+   "John Deere": ["1910 Commodity Cart", "C650 Air Cart", "C850 Air Cart", "C-Series", "Other"],
+   "Case IH": [
+      "Precision Air 525",
+      "Precision Air 535",
+      "Precision Air 550",
+      "Precision Air 625",
+      "Precision Air 740",
+      "Precision Air 855",
+      "Other",
+   ],
+   Bourgault: ["7950", "7950 QT", "6550 Air Cart", "Other"],
+   Morris: ["8635TL", "8636TL", "Other"],
+   Väderstad: ["Seed Hawk Cart", "Other"],
+   SeedMaster: ["SeedMaster Cart", "Other"],
+   "Flexi-Coil": ["5000 Cart", "6000 Cart", "Other"],
+   "Great Plains": ["Air Cart", "Other"],
+   Pillar: ["MS Air Cart", "Other"],
+   Other: ["Other"],
+};
+
+const PLANTER_MODELS = {
+   "John Deere": ["1770NT", "1790", "DB40", "DB44", "DB60", "DB88", "DB90", "DB120", "MaxEmerge 5", "Other"],
+   "Case IH": ["1200 Early Riser", "1255 Early Riser", "2150 Early Riser", "Other"],
+   "New Holland": ["P1000", "P2080", "P2085", "Other"],
+   Kinze: ["3600", "3700", "3800", "4900", "Other"],
+   "Great Plains": ["YP825A", "YP1625A", "Other"],
+   Horsch: ["Maestro", "Pronto", "Other"],
+   Fendt: ["Momentum", "Other"],
+   Monosem: ["NG Plus", "Other"],
+   Other: ["Other"],
+};
+
+export function getManufacturers(equipmentType, component) {
+   if (equipmentType === "planter") {
+      return Object.keys(PLANTER_MODELS);
+   }
+
+   const catalog = component === "cart" ? CART_MODELS : DRILL_MODELS;
+   return Object.keys(catalog);
+}
+
+export function getModels(equipmentType, component, manufacturer) {
+   if (!manufacturer) return [];
+
+   if (equipmentType === "planter") {
+      return PLANTER_MODELS[manufacturer] || ["Other"];
+   }
+
+   const catalog = component === "cart" ? CART_MODELS : DRILL_MODELS;
+   return catalog[manufacturer] || ["Other"];
+}
+
+export function createEmptyMachineSetup() {
+   return {
+      equipmentType: "",
+      component: "",
+      manufacturer: "",
+      model: "",
+      width: "",
+      rowSpacing: "",
+      rowUnitCount: "",
+      workingRanks: "",
+      tankSize: "",
+      otherDetails: "",
+   };
+}
+
+export function getMachineSetupPath(setup) {
+   if (setup.equipmentType === "planter") return "planter";
+   if (setup.equipmentType === "air_seeder" && setup.component === "drill") return "drill";
+   if (setup.equipmentType === "air_seeder" && setup.component === "cart") return "cart";
+   return null;
+}
+
+const CURRENT_MACHINE_IDENTITY_FIELDS = ["equipmentType", "component", "manufacturer", "model", "otherDetails"];
+
+export function getCurrentMachineIdentity(setup) {
+   const normalized = pickMachineSetupFields(normalizeMachineSetup(setup));
+   const identity = {};
+
+   CURRENT_MACHINE_IDENTITY_FIELDS.forEach((field) => {
+      identity[field] = normalized[field] ?? "";
+   });
+
+   return identity;
+}
+
+export function isSameCurrentMachine(previous, next) {
+   const previousIdentity =
+      previous && typeof previous === "object" && "equipmentType" in previous
+         ? previous
+         : getCurrentMachineIdentity(previous);
+   const nextIdentity = getCurrentMachineIdentity(next);
+
+   return CURRENT_MACHINE_IDENTITY_FIELDS.every((field) => previousIdentity[field] === nextIdentity[field]);
+}
+
+export function pickMachineSetupFields(setup) {
+   const empty = createEmptyMachineSetup();
+   const picked = {};
+
+   Object.keys(empty).forEach((key) => {
+      picked[key] = setup?.[key] ?? empty[key];
+   });
+
+   return picked;
+}
+
+export function switchMachineSetup(setup, target = {}) {
+   const normalized = normalizeMachineSetup(setup);
+   const savedSetups = { ...(normalized.savedSetups || {}) };
+   let lastAirSeederComponent = normalized.lastAirSeederComponent || "";
+   const currentPath = getMachineSetupPath(normalized);
+
+   if (currentPath) {
+      savedSetups[currentPath] = pickMachineSetupFields(normalized);
+   }
+
+   if (normalized.equipmentType === "air_seeder" && normalized.component) {
+      lastAirSeederComponent = normalized.component;
+   }
+
+   const nextEquipmentType = target.equipmentType ?? normalized.equipmentType;
+   let nextComponent = target.component !== undefined ? target.component : normalized.component;
+
+   if (
+      nextEquipmentType === "air_seeder" &&
+      target.component === undefined &&
+      normalized.equipmentType !== "air_seeder"
+   ) {
+      nextComponent = lastAirSeederComponent;
+   }
+
+   if (nextEquipmentType === "air_seeder" && nextComponent) {
+      lastAirSeederComponent = nextComponent;
+   }
+
+   const nextPath = getMachineSetupPath({
+      equipmentType: nextEquipmentType,
+      component: nextComponent,
+   });
+
+   if (!nextPath) {
+      return {
+         ...createEmptyMachineSetup(),
+         equipmentType: nextEquipmentType,
+         component: nextComponent || "",
+         savedSetups,
+         lastAirSeederComponent,
+      };
+   }
+
+   const restored = savedSetups[nextPath] ? pickMachineSetupFields(savedSetups[nextPath]) : createEmptyMachineSetup();
+
+   return {
+      ...restored,
+      equipmentType: nextEquipmentType,
+      component: nextEquipmentType === "air_seeder" ? nextComponent : "",
+      savedSetups,
+      lastAirSeederComponent,
+   };
+}
+
+export function persistMachineSetupDraft(setup) {
+   const normalized = normalizeMachineSetup(setup);
+   const path = getMachineSetupPath(normalized);
+   const lastAirSeederComponent =
+      normalized.equipmentType === "air_seeder" && normalized.component
+         ? normalized.component
+         : normalized.lastAirSeederComponent || "";
+
+   if (!path) {
+      return {
+         ...normalized,
+         lastAirSeederComponent,
+      };
+   }
+
+   return {
+      ...normalized,
+      lastAirSeederComponent,
+      savedSetups: {
+         ...(normalized.savedSetups || {}),
+         [path]: pickMachineSetupFields(normalized),
+      },
+   };
+}
+
+export function normalizeMachineSetup(value) {
+   if (!value) {
+      return { ...createEmptyMachineSetup(), savedSetups: {}, lastAirSeederComponent: "" };
+   }
+   if (typeof value === "string") {
+      try {
+         const parsed = JSON.parse(value);
+         return {
+            ...createEmptyMachineSetup(),
+            ...parsed,
+            savedSetups: parsed.savedSetups && typeof parsed.savedSetups === "object" ? parsed.savedSetups : {},
+            lastAirSeederComponent: parsed.lastAirSeederComponent || "",
+         };
+      } catch {
+         return { ...createEmptyMachineSetup(), otherDetails: value, savedSetups: {}, lastAirSeederComponent: "" };
+      }
+   }
+
+   return {
+      ...createEmptyMachineSetup(),
+      ...value,
+      savedSetups: value.savedSetups && typeof value.savedSetups === "object" ? value.savedSetups : {},
+      lastAirSeederComponent: value.lastAirSeederComponent || "",
+   };
+}
+
+export function isMachineSetupComplete(value) {
+   const setup = normalizeMachineSetup(value);
+
+   if (!setup.equipmentType || !setup.manufacturer || !setup.model) {
+      return false;
+   }
+
+   if (setup.equipmentType === "air_seeder" && !setup.component) {
+      return false;
+   }
+
+   if (setup.equipmentType === "planter" || setup.component === "drill") {
+      if (!setup.width || !setup.rowSpacing) return false;
+   }
+
+   if (setup.component === "drill") {
+      if (!setup.rowUnitCount || !setup.workingRanks) return false;
+   }
+
+   if (setup.component === "cart" && !setup.tankSize) {
+      return false;
+   }
+
+   if (setup.model === "Other" && !setup.otherDetails?.trim()) {
+      return false;
+   }
+
+   return true;
+}
+
+export function formatMachineSetupSummary(value) {
+   const setup = normalizeMachineSetup(value);
+   const parts = [];
+
+   if (setup.equipmentType === "air_seeder") {
+      const componentLabel = AIR_SEEDER_COMPONENTS.find((item) => item.value === setup.component)?.label;
+      parts.push(`Air Seeder – ${componentLabel || setup.component}`);
+   } else {
+      parts.push("Planter");
+   }
+
+   parts.push(setup.manufacturer, setup.model);
+
+   if (setup.width) parts.push(setup.width);
+   if (setup.rowSpacing) parts.push(setup.rowSpacing);
+   if (setup.rowUnitCount) parts.push(`${setup.rowUnitCount} row-units`);
+   if (setup.workingRanks) {
+      const rankCount = Number(setup.workingRanks);
+      parts.push(`${rankCount} working rank${rankCount === 1 ? "" : "s"}`);
+   }
+   if (setup.tankSize) parts.push(setup.tankSize);
+   if (setup.otherDetails) parts.push(setup.otherDetails);
+
+   return parts.filter(Boolean).join(" · ");
+}

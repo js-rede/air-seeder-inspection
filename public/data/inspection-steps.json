@@ -1,0 +1,312 @@
+[
+   {
+      "slug": "machine-setup",
+      "step_number": 1,
+      "section": "machine_setup",
+      "step_title": "Choose Your Machine",
+      "instructions": "",
+      "question": "",
+      "answer_type": "machine_setup",
+      "video_url": "",
+      "video_caption": "",
+      "image_url": "",
+      "image_caption": "",
+      "image_2_url": "",
+      "image_2_caption": "",
+      "recommended_action": "",
+      "estimated_low_cost": 0,
+      "estimated_high_cost": 0
+   },
+   {
+      "slug": "main-arm-pivot",
+      "step_number": 2,
+      "section": "openers",
+      "step_title": "Main Arm Pivot Inspection",
+      "instructions": "Inspect several row-units to determine pivot condition. Wiggle row-units from side to side and measure any movement between the arm and pivot point, then rate the pivot condition for this section of the drill.",
+      "instructions_multi_rank": "Evaluate each section of your drill by working rank. <br/>Inspect several row-units in each rank to determine pivot condition. Wiggle row-units from side to side and measure any movement between the arm and pivot point, then rate the pivot condition for each rank.",
+      "question": "How much side-to-side movement is present?",
+      "question_multi_rank": "Rate the pivot condition for each working rank:",
+      "answer_type": "working_rank_selection",
+      "cost_multiplies_by_row_units": true,
+      "choices": [
+         {
+            "label": "Less than 1/4-inch",
+            "value": "less-than-quarter-inch",
+            "rating": "good",
+            "recommended_action": "Pivot wear is within an acceptable range. No immediate bushing or hardware replacement is needed.",
+            "estimated_low_cost": 0,
+            "estimated_high_cost": 0
+         },
+         {
+            "label": "Between 1/4-inch and 1/2-inch slop",
+            "value": "quarter-to-half-inch-slop",
+            "rating": "maybe",
+            "recommended_action": "Moderate wear is present. Plan to replace pivot bushings and inspect pins before the next seeding season.",
+            "estimated_low_cost": 250,
+            "estimated_high_cost": 600
+         },
+         {
+            "label": "Greater than 1/2-inch",
+            "value": "greater-than-half-inch",
+            "rating": "bad",
+            "recommended_action": "Excessive movement indicates worn bushings and pins. Replace pivot bushings and hardware before operating.",
+            "estimated_low_cost": 600,
+            "estimated_high_cost": 1200
+         }
+      ],
+      "secondary_question": "Current main arm pivot setup",
+      "secondary_choices": [
+         {
+            "label": "Original pivots",
+            "value": "original-pivots"
+         },
+         {
+            "label": "Red E pivots",
+            "value": "red-e-pivots"
+         },
+         {
+            "label": "Other",
+            "value": "other"
+         }
+      ],
+      "video_url": "",
+      "video_caption": "",
+      "image_url": "https://rede-ag.com/wp-content/uploads/2026/06/shorter-main-arm-pivot-inspection-step.webp",
+      "image_caption": ""
+   },
+   {
+      "slug": "disc-opener",
+      "step_number": 3,
+      "section": "openers",
+      "step_title": "Disc Opener Inspection",
+      "instructions": "Inspect several row-units to determine overall disc condition. Measure cutting disc diameter, then rate the overall disc condition across the entire machine. Discs should be replaced at or before 17 inches to ensure working condition.",
+      "instructions_multi_rank": "Evaluate disc condition by working rank. <br/>Inspect several row-units in each rank, measure cutting disc diameter, then rate disc condition for each rank. Discs should be replaced at or before 17 inches to ensure working condition.",
+      "question": "What is the overall opener disc diameter condition?",
+      "question_multi_rank": "Rate the disc diameter condition for each working rank:",
+      "answer_type": "working_rank_selection",
+      "cost_multiplies_by_row_units": true,
+      "quantity_label": "discs",
+      "choices": [
+         {
+            "label": "Diameter greater than 17.25 inches",
+            "value": "greater-than-17-25-inches",
+            "rating": "good",
+            "recommended_action": "Disc diameter is within an acceptable range. No immediate replacement is needed.",
+            "estimated_low_cost": 0,
+            "estimated_high_cost": 0
+         },
+         {
+            "label": "Diameter is between 17 and 17.25 inches",
+            "value": "between-17-and-17-25-inches",
+            "rating": "maybe",
+            "recommended_action": "Discs show early wear. Plan replacement before diameter drops below 17 inches.",
+            "estimated_low_cost": 0,
+            "estimated_high_cost": 0
+         },
+         {
+            "label": "Diameter less than 17 inches",
+            "value": "less-than-17-inches",
+            "rating": "bad",
+            "recommended_action": "Replace worn discs measuring less than 17 inches and inspect bearings before operating.",
+            "estimated_low_cost": 70,
+            "estimated_high_cost": 120
+         }
+      ],
+      "secondary_question": "What replacement discs are wanted?",
+      "secondary_show_for_values": ["between-17-and-17-25-inches", "less-than-17-inches"],
+      "secondary_cost_ratings": ["maybe", "bad"],
+      "secondary_choices": [
+         {
+            "label": "18\" Ingersoll Hi-Hard",
+            "value": "18-ingersoll-hi-hard",
+            "unit_cost": 49,
+            "expense_symbol": "$"
+         },
+         {
+            "label": "18 5/8\" Ingersoll Hi-Hard",
+            "value": "18-5-8-ingersoll-hi-hard",
+            "unit_cost": 53,
+            "expense_symbol": "$$"
+         },
+         {
+            "label": "19\" 30 Point Notched",
+            "value": "19-30-point-notched",
+            "unit_cost": 59,
+            "expense_symbol": "$$$"
+         },
+         {
+            "label": "18\" Forges De Niaux",
+            "value": "18-forges-de-niaux",
+            "unit_cost": 49,
+            "expense_symbol": "$"
+         },
+         {
+            "label": "TBD",
+            "value": "tbd",
+            "unit_cost": 49,
+            "expense_symbol": "$"
+         }
+      ],
+      "video_url": "",
+      "video_caption": "",
+      "image_url": "",
+      "image_caption": ""
+   },
+   {
+      "slug": "closing-wheel",
+      "step_number": 4,
+      "section": "closing_system",
+      "step_title": "Closing Wheel Inspection",
+      "instructions": "Inspect wheel condition, bearing smoothness, cracks, missing rubber, and uneven wear.",
+      "question": "Are the closing wheels worn or damaged?",
+      "answer_type": "selection",
+      "choices": [
+         {
+            "label": "Good",
+            "value": "good",
+            "rating": "good",
+            "recommended_action": "Closing wheels are in acceptable condition. Continue monitoring during the season.",
+            "estimated_low_cost": 0,
+            "estimated_high_cost": 0
+         },
+         {
+            "label": "Needs Attention",
+            "value": "needs-attention",
+            "rating": "maybe",
+            "recommended_action": "Some wear is present. Schedule closing wheel replacement and inspect pivots and bearings.",
+            "estimated_low_cost": 200,
+            "estimated_high_cost": 800
+         },
+         {
+            "label": "Worn Out",
+            "value": "worn-out",
+            "rating": "bad",
+            "recommended_action": "Replace damaged closing wheels and inspect associated pivots and bearings before seeding.",
+            "estimated_low_cost": 800,
+            "estimated_high_cost": 1800
+         },
+         {
+            "label": "Not Sure",
+            "value": "not-sure",
+            "rating": "unknown",
+            "recommended_action": "Contact Red E for an onsite inspection or further guidance on closing wheel condition.",
+            "estimated_low_cost": 0,
+            "estimated_high_cost": 0
+         }
+      ],
+      "video_url": "",
+      "video_caption": "",
+      "image_url": "",
+      "image_caption": ""
+   },
+   {
+      "slug": "gauge-wheel",
+      "step_number": 5,
+      "section": "gauge_wheels",
+      "step_title": "Gauge Wheel Inspection",
+      "instructions": "Inspect gauge wheel tread, sidewall condition, bearing operation, and contact with opener discs.",
+      "question": "Are the gauge wheels properly contacting the disc and free from excessive wear?",
+      "answer_type": "selection",
+      "choices": [
+         {
+            "label": "Good",
+            "value": "good",
+            "rating": "good",
+            "recommended_action": "Gauge wheels are contacting properly with acceptable tread and bearing condition.",
+            "estimated_low_cost": 0,
+            "estimated_high_cost": 0
+         },
+         {
+            "label": "Needs Attention",
+            "value": "needs-attention",
+            "rating": "maybe",
+            "recommended_action": "Gauge wheels show early wear or contact issues. Plan replacement of wheels, bearings, or arms as needed.",
+            "estimated_low_cost": 150,
+            "estimated_high_cost": 600
+         },
+         {
+            "label": "Worn Out",
+            "value": "worn-out",
+            "rating": "bad",
+            "recommended_action": "Replace worn gauge wheels, bearings, or arms to restore proper depth control and disc contact.",
+            "estimated_low_cost": 600,
+            "estimated_high_cost": 1500
+         },
+         {
+            "label": "Not Sure",
+            "value": "not-sure",
+            "rating": "unknown",
+            "recommended_action": "Contact Red E for an onsite inspection or further guidance on gauge wheel condition.",
+            "estimated_low_cost": 0,
+            "estimated_high_cost": 0
+         }
+      ],
+      "video_url": "",
+      "video_caption": "",
+      "image_url": "",
+      "image_caption": ""
+   },
+   {
+      "slug": "seed-boot",
+      "step_number": 6,
+      "section": "seed_boots",
+      "step_title": "Seed Boot Inspection",
+      "instructions": "Inspect seed boots for wear on the delivery surfaces, cracks, and excessive material loss.",
+      "question": "Do the seed boots show excessive wear?",
+      "answer_type": "selection",
+      "choices": [
+         {
+            "label": "Good",
+            "value": "good",
+            "rating": "good",
+            "recommended_action": "Seed boots are in acceptable condition for proper seed placement.",
+            "estimated_low_cost": 0,
+            "estimated_high_cost": 0
+         },
+         {
+            "label": "Needs Attention",
+            "value": "needs-attention",
+            "rating": "maybe",
+            "recommended_action": "Seed boots show early wear. Plan replacement to maintain seed placement and emergence.",
+            "estimated_low_cost": 250,
+            "estimated_high_cost": 1200
+         },
+         {
+            "label": "Worn Out",
+            "value": "worn-out",
+            "rating": "bad",
+            "recommended_action": "Replace worn seed boots before seeding to prevent poor placement and emergence issues.",
+            "estimated_low_cost": 1200,
+            "estimated_high_cost": 3000
+         },
+         {
+            "label": "Not Sure",
+            "value": "not-sure",
+            "rating": "unknown",
+            "recommended_action": "Contact Red E for an onsite inspection or further guidance on seed boot condition.",
+            "estimated_low_cost": 0,
+            "estimated_high_cost": 0
+         }
+      ],
+      "video_url": "",
+      "video_caption": "",
+      "image_url": "",
+      "image_caption": ""
+   },
+   {
+      "slug": "air-cart",
+      "step_number": 7,
+      "section": "air_cart",
+      "step_title": "Air Cart Inspection",
+      "instructions": "Inspect meters, towers, hoses, fans, manifolds, and sensors for wear, damage, or operational issues.",
+      "question": "Are any air cart components showing signs of wear or failure?",
+      "answer_type": "yes_no",
+      "video_url": "",
+      "video_caption": "",
+      "image_url": "",
+      "image_caption": "",
+      "recommended_action": "Repair or replace damaged air cart components before seeding season.",
+      "estimated_low_cost": 500,
+      "estimated_high_cost": 10000
+   }
+]
