@@ -7,25 +7,10 @@ import {
    shouldShowSecondaryForWorkingRankAnswer,
 } from "../utils/choices";
 import SecondaryQuestionFields from "./SecondaryQuestionFields";
+import AnswerChoiceContent from "./AnswerChoiceContent";
+import { choiceButtonRatingStyles } from "../utils/ratingStyles";
 
-const ratingStyles = {
-   good: {
-      selected: "border-emerald-600 bg-emerald-50 text-emerald-900",
-      unselected: "border-slate-300 bg-white hover:border-emerald-300 hover:bg-emerald-50/50",
-   },
-   maybe: {
-      selected: "border-amber-600 bg-amber-50 text-amber-900",
-      unselected: "border-slate-300 bg-white hover:border-amber-300 hover:bg-amber-50/50",
-   },
-   bad: {
-      selected: "border-red-600 bg-red-50 text-red-900",
-      unselected: "border-slate-300 bg-white hover:border-red-300 hover:bg-red-50/50",
-   },
-   unknown: {
-      selected: "border-blue-600 bg-blue-50 text-blue-900",
-      unselected: "border-slate-300 bg-white hover:border-slate-400 hover:bg-slate-50",
-   },
-};
+const ratingStyles = choiceButtonRatingStyles;
 
 const buttonBase = "w-full rounded-xl border p-4 text-left transition cursor-pointer";
 const rankCardClass = "rounded-xl border border-slate-300 bg-slate-100 p-4";
@@ -122,7 +107,9 @@ function WorkingRankSelectionForm({
                            type="button"
                            className={`${buttonBase} ${isSelected ? styles.selected : styles.unselected}`}
                            onClick={() => selectRankChoice(rankNumber, choiceValue)}>
-                           {choice.label}
+                           <AnswerChoiceContent rating={choice.rating} badgeLabel={choice.badge_label}>
+                              {choice.label}
+                           </AnswerChoiceContent>
                         </button>
                      );
                   })}

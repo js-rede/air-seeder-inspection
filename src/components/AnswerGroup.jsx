@@ -11,24 +11,15 @@ import {
    getSelectionAnswerValue,
    shouldShowSecondaryQuestion,
 } from "../utils/choices";
+import { choiceButtonRatingStyles } from "../utils/ratingStyles";
+import AnswerChoiceContent from "./AnswerChoiceContent";
 
-const ratingStyles = {
-   good: {
-      selected: "border-emerald-600 bg-emerald-50 text-emerald-900",
-      unselected: "border-slate-300 bg-white hover:border-emerald-300 hover:bg-emerald-50/50",
-   },
-   maybe: {
-      selected: "border-amber-600 bg-amber-50 text-amber-900",
-      unselected: "border-slate-300 bg-white hover:border-amber-300 hover:bg-amber-50/50",
-   },
-   bad: {
-      selected: "border-red-600 bg-red-50 text-red-900",
-      unselected: "border-slate-300 bg-white hover:border-red-300 hover:bg-red-50/50",
-   },
-   unknown: {
-      selected: "border-blue-600 bg-blue-50 text-blue-900",
-      unselected: "border-slate-300 bg-white hover:border-slate-400 hover:bg-slate-50",
-   },
+const ratingStyles = choiceButtonRatingStyles;
+
+const yesNoRatings = {
+   Yes: "bad",
+   No: "good",
+   "Not Sure": "unknown",
 };
 
 function AnswerGroup({
@@ -46,8 +37,6 @@ function AnswerGroup({
    quantityLabel = "row-units",
 }) {
    const buttonBase = "w-full rounded-xl border p-4 text-left transition cursor-pointer";
-   const defaultSelected = "border-blue-600 bg-blue-50 text-blue-900";
-   const defaultUnselected = "border-slate-300 bg-white hover:border-slate-400 hover:bg-slate-50";
    const input =
       "w-full rounded-xl border border-slate-300 p-2.5 bg-gray-100 text-lg focus:border-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-200";
 
@@ -118,7 +107,9 @@ function AnswerGroup({
                      type="button"
                      className={`${buttonBase} ${isSelected ? styles.selected : styles.unselected}`}
                      onClick={() => selectPrimary(value)}>
-                     {choice.label}
+                     <AnswerChoiceContent rating={choice.rating} badgeLabel={choice.badge_label}>
+                        {choice.label}
+                     </AnswerChoiceContent>
                   </button>
                );
             })}
@@ -138,15 +129,20 @@ function AnswerGroup({
    if (answerType === "yes_no") {
       return (
          <div className="mt-6 space-y-3">
-            {["Yes", "No", "Not Sure"].map((option) => (
-               <button
-                  key={option}
-                  type="button"
-                  className={`${buttonBase} ${selectedAnswer === option ? defaultSelected : defaultUnselected}`}
-                  onClick={() => onAnswer(option)}>
-                  {option}
-               </button>
-            ))}
+            {["Yes", "No", "Not Sure"].map((option) => {
+               const rating = yesNoRatings[option];
+               const styles = ratingStyles[rating] ?? ratingStyles.unknown;
+
+               return (
+                  <button
+                     key={option}
+                     type="button"
+                     className={`${buttonBase} ${selectedAnswer === option ? styles.selected : styles.unselected}`}
+                     onClick={() => onAnswer(option)}>
+                     <AnswerChoiceContent rating={rating}>{option}</AnswerChoiceContent>
+                  </button>
+               );
+            })}
          </div>
       );
    }

@@ -1,31 +1,14 @@
 import { getChoiceValue, getSecondaryAnswer, getSecondaryOtherAnswer, normalizeRowUnitDistribution } from "../utils/choices";
 import CountStepper from "./CountStepper";
 import SecondaryQuestionFields from "./SecondaryQuestionFields";
+import AnswerChoiceContent from "./AnswerChoiceContent";
+import { rowUnitDistributionBorderClassNames } from "../utils/ratingStyles";
 
 const ratingStyles = {
-   good: {
-      border: "border-emerald-200",
-      badge: "bg-emerald-100 text-emerald-800",
-   },
-   maybe: {
-      border: "border-amber-200",
-      badge: "bg-amber-100 text-amber-800",
-   },
-   bad: {
-      border: "border-red-200",
-      badge: "bg-red-100 text-red-800",
-   },
-   unknown: {
-      border: "border-slate-200",
-      badge: "bg-slate-100 text-slate-700",
-   },
-};
-
-const ratingLabels = {
-   good: "Good",
-   maybe: "Marginal",
-   bad: "Bad",
-   unknown: "Not Sure",
+   good: { border: rowUnitDistributionBorderClassNames.good },
+   maybe: { border: rowUnitDistributionBorderClassNames.maybe },
+   bad: { border: rowUnitDistributionBorderClassNames.bad },
+   unknown: { border: rowUnitDistributionBorderClassNames.unknown },
 };
 
 function getQuantityLabels(quantityLabel = "row-units") {
@@ -112,12 +95,9 @@ function RowUnitDistributionForm({
             return (
                <div key={choiceValue} className={`rounded-xl border p-4 ${styles.border}`}>
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                     <div>
-                        <span className={`rounded-full px-2.5 py-1 text-xs font-semibold uppercase ${styles.badge}`}>
-                           {choice.badge_label || ratingLabels[choice.rating] || choice.rating}
-                        </span>
-                        <p className="mt-2 font-medium text-slate-900">{choice.label}</p>
-                     </div>
+                     <AnswerChoiceContent rating={choice.rating} badgeLabel={choice.badge_label}>
+                        {choice.label}
+                     </AnswerChoiceContent>
 
                      <div className="flex items-center gap-3 text-sm text-slate-600">
                         <span>{title}</span>
