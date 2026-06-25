@@ -4,7 +4,13 @@ import WorkingRankSelectionForm from "./WorkingRankSelectionForm";
 import SecondaryQuestionFields from "./SecondaryQuestionFields";
 import { DISC_DIAMETER_OPTIONS } from "../data/discDiameterOptions";
 import { selectClass, selectStyle } from "../utils/selectClass";
-import { getChoiceValue, getSecondaryAnswer, getSecondaryOtherAnswer, getSelectionAnswerValue, shouldShowSecondaryQuestion } from "../utils/choices";
+import {
+   getChoiceValue,
+   getSecondaryAnswer,
+   getSecondaryOtherAnswer,
+   getSelectionAnswerValue,
+   shouldShowSecondaryQuestion,
+} from "../utils/choices";
 
 const ratingStyles = {
    good: {
