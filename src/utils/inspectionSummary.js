@@ -9,6 +9,7 @@ import {
    getStepChoices,
    getWorkingRankChoiceCost,
    getWorkingRankCostMultiplier,
+   isSkipChoiceValue,
    normalizeRowUnitDistribution,
    normalizeWorkingRankSelections,
    usesSecondaryCostForRating,
@@ -161,7 +162,7 @@ export function calculateInspectionSummary(steps, answers, rowUnitCountOverride,
          const secondaryChoice = getSecondaryChoice(step, answer);
 
          Object.entries(selections).forEach(([rankKey, choiceValue]) => {
-            if (!choiceValue) return;
+            if (!choiceValue || isSkipChoiceValue(choiceValue)) return;
 
             const choice = choices.find((item) => getChoiceValue(item) === choiceValue);
             if (!choice) return;

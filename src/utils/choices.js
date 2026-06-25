@@ -1,3 +1,7 @@
+import { isSkipChoiceValue } from "./skipChoice";
+
+export { isSkipChoiceValue, SKIP_CHOICE_VALUE, getSkipChoiceLabel } from "./skipChoice";
+
 export function getChoiceValue(choice) {
    return choice.value ?? choice.label;
 }
@@ -119,7 +123,7 @@ export function getWorkingRankSelectionCosts(step, answer, rowUnitCount = 0, wor
    let estimatedHighCost = 0;
 
    Object.entries(selections).forEach(([rankKey, choiceValue]) => {
-      if (!choiceValue) return;
+      if (!choiceValue || isSkipChoiceValue(choiceValue)) return;
 
       const choice = choices.find((item) => getChoiceValue(item) === choiceValue);
       if (!choice) return;
@@ -203,7 +207,7 @@ export function shouldShowSecondaryQuestion(step, selectionValue) {
       return false;
    }
 
-   if (!selectionValue) {
+   if (!selectionValue || isSkipChoiceValue(selectionValue)) {
       return false;
    }
 
@@ -227,7 +231,9 @@ export function shouldShowSecondaryForWorkingRankAnswer(step, answer, workingRan
    }
 
    const selections = normalizeWorkingRankSelections(answer, workingRanks);
-   const selectedValues = Object.values(selections).filter(Boolean);
+   const selectedValues = Object.values(selections).filter(
+      (value) => Boolean(value) && !isSkipChoiceValue(value),
+   );
 
    if (!selectedValues.length) {
       return false;
@@ -299,6 +305,8 @@ export function getSelectedChoice(step, selectedAnswer) {
 
    const choices = getStepChoices(step);
    const value = getSelectionAnswerValue(selectedAnswer);
+
+   if (isSkipChoiceValue(value)) return null;
 
    return choices.find((choice) => getChoiceValue(choice) === value) ?? null;
 }
@@ -410,6 +418,8 @@ export function getRecommendationForAnswer(step, selectedAnswer, rowUnitCount = 
       const unitsPerRank = distributeRowUnitsPerRank(rowUnitCount, workingRanks);
       const activeChoices = Object.entries(selections)
          .map(([rankKey, choiceValue]) => {
+            if (isSkipChoiceValue(choiceValue)) return null;
+
             const choice = choices.find((item) => getChoiceValue(item) === choiceValue);
             if (!choice) return null;
 
@@ -454,6 +464,10 @@ export function getRecommendationForAnswer(step, selectedAnswer, rowUnitCount = 
          estimatedLowCost,
          estimatedHighCost,
       };
+   }
+
+   if (step.answer_type === "selection" && isSkipChoiceValue(getSelectionAnswerValue(selectedAnswer))) {
+      return null;
    }
 
    const selectedChoice = getSelectedChoice(step, selectedAnswer);

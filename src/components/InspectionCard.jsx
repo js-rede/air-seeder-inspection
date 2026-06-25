@@ -35,7 +35,7 @@ function StepSideImage({ url, caption, alt }) {
 
    return (
       <aside className="shrink-0 self-center sm:self-start">
-         {caption && <p className="mb-2 text-center text-xs text-slate-500 italic sm:text-left">{caption}</p>}
+         {caption && <p className="m-auto mb-2 w-fit text-center text-xs text-slate-500 italic sm:text-left">{caption}</p>}
          <img src={url} alt={alt} className="mx-auto w-28 rounded-lg border border-slate-200 sm:mx-0 sm:w-40" />
       </aside>
    );
@@ -92,7 +92,7 @@ function InspectionCard({ step, selectedAnswer, onAnswer, rowUnitCount = 0, work
                         href={step.link_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="font-semibold text-[#e21313] hover:underline italic underline text-sm">
+                        className="text-sm font-semibold italic text-slate-600 underline hover:text-slate-800">
                         {step.link_text}
                      </a>
                   </p>

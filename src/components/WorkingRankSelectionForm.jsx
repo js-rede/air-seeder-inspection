@@ -4,10 +4,13 @@ import {
    getSecondaryAnswer,
    getSecondaryOtherAnswer,
    getWorkingRankSelections,
+   getSkipChoiceLabel,
    shouldShowSecondaryForWorkingRankAnswer,
+   SKIP_CHOICE_VALUE,
 } from "../utils/choices";
 import SecondaryQuestionFields from "./SecondaryQuestionFields";
 import AnswerChoiceContent from "./AnswerChoiceContent";
+import SkipChoiceButton from "./SkipChoiceButton";
 import { choiceButtonRatingStyles } from "../utils/ratingStyles";
 
 const ratingStyles = choiceButtonRatingStyles;
@@ -113,6 +116,13 @@ function WorkingRankSelectionForm({
                         </button>
                      );
                   })}
+
+                  <SkipChoiceButton
+                     label={getSkipChoiceLabel({ perRank: showRankLabels })}
+                     isSelected={selectedValue === SKIP_CHOICE_VALUE}
+                     inRankCard={showRankLabels}
+                     onClick={() => selectRankChoice(rankNumber, SKIP_CHOICE_VALUE)}
+                  />
                </div>
             );
          })}

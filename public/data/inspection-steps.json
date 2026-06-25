@@ -169,7 +169,7 @@
       "cost_multiplies_by_row_units": true,
       "choices": [
          {
-            "label": "All move and are tight from side to side",
+            "label": "All move up and down, and are tight from side to side",
             "value": "all-move-and-are-tight-side-to-side",
             "rating": "good",
             "recommended_action": "Closing wheel pivot wear is within an acceptable range. No immediate bushing or hardware replacement is needed.",

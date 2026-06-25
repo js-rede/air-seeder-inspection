@@ -9,10 +9,13 @@ import {
    getSecondaryAnswer,
    getSecondaryOtherAnswer,
    getSelectionAnswerValue,
+   getSkipChoiceLabel,
    shouldShowSecondaryQuestion,
+   SKIP_CHOICE_VALUE,
 } from "../utils/choices";
 import { choiceButtonRatingStyles } from "../utils/ratingStyles";
 import AnswerChoiceContent from "./AnswerChoiceContent";
+import SkipChoiceButton from "./SkipChoiceButton";
 
 const ratingStyles = choiceButtonRatingStyles;
 
@@ -113,6 +116,12 @@ function AnswerGroup({
                   </button>
                );
             })}
+
+            <SkipChoiceButton
+               label={getSkipChoiceLabel()}
+               isSelected={selectionValue === SKIP_CHOICE_VALUE}
+               onClick={() => selectPrimary(SKIP_CHOICE_VALUE)}
+            />
 
             {showSecondaryQuestion && (
                <SecondaryQuestionFields
