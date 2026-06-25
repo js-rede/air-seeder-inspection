@@ -2,19 +2,11 @@ export const MACHINE_CHOICES = [
    {
       value: "air_seeder",
       label: "Air Seeder",
-      description: "Seed Drill & Air Cart",
+      description: "Drill & Air Cart Setup",
       equipmentType: "air_seeder",
       component: "both",
    },
-   { value: "planter", label: "Planter", description: "", equipmentType: "planter", component: "" },
-   {
-      value: "drill_only",
-      label: "Seed Drill Only",
-      description: "",
-      equipmentType: "air_seeder",
-      component: "drill",
-   },
-   { value: "cart_only", label: "Air Cart Only", description: "", equipmentType: "air_seeder", component: "cart" },
+   { value: "planter", label: "Planter", description: "Row-Crop Planter Setup", equipmentType: "planter", component: "" },
 ];
 
 export const EQUIPMENT_TYPES = [
@@ -50,6 +42,13 @@ export const WORKING_RANKS = [
    { value: "2", label: "2 ranks" },
    { value: "3", label: "3 ranks" },
    { value: "4", label: "4 ranks" },
+];
+
+export const CART_TANK_COUNTS = [
+   { value: "1", label: "1 tank" },
+   { value: "2", label: "2 tanks" },
+   { value: "3", label: "3 tanks" },
+   { value: "4", label: "4 tanks" },
 ];
 
 export const CART_TANK_SIZES = [
@@ -196,21 +195,72 @@ export function createEmptyCartSetup() {
    return {
       manufacturer: "",
       model: "",
+      tankCount: "",
       tankSize: "",
       otherDetails: "",
    };
+}
+
+export const DRILL_INSPECTION_SECTIONS = new Set([
+   "openers",
+   "closing_system",
+   "press_wheels",
+   "depth_control",
+   "gauge_wheels",
+   "seed_boots",
+   "drill",
+]);
+
+export function isDrillIncluded(setup) {
+   const normalized = normalizeMachineSetup(setup);
+
+   if (normalized.equipmentType === "planter") return true;
+   if (normalized.component === "drill") return true;
+   if (normalized.component === "cart") return false;
+   if (normalized.component === "both") return normalized.includeDrill !== false;
+
+   return false;
+}
+
+export function isCartIncluded(setup) {
+   const normalized = normalizeMachineSetup(setup);
+
+   if (normalized.equipmentType === "planter") return false;
+   if (normalized.component === "cart") return true;
+   if (normalized.component === "drill") return false;
+   if (normalized.component === "both") return normalized.includeCart !== false;
+
+   return false;
+}
+
+export function isInspectionStepApplicable(step, setup) {
+   if (!step || step.section === "machine_setup") return true;
+
+   if (step.section === "air_cart") return isCartIncluded(setup);
+   if (DRILL_INSPECTION_SECTIONS.has(step.section)) return isDrillIncluded(setup);
+
+   return true;
+}
+
+export function getApplicableSteps(steps, setup) {
+   if (!Array.isArray(steps)) return [];
+
+   return steps.filter((step) => isInspectionStepApplicable(step, setup));
 }
 
 export function createEmptyMachineSetup() {
    return {
       equipmentType: "",
       component: "",
+      includeDrill: true,
+      includeCart: true,
       manufacturer: "",
       model: "",
       width: "",
       rowSpacing: "",
       rowUnitCount: "",
       workingRanks: "",
+      tankCount: "",
       tankSize: "",
       otherDetails: "",
       drill: createEmptyDrillSetup(),
@@ -220,6 +270,10 @@ export function createEmptyMachineSetup() {
 
 export function getDrillSetup(setup) {
    const normalized = normalizeMachineSetup(setup);
+
+   if (!isDrillIncluded(normalized)) {
+      return normalized;
+   }
 
    if (normalized.component === "both") {
       return {
@@ -258,7 +312,7 @@ function isDrillPartComplete(drill) {
 
 function isCartPartComplete(cart) {
    if (!cart?.manufacturer || !cart?.model) return false;
-   if (!cart.tankSize) return false;
+   if (!cart.tankCount || !cart.tankSize) return false;
    if (cart.model === "Other" && !cart.otherDetails?.trim()) return false;
    return true;
 }
@@ -285,6 +339,8 @@ export function getCurrentMachineIdentity(setup) {
       return {
          equipmentType: normalized.equipmentType,
          component: normalized.component,
+         includeDrill: normalized.includeDrill !== false,
+         includeCart: normalized.includeCart !== false,
          drill: DRILL_IDENTITY_FIELDS.reduce((identity, field) => {
             identity[field] = drill[field] ?? "";
             return identity;
@@ -318,6 +374,8 @@ export function isSameCurrentMachine(previous, next) {
       if (previousIdentity.equipmentType !== nextIdentity.equipmentType) return false;
 
       return (
+         previousIdentity.includeDrill === nextIdentity.includeDrill &&
+         previousIdentity.includeCart === nextIdentity.includeCart &&
          DRILL_IDENTITY_FIELDS.every((field) => previousIdentity.drill?.[field] === nextIdentity.drill?.[field]) &&
          CART_IDENTITY_FIELDS.every((field) => previousIdentity.cart?.[field] === nextIdentity.cart?.[field])
       );
@@ -455,7 +513,14 @@ export function isMachineSetupComplete(value) {
    }
 
    if (setup.component === "both") {
-      return isDrillPartComplete(setup.drill) && isCartPartComplete(setup.cart);
+      const includeDrill = setup.includeDrill !== false;
+      const includeCart = setup.includeCart !== false;
+
+      if (!includeDrill && !includeCart) return false;
+      if (includeDrill && !isDrillPartComplete(setup.drill)) return false;
+      if (includeCart && !isCartPartComplete(setup.cart)) return false;
+
+      return true;
    }
 
    if (!setup.manufacturer || !setup.model) {
@@ -470,7 +535,7 @@ export function isMachineSetupComplete(value) {
       if (!setup.rowUnitCount || !setup.workingRanks) return false;
    }
 
-   if (setup.component === "cart" && !setup.tankSize) {
+   if (setup.component === "cart" && (!setup.tankCount || !setup.tankSize)) {
       return false;
    }
 
@@ -488,25 +553,40 @@ export function formatMachineSetupSummary(value) {
    if (setup.component === "both") {
       parts.push("Air Seeder");
 
+      const includeDrill = setup.includeDrill !== false;
+      const includeCart = setup.includeCart !== false;
       const drill = setup.drill || createEmptyDrillSetup();
       const cart = setup.cart || createEmptyCartSetup();
 
-      const drillParts = [drill.manufacturer, drill.model, drill.width, drill.rowSpacing];
-      if (drill.rowUnitCount) drillParts.push(`${drill.rowUnitCount} row-units`);
-      if (drill.workingRanks) {
-         const rankCount = Number(drill.workingRanks);
-         drillParts.push(`${rankCount} working rank${rankCount === 1 ? "" : "s"}`);
+      if (includeDrill) {
+         const drillParts = [drill.manufacturer, drill.model, drill.width, drill.rowSpacing];
+         if (drill.rowUnitCount) drillParts.push(`${drill.rowUnitCount} row-units`);
+         if (drill.workingRanks) {
+            const rankCount = Number(drill.workingRanks);
+            drillParts.push(`${rankCount} working rank${rankCount === 1 ? "" : "s"}`);
+         }
+         if (drill.otherDetails) drillParts.push(drill.otherDetails);
+
+         const drillSummary = drillParts.filter(Boolean).join(" · ");
+         if (drillSummary) parts.push(`Drill: ${drillSummary}`);
+      } else {
+         parts.push("Drill: skipped");
       }
-      if (drill.otherDetails) drillParts.push(drill.otherDetails);
 
-      const cartParts = [cart.manufacturer, cart.model, cart.tankSize];
-      if (cart.otherDetails) cartParts.push(cart.otherDetails);
+      if (includeCart) {
+         const cartParts = [cart.manufacturer, cart.model];
+         if (cart.tankCount) {
+            const tankCount = Number(cart.tankCount);
+            cartParts.push(`${tankCount} tank${tankCount === 1 ? "" : "s"}`);
+         }
+         if (cart.tankSize) cartParts.push(cart.tankSize);
+         if (cart.otherDetails) cartParts.push(cart.otherDetails);
 
-      const drillSummary = drillParts.filter(Boolean).join(" · ");
-      const cartSummary = cartParts.filter(Boolean).join(" · ");
-
-      if (drillSummary) parts.push(`Drill: ${drillSummary}`);
-      if (cartSummary) parts.push(`Cart: ${cartSummary}`);
+         const cartSummary = cartParts.filter(Boolean).join(" · ");
+         if (cartSummary) parts.push(`Cart: ${cartSummary}`);
+      } else {
+         parts.push("Cart: skipped");
+      }
 
       return parts.filter(Boolean).join(" · ");
    }
@@ -526,6 +606,10 @@ export function formatMachineSetupSummary(value) {
    if (setup.workingRanks) {
       const rankCount = Number(setup.workingRanks);
       parts.push(`${rankCount} working rank${rankCount === 1 ? "" : "s"}`);
+   }
+   if (setup.tankCount) {
+      const tankCount = Number(setup.tankCount);
+      parts.push(`${tankCount} tank${tankCount === 1 ? "" : "s"}`);
    }
    if (setup.tankSize) parts.push(setup.tankSize);
    if (setup.otherDetails) parts.push(setup.otherDetails);

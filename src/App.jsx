@@ -11,7 +11,9 @@ import Loading from "./components/Loading";
 import { validateSteps } from "./utils/validateSteps";
 import { calculateInspectionSummary, calculateRowUnitCount } from "./utils/inspectionSummary";
 import {
+   getApplicableSteps,
    getCurrentMachineIdentity,
+   isDrillIncluded,
    isSameCurrentMachine,
    getDrillSetup,
    normalizeMachineSetup,
@@ -63,15 +65,30 @@ function App() {
       });
    }, [hasStarted, hasInspectionStarted, isFinished, currentIndex, answers, rowUnitCountOverride, workingRanksOverride, currentMachine]);
 
-   const currentStep = steps[currentIndex];
    const machineSetup = useMemo(() => normalizeMachineSetup(answers["machine-setup"]), [answers]);
+   const applicableSteps = useMemo(() => getApplicableSteps(steps, machineSetup), [steps, machineSetup]);
    const calculatedRowUnitCount = useMemo(() => calculateRowUnitCount(answers["machine-setup"]), [answers]);
    const setupWorkingRanks = Number(getDrillSetup(machineSetup).workingRanks) || 0;
-   const showWorkingRanks = machineSetup.component === "drill" || machineSetup.component === "both";
+   const showWorkingRanks = isDrillIncluded(machineSetup);
    const summary = useMemo(
-      () => calculateInspectionSummary(steps, answers, rowUnitCountOverride, workingRanksOverride),
-      [steps, answers, rowUnitCountOverride, workingRanksOverride],
+      () => calculateInspectionSummary(applicableSteps, answers, rowUnitCountOverride, workingRanksOverride),
+      [applicableSteps, answers, rowUnitCountOverride, workingRanksOverride],
    );
+   const currentStep = applicableSteps[currentIndex];
+   useEffect(() => {
+      if (!applicableSteps.length) return;
+
+      setCurrentIndex((prev) => {
+         const previousStep = steps[prev] || applicableSteps[prev];
+         if (previousStep?.slug) {
+            const nextIndex = applicableSteps.findIndex((step) => step.slug === previousStep.slug);
+            if (nextIndex >= 0) return nextIndex;
+         }
+
+         return Math.min(prev, applicableSteps.length - 1);
+      });
+   }, [applicableSteps, steps]);
+
    const isMachineSetupStep = currentStep?.answer_type === "machine_setup";
    const hasRunningEstimate = summary.estimatedLow > 0 || summary.estimatedHigh > 0;
    const isMainArmPivotStep = currentStep?.slug === "main-arm-pivot";
@@ -178,12 +195,12 @@ function App() {
          setHasInspectionStarted(true);
       }
 
-      if (currentIndex >= steps.length - 1) {
+      if (currentIndex >= applicableSteps.length - 1) {
          setIsFinished(true);
          return;
       }
 
-      setCurrentIndex((prev) => Math.min(prev + 1, steps.length - 1));
+      setCurrentIndex((prev) => Math.min(prev + 1, applicableSteps.length - 1));
    }
 
    function goBack() {
@@ -224,7 +241,7 @@ function App() {
             <div className="max-w-[1000px] m-auto mt-0 w-full">
                <InspectionHeader
                   currentIndex={currentIndex}
-                  totalSteps={steps.length}
+                  totalSteps={applicableSteps.length}
                   showProgress={hasStarted && !isFinished}
                />
 
@@ -263,7 +280,7 @@ function App() {
                         />
                         <InspectionNav
                            currentIndex={currentIndex}
-                           totalSteps={steps.length}
+                           totalSteps={applicableSteps.length}
                            onBack={goBack}
                            onNext={goNext}
                            canGoNext={isAnswerComplete(

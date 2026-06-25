@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import {
+   CART_TANK_COUNTS,
    CART_TANK_SIZES,
    DRILL_WIDTHS,
    MACHINE_CHOICES,
@@ -16,11 +17,50 @@ import {
 import { calculateRowUnitCount, getRowUnitCountOptions } from "../utils/inspectionSummary";
 import { selectClass, selectStyle } from "../utils/selectClass";
 
-function SetupCard({ title, children }) {
+function ComponentIncludeToggle({ included, label, onChange, disableOff }) {
    return (
-      <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-5 shadow-sm">
-         <h3 className="mb-4 text-lg font-semibold text-slate-900">{title}</h3>
-         <div className="space-y-4">{children}</div>
+      <div className="flex shrink-0 items-center gap-2">
+         <span className="text-xs font-medium uppercase italic tracking-wide text-slate-500 opacity-70">
+            {included ? "Included" : "Skipped"}
+         </span>
+         <button
+            type="button"
+            role="switch"
+            aria-checked={included}
+            aria-label={`${included ? "Skip" : "Include"} ${label}`}
+            disabled={disableOff && included}
+            onClick={() => onChange(!included)}
+            className={`relative h-6 w-11 rounded-full transition-colors ${
+               disableOff && included ? "cursor-not-allowed opacity-60" : "cursor-pointer"
+            } ${included ? "bg-[#e21313]" : "bg-slate-300"}`}>
+            <span
+               className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
+                  included ? "translate-x-5" : "translate-x-0"
+               }`}
+            />
+         </button>
+      </div>
+   );
+}
+
+function SetupCard({ title, included = true, onIncludedChange, canDisable = true, children }) {
+   return (
+      <div
+         className={`rounded-2xl border p-5 shadow-sm transition ${
+            included ? "border-slate-200 bg-slate-50/60" : "border-slate-200 bg-slate-100/50"
+         }`}>
+         <div className="mb-4 flex items-start justify-between gap-4">
+            <h3 className={`text-lg font-semibold ${included ? "text-slate-900" : "text-slate-500"}`}>{title}</h3>
+            {onIncludedChange ? (
+               <ComponentIncludeToggle
+                  label={title}
+                  included={included}
+                  onChange={onIncludedChange}
+                  disableOff={!canDisable}
+               />
+            ) : null}
+         </div>
+         <div className={`space-y-4 ${included ? "" : "pointer-events-none opacity-50"}`}>{children}</div>
       </div>
    );
 }
@@ -152,7 +192,7 @@ function DrillDetailFields({ idPrefix, values, onFieldChange, predictedRowUnitCo
                      ))}
                   </select>
                   {predictedRowUnitCount > 0 && (
-                     <p className="mt-2 text-xs text-slate-500">Estimated from width and row spacing. Adjust if needed.</p>
+                     <p className="mt-2 text-xs text-slate-500">Estimated from width & row spacing. Adjust if needed.</p>
                   )}
                </div>
 
@@ -184,23 +224,44 @@ function CartDetailFields({ idPrefix, values, onFieldChange }) {
    if (!values.model) return null;
 
    return (
-      <div>
-         <label htmlFor={`${idPrefix}-tank-size`} className="mb-2 block text-sm font-medium text-slate-700">
-            Tank size
-         </label>
-         <select
-            id={`${idPrefix}-tank-size`}
-            value={values.tankSize}
-            onChange={(e) => onFieldChange("tankSize", e.target.value)}
-            className={selectClass}
-            style={selectStyle}>
-            <option value="">Select tank size…</option>
-            {CART_TANK_SIZES.map((size) => (
-               <option key={size} value={size}>
-                  {size}
-               </option>
-            ))}
-         </select>
+      <div className="grid gap-4 sm:grid-cols-2">
+         <div>
+            <label htmlFor={`${idPrefix}-tank-count`} className="mb-2 block text-sm font-medium text-slate-700">
+               Number of tanks
+            </label>
+            <select
+               id={`${idPrefix}-tank-count`}
+               value={values.tankCount}
+               onChange={(e) => onFieldChange("tankCount", e.target.value)}
+               className={selectClass}
+               style={selectStyle}>
+               <option value="">Select tanks…</option>
+               {CART_TANK_COUNTS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                     {option.label}
+                  </option>
+               ))}
+            </select>
+         </div>
+
+         <div>
+            <label htmlFor={`${idPrefix}-tank-size`} className="mb-2 block text-sm font-medium text-slate-700">
+               Tank size
+            </label>
+            <select
+               id={`${idPrefix}-tank-size`}
+               value={values.tankSize}
+               onChange={(e) => onFieldChange("tankSize", e.target.value)}
+               className={selectClass}
+               style={selectStyle}>
+               <option value="">Select tank size…</option>
+               {CART_TANK_SIZES.map((size) => (
+                  <option key={size} value={size}>
+                     {size}
+                  </option>
+               ))}
+            </select>
+         </div>
       </div>
    );
 }
@@ -209,6 +270,8 @@ function MachineSetupForm({ value, onChange }) {
    const setup = normalizeMachineSetup(value);
    const machineChoice = getMachineChoice(setup);
    const isAirSeederBoth = setup.component === "both";
+   const includeDrill = setup.includeDrill !== false;
+   const includeCart = setup.includeCart !== false;
    const showSingleDrillFields = setup.equipmentType === "planter" || setup.component === "drill";
    const showSingleCartFields = setup.component === "cart";
    const drillValues = isAirSeederBoth ? setup.drill : setup;
@@ -224,6 +287,7 @@ function MachineSetupForm({ value, onChange }) {
 
    useEffect(() => {
       if (!showSingleDrillFields && !isAirSeederBoth) return;
+      if (isAirSeederBoth && !includeDrill) return;
       if (!drillValues.width || !drillValues.rowSpacing) return;
       if (drillValues.rowUnitCount) return;
 
@@ -249,6 +313,7 @@ function MachineSetupForm({ value, onChange }) {
       drillValues.width,
       drillValues.rowSpacing,
       drillValues.rowUnitCount,
+      includeDrill,
    ]);
 
    function updateField(field, nextValue) {
@@ -265,6 +330,8 @@ function MachineSetupForm({ value, onChange }) {
          next.rowSpacing = "";
          next.rowUnitCount = "";
          next.workingRanks = "";
+         next.tankCount = "";
+         next.tankSize = "";
       }
 
       if (field === "model") {
@@ -272,6 +339,8 @@ function MachineSetupForm({ value, onChange }) {
          next.rowSpacing = "";
          next.rowUnitCount = "";
          next.workingRanks = "";
+         next.tankCount = "";
+         next.tankSize = "";
          if (nextValue !== "Other") {
             next.otherDetails = "";
          }
@@ -323,10 +392,12 @@ function MachineSetupForm({ value, onChange }) {
 
       if (field === "manufacturer") {
          nextCart.model = "";
+         nextCart.tankCount = "";
          nextCart.tankSize = "";
       }
 
       if (field === "model") {
+         nextCart.tankCount = "";
          nextCart.tankSize = "";
          if (nextValue !== "Other") {
             nextCart.otherDetails = "";
@@ -336,10 +407,32 @@ function MachineSetupForm({ value, onChange }) {
       onChange(persistMachineSetupDraft({ ...setup, cart: nextCart }));
    }
 
+   function setIncludeDrill(nextIncluded) {
+      if (!nextIncluded && !includeCart) return;
+
+      onChange(
+         persistMachineSetupDraft({
+            ...setup,
+            includeDrill: nextIncluded,
+         }),
+      );
+   }
+
+   function setIncludeCart(nextIncluded) {
+      if (!nextIncluded && !includeDrill) return;
+
+      onChange(
+         persistMachineSetupDraft({
+            ...setup,
+            includeCart: nextIncluded,
+         }),
+      );
+   }
+
    return (
       <div className="mt-6 space-y-5" id="machine-setup">
          <div>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                {MACHINE_CHOICES.map((option) => {
                   const isSelected = machineChoice === option.value;
 
@@ -364,8 +457,12 @@ function MachineSetupForm({ value, onChange }) {
          </div>
 
          {isAirSeederBoth && (
-            <div className="grid gap-5 lg:grid-cols-2">
-               <SetupCard title="Drill">
+            <div className="space-y-5">
+               <SetupCard
+                  title="Drill"
+                  included={includeDrill}
+                  onIncludedChange={setIncludeDrill}
+                  canDisable={includeCart}>
                   <ManufacturerModelFields
                      idPrefix="machine-drill"
                      values={drillValues}
@@ -382,7 +479,11 @@ function MachineSetupForm({ value, onChange }) {
                   />
                </SetupCard>
 
-               <SetupCard title="Air Cart">
+               <SetupCard
+                  title="Air Cart"
+                  included={includeCart}
+                  onIncludedChange={setIncludeCart}
+                  canDisable={includeDrill}>
                   <ManufacturerModelFields
                      idPrefix="machine-cart"
                      values={cartValues}
@@ -395,7 +496,26 @@ function MachineSetupForm({ value, onChange }) {
             </div>
          )}
 
-         {!isAirSeederBoth && (setup.equipmentType === "planter" || setup.component) && (
+         {setup.equipmentType === "planter" && (
+            <SetupCard title="Planter">
+               <ManufacturerModelFields
+                  idPrefix="machine"
+                  values={setup}
+                  manufacturers={singleManufacturers}
+                  models={singleModels}
+                  onFieldChange={updateField}
+               />
+               <DrillDetailFields
+                  idPrefix="machine"
+                  values={setup}
+                  onFieldChange={updateField}
+                  predictedRowUnitCount={predictedRowUnitCount}
+                  rowUnitCountOptions={rowUnitCountOptions}
+               />
+            </SetupCard>
+         )}
+
+         {!isAirSeederBoth && setup.component && (
             <div className="space-y-4">
                <ManufacturerModelFields
                   idPrefix="machine"
