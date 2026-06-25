@@ -30,11 +30,21 @@ function InstructionText({ text }) {
    );
 }
 
+function StepSideImage({ url, caption, alt }) {
+   if (!url) return null;
+
+   return (
+      <aside className="shrink-0 self-center sm:self-start">
+         {caption && <p className="mb-2 text-center text-xs text-slate-500 italic sm:text-left">{caption}</p>}
+         <img src={url} alt={alt} className="mx-auto w-28 rounded-lg border border-slate-200 sm:mx-0 sm:w-40" />
+      </aside>
+   );
+}
+
 function InspectionCard({ step, selectedAnswer, onAnswer, rowUnitCount = 0, workingRanks = 0 }) {
    const answerType = step.answer_type || getAnswerType(step);
    const choices = getStepChoices(step);
-   const effectiveWorkingRanks =
-      step.answer_type === "working_rank_selection" ? Math.max(1, workingRanks) : workingRanks;
+   const effectiveWorkingRanks = step.answer_type === "working_rank_selection" ? Math.max(1, workingRanks) : workingRanks;
    const recommendation = getRecommendationForAnswer(step, selectedAnswer, rowUnitCount, effectiveWorkingRanks);
    const costRange = recommendation
       ? formatCostRange(recommendation.estimatedLowCost, recommendation.estimatedHighCost)
@@ -61,14 +71,36 @@ function InspectionCard({ step, selectedAnswer, onAnswer, rowUnitCount = 0, work
          )}
          {/* Image */}
          {step.image_url && (
-            <div className="mb-6">
-               {step.image_caption && <p className="mt-3 text-sm text-slate-500 italic">{step.image_caption}</p>}
-               <img src={step.image_url} alt={step.step_title} className="w-full rounded-xl border border-slate-200" />
+            <div className={`mb-6 ${step.image_2_url ? "flex flex-col items-center gap-4 sm:flex-row sm:items-start" : ""}`}>
+               <div className={step.image_2_url ? "min-w-0 flex-1" : ""}>
+                  {step.image_caption && <p className="mb-3 text-sm text-slate-500 italic">{step.image_caption}</p>}
+                  <img src={step.image_url} alt={step.step_title} className="w-full rounded-xl border border-slate-200" />
+               </div>
+               {step.image_2_url && (
+                  <StepSideImage url={step.image_2_url} caption={step.image_2_caption} alt={step.step_title} />
+               )}
             </div>
          )}
          {/* Instructions */}
-         <div className="mb-8 text-lg leading-relaxed text-slate-600">
-            <InstructionText text={instructions} />
+         <div
+            className={`mb-8 ${step.image_2_url && !step.image_url ? "flex flex-col gap-5 sm:flex-row sm:items-start sm:gap-6" : ""}`}>
+            <div className="min-w-0 flex-1 text-lg leading-relaxed text-slate-600">
+               <InstructionText text={instructions} />
+               {step.link_text && step.link_url && (
+                  <p className="mt-3 text-base">
+                     <a
+                        href={step.link_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-semibold text-[#e21313] hover:underline italic underline text-sm">
+                        {step.link_text}
+                     </a>
+                  </p>
+               )}
+            </div>
+            {step.image_2_url && !step.image_url && (
+               <StepSideImage url={step.image_2_url} caption={step.image_2_caption} alt={step.step_title} />
+            )}
          </div>
          {/* Question */}
          {question && <div className="text-xl font-semibold text-slate-900">{question}</div>}
@@ -101,9 +133,7 @@ function InspectionCard({ step, selectedAnswer, onAnswer, rowUnitCount = 0, work
                   Recommendation
                </div>
 
-               <div className={`mt-2 text-slate-900 ${hasRecommendationIssues ? "italic" : ""}`}>
-                  {recommendation.text}
-               </div>
+               <div className={`mt-2 text-slate-900 ${hasRecommendationIssues ? "italic" : ""}`}>{recommendation.text}</div>
 
                {recommendation.lines?.length > 0 && (
                   <ul className="mt-4 list-disc space-y-1 pl-5 text-slate-900">

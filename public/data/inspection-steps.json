@@ -75,14 +75,16 @@
       "image_caption": ""
    },
    {
-      "slug": "disc-opener",
+      "slug": "cutting-discs",
       "step_number": 3,
       "section": "openers",
-      "step_title": "Disc Opener Inspection",
-      "instructions": "Inspect several row-units to determine overall disc condition. Measure cutting disc diameter, then rate the overall disc condition across the entire machine. Discs should be replaced at or before 17 inches to ensure working condition.",
-      "instructions_multi_rank": "Evaluate disc condition by working rank. <br/>Inspect several row-units in each rank, measure cutting disc diameter, then rate disc condition for each rank. Discs should be replaced at or before 17 inches to ensure working condition.",
-      "question": "What is the overall opener disc diameter condition?",
-      "question_multi_rank": "Rate the disc diameter condition for each working rank:",
+      "step_title": "Disc Inspection",
+      "instructions": "Inspect several row-units to determine overall disc conditions. Measure cutting disc diameter, then rate the overall disc condition across the entire machine. Discs should be replaced at or before 17 inches to ensure working condition.",
+      "instructions_multi_rank": "Evaluate disc conditions by working rank. <br/>Inspect several row-units in each rank, measure cutting disc diameter, then rate disc condition for each rank. Discs should be replaced at or before 17 inches to ensure working condition.",
+      "link_text": "We recommend using the Red E Inspection Tool to measure disc diameter.",
+      "link_url": "https://rede-ag.com/resources/",
+      "question": "What is the overall disc diameter?",
+      "question_multi_rank": "Rate the disc diameter for each working rank:",
       "answer_type": "working_rank_selection",
       "cost_multiplies_by_row_units": true,
       "quantity_label": "discs",
@@ -150,7 +152,9 @@
       "video_url": "",
       "video_caption": "",
       "image_url": "",
-      "image_caption": ""
+      "image_caption": "",
+      "image_2_url": "https://rede-ag.com/wp-content/uploads/2025/03/drill-inspection-tool-160x160.png",
+      "image_2_caption": "Red E Inspection Tool"
    },
    {
       "slug": "closing-wheel-pivot",
