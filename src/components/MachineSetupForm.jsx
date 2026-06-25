@@ -110,22 +110,27 @@ function MachineSetupForm({ value, onChange }) {
 
          {showComponent && (
             <div>
-               <label htmlFor="machine-component" className="mb-2 block text-sm font-medium text-slate-700">
-                  Air seeder component
-               </label>
-               <select
-                  id="machine-component"
-                  value={setup.component}
-                  onChange={(e) => updateField("component", e.target.value)}
-                  className={selectClass}
-                  style={selectStyle}>
-                  <option value="">Select drill or air cart…</option>
-                  {AIR_SEEDER_COMPONENTS.map((option) => (
-                     <option key={option.value} value={option.value}>
-                        {option.label}
-                     </option>
-                  ))}
-               </select>
+               <div className="mb-2 text-sm font-medium text-slate-700">Air seeder component</div>
+               <div className="grid gap-3 sm:grid-cols-2">
+                  {AIR_SEEDER_COMPONENTS.map((option) => {
+                     const isSelected = setup.component === option.value;
+
+                     return (
+                        <button
+                           key={option.value}
+                           id={option.value === "drill" ? "machine-component-drill" : "machine-component-cart"}
+                           type="button"
+                           onClick={() => updateField("component", option.value)}
+                           className={`cursor-pointer rounded-xl border p-4 text-left transition ${
+                              isSelected
+                                 ? "border-[#1347e2] bg-blue-50 text-slate-900"
+                                 : "border-slate-300 bg-white hover:border-slate-400 hover:bg-slate-50"
+                           }`}>
+                           <span className="block text-lg font-semibold">{option.label}</span>
+                        </button>
+                     );
+                  })}
+               </div>
             </div>
          )}
 
