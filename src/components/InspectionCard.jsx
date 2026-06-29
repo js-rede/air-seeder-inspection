@@ -71,19 +71,14 @@ function InspectionCard({ step, selectedAnswer, onAnswer, rowUnitCount = 0, work
          )}
          {/* Image */}
          {step.image_url && (
-            <div className={`mb-6 ${step.image_2_url ? "flex flex-col items-center gap-4 sm:flex-row sm:items-start" : ""}`}>
-               <div className={step.image_2_url ? "min-w-0 flex-1" : ""}>
-                  {step.image_caption && <p className="mb-3 text-sm text-slate-500 italic">{step.image_caption}</p>}
-                  <img src={step.image_url} alt={step.step_title} className="w-full rounded-xl border border-slate-200" />
-               </div>
-               {step.image_2_url && (
-                  <StepSideImage url={step.image_2_url} caption={step.image_2_caption} alt={step.step_title} />
-               )}
+            <div className="mb-6">
+               {step.image_caption && <p className="mb-3 text-sm text-slate-500 italic">{step.image_caption}</p>}
+               <img src={step.image_url} alt={step.step_title} className="w-full rounded-xl border border-slate-200" />
             </div>
          )}
          {/* Instructions */}
          <div
-            className={`mb-8 ${step.image_2_url && !step.image_url ? "flex flex-col gap-5 sm:flex-row sm:items-start sm:gap-6" : ""}`}>
+            className={`mb-8 ${step.image_2_url ? "flex flex-col gap-5 sm:flex-row sm:items-start sm:gap-6" : ""}`}>
             <div className="min-w-0 flex-1 text-lg leading-relaxed text-slate-600">
                <InstructionText text={instructions} />
                {step.link_text && step.link_url && (
@@ -98,7 +93,7 @@ function InspectionCard({ step, selectedAnswer, onAnswer, rowUnitCount = 0, work
                   </p>
                )}
             </div>
-            {step.image_2_url && !step.image_url && (
+            {step.image_2_url && (
                <StepSideImage url={step.image_2_url} caption={step.image_2_caption} alt={step.step_title} />
             )}
          </div>
