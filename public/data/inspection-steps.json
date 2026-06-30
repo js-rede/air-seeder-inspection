@@ -218,7 +218,7 @@
       ],
       "video_url": "",
       "video_caption": "",
-      "image_url": "",
+      "image_url": "https://rede-ag.com/wp-content/uploads/2026/06/closing-wheel-pivot-1.webp",
       "image_caption": ""
    },
    {
@@ -226,42 +226,61 @@
       "step_number": 5,
       "section": "closing_system",
       "step_title": "Closing Wheel Spring and Arm Inspection",
-      "instructions": "Inspect closing wheel springs and arms on several row-units in each rank. Look for weak springs, bent arms, cracked welds, and loose hardware.",
+      "instructions": "If the spring is sloppy or broken it won't properly close the furrow, leaving the seed exposed. Inspect closing wheel springs and arms on several row-units. Look for sloppy or broken springs, plastic deformation, and whether springs are on the top adjustment setting.",
+      "instructions_multi_rank": "Evaluate closing wheel spring and arm condition by working rank. <br/>If the spring is sloppy or broken it won't properly close the furrow, leaving the seed exposed. Inspect several row-units in each rank and rate spring and arm condition for each rank.",
       "question": "What is the overall closing wheel spring and arm condition?",
+      "question_multi_rank": "Rate the closing wheel spring and arm condition for each working rank:",
       "answer_type": "working_rank_selection",
+      "cost_multiplies_by_row_units": true,
       "choices": [
          {
-            "label": "Good",
-            "value": "good",
+            "label": "Good working order",
+            "value": "good-working-order",
             "rating": "good",
-            "recommended_action": "Closing wheel springs and arms are in acceptable condition.",
+            "recommended_action": "Closing wheel springs and arms are in good working order. No immediate replacement is needed.",
             "estimated_low_cost": 0,
             "estimated_high_cost": 0
          },
          {
-            "label": "Needs Attention",
-            "value": "needs-attention",
+            "label": "On top adjustment setting - PRETTY SURE THIS CAN BE BETTER",
+            "value": "on-top-adjustment-setting",
             "rating": "maybe",
-            "recommended_action": "Some closing wheel springs or arms show early wear. Plan replacement before seeding season.",
-            "estimated_low_cost": 150,
-            "estimated_high_cost": 450
+            "recommended_action": "Springs are on the top adjustment setting. Monitor closing performance and adjust as needed before seeding.",
+            "estimated_low_cost": 0,
+            "estimated_high_cost": 0
          },
          {
-            "label": "Worn Out",
-            "value": "worn-out",
+            "label": "Broken plastic, plastic deformation, or loose hardware",
+            "value": "broken-or-plastic-deformation",
             "rating": "bad",
-            "recommended_action": "Replace worn closing wheel springs and arms to restore proper down pressure and alignment.",
+            "recommended_action": "Replace broken springs or arms showing plastic deformation to restore proper furrow closing.",
             "estimated_low_cost": 450,
             "estimated_high_cost": 1100
          }
       ],
+      "secondary_question": "Current setup",
+      "secondary_choices": [
+         {
+            "label": "HD Red E Square Wire WHAT??",
+            "value": "hd-red-e-square-wire"
+         },
+         {
+            "label": "Standard Round Wire HMM??",
+            "value": "standard-round-wire"
+         },
+         {
+            "label": "Bearing in Arm -WHAT DOES THIS MEAN?",
+            "value": "bearing-in-arm"
+         },
+         {
+            "label": "Bearing in CW -WHAT DOES THIS MEAN?",
+            "value": "bearing-in-cw"
+         }
+      ],
       "video_url": "",
       "video_caption": "",
-      "image_url": "",
-      "image_caption": "",
-      "question_multi_rank": "Rate the closing wheel spring and arm condition for each working rank:",
-      "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect closing wheel springs and arms on several row-units in each rank. Look for weak springs, bent arms, cracked welds, and loose hardware.",
-      "cost_multiplies_by_row_units": true
+      "image_url": "https://rede-ag.com/wp-content/uploads/2026/06/closing-wheel-spring-and-arm-2.webp",
+      "image_caption": ""
    },
    {
       "slug": "closing-wheel",
@@ -299,7 +318,7 @@
       ],
       "video_url": "",
       "video_caption": "",
-      "image_url": "",
+      "image_url": "https://rede-ag.com/wp-content/uploads/2026/06/closing-wheel.webp",
       "image_caption": "",
       "question_multi_rank": "Rate the closing wheel condition for each working rank:",
       "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect closing wheels on several row-units in each rank. Check bearing smoothness, rubber condition, cracks, chips, and uneven wear.",
@@ -344,7 +363,7 @@
       ],
       "video_url": "",
       "video_caption": "",
-      "image_url": "",
+      "image_url": "https://rede-ag.com/wp-content/uploads/2026/06/press-wheel-pivot-1.webp",
       "image_caption": ""
    },
    {
@@ -383,7 +402,7 @@
       ],
       "video_url": "",
       "video_caption": "",
-      "image_url": "",
+      "image_url": "https://rede-ag.com/wp-content/uploads/2026/06/press-wheel-spring-and-arm.webp",
       "image_caption": "",
       "question_multi_rank": "Rate the press wheel spring and arm condition for each working rank:",
       "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect press wheel springs and arms on several row-units in each rank. Look for weak springs, bent arms, cracked welds, and loose hardware.",
@@ -425,7 +444,7 @@
       ],
       "video_url": "",
       "video_caption": "",
-      "image_url": "",
+      "image_url": "https://rede-ag.com/wp-content/uploads/2026/06/press-wheel-1.webp",
       "image_caption": "",
       "question_multi_rank": "Rate the press wheel condition for each working rank:",
       "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect press wheels on several row-units in each rank. Check bearing smoothness, rubber or cast condition, cracks, and uneven wear.",
@@ -468,7 +487,7 @@
       ],
       "video_url": "",
       "video_caption": "",
-      "image_url": "",
+      "image_url": "https://rede-ag.com/wp-content/uploads/2026/06/disc-hubs.webp",
       "image_caption": "",
       "question_multi_rank": "Rate the disc hub condition for each working rank:",
       "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect disc hubs on several row-units in each rank. Check for bearing play, seal condition, wobble, and heat discoloration.",
@@ -513,7 +532,7 @@
       ],
       "video_url": "",
       "video_caption": "",
-      "image_url": "",
+      "image_url": "https://rede-ag.com/wp-content/uploads/2026/06/depth-adjustment-pivot.webp",
       "image_caption": ""
    },
    {
@@ -552,7 +571,7 @@
       ],
       "video_url": "",
       "video_caption": "",
-      "image_url": "",
+      "image_url": "https://rede-ag.com/wp-content/uploads/2026/06/depth-arm-cover-and-handle.webp",
       "image_caption": "",
       "question_multi_rank": "Rate the depth arm, cover, and handle condition for each working rank:",
       "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect depth arms, covers, and handles on several row-units in each rank. Look for bent arms, missing covers, damaged handles, and loose hardware.",
@@ -594,7 +613,7 @@
       ],
       "video_url": "",
       "video_caption": "",
-      "image_url": "",
+      "image_url": "https://rede-ag.com/wp-content/uploads/2026/06/gauge-wheel.webp",
       "image_caption": "",
       "question_multi_rank": "Rate the gauge wheel condition for each working rank:",
       "instructions_multi_rank": "Evaluate gauge wheels by working rank. <br/>Inspect gauge wheels on several row-units in each rank. Check tread condition, sidewall wear, bearing operation, and contact with opener discs.",
@@ -639,7 +658,7 @@
       ],
       "video_url": "",
       "video_caption": "",
-      "image_url": "",
+      "image_url": "https://rede-ag.com/wp-content/uploads/2026/06/seed-boot-pivot.webp",
       "image_caption": ""
    },
    {
@@ -678,7 +697,7 @@
       ],
       "video_url": "",
       "video_caption": "",
-      "image_url": "",
+      "image_url": "https://rede-ag.com/wp-content/uploads/2026/06/seed-boot.webp",
       "image_caption": "",
       "question_multi_rank": "Rate the seed boot condition for each working rank:",
       "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect seed boots on several row-units in each rank. Check delivery surfaces for wear, cracks, and excessive material loss.",
@@ -720,7 +739,7 @@
       ],
       "video_url": "",
       "video_caption": "",
-      "image_url": "",
+      "image_url": "https://rede-ag.com/wp-content/uploads/2026/06/seed-boot-spring.webp",
       "image_caption": "",
       "question_multi_rank": "Rate the boot spring condition for each working rank:",
       "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect boot springs on several row-units in each rank. Look for weak, broken, or missing springs and loose hardware.",
@@ -762,7 +781,7 @@
       ],
       "video_url": "",
       "video_caption": "",
-      "image_url": "",
+      "image_url": "https://rede-ag.com/wp-content/uploads/2026/06/seed-tab.webp",
       "image_caption": "",
       "question_multi_rank": "Rate the seed tab condition for each working rank:",
       "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect seed tabs on several row-units in each rank. Check tab height, wear, and ability to hold seed in the furrow.",
@@ -812,8 +831,9 @@
       ],
       "video_url": "",
       "video_caption": "",
-      "image_url": "",
+      "image_url": "https://rede-ag.com/wp-content/uploads/2026/06/hoses-2.webp",
       "image_caption": "",
+      "image_padding": "p-0",
       "question_multi_rank": "Rate the hose condition for each working rank:",
       "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect product hoses on the drill by working rank. Look for cracks, wear spots, loose clamps, and leaks at fittings.",
       "cost_multiplies_by_row_units": true
@@ -862,7 +882,7 @@
       ],
       "video_url": "",
       "video_caption": "",
-      "image_url": "",
+      "image_url": "https://rede-ag.com/wp-content/uploads/2026/06/tower.webp",
       "image_caption": "",
       "question_multi_rank": "Rate the tower condition for each working rank:",
       "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect towers on the drill by working rank. Check for cracks, loose hardware, worn mounting points, and product buildup.",

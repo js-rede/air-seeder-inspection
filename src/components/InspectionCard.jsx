@@ -73,7 +73,14 @@ function InspectionCard({ step, selectedAnswer, onAnswer, rowUnitCount = 0, work
          {step.image_url && (
             <div className="mb-6">
                {step.image_caption && <p className="mb-3 text-sm text-slate-500 italic">{step.image_caption}</p>}
-               <img src={step.image_url} alt={step.step_title} className="w-full rounded-xl border border-slate-200" />
+               <div
+                  className={`w-full overflow-hidden rounded-xl border border-slate-200 ${step.image_padding ?? "p-2"}`}>
+                  <img
+                     src={step.image_url}
+                     alt={step.step_title}
+                     className="m-auto block h-auto max-h-[218px] w-auto max-w-full"
+                  />
+               </div>
             </div>
          )}
          {/* Instructions */}
