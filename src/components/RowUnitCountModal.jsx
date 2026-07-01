@@ -5,10 +5,17 @@ const MIN_ROW_UNITS = 10;
 const MAX_ROW_UNITS = 150;
 const MIN_WORKING_RANKS = 1;
 const MAX_WORKING_RANKS = 4;
+const MIN_TANK_COUNT = 1;
+const MAX_TANK_COUNT = 4;
 
 function clampRowUnits(value) {
    const parsed = Math.round(Number(value) || MIN_ROW_UNITS);
    return Math.min(MAX_ROW_UNITS, Math.max(MIN_ROW_UNITS, parsed));
+}
+
+function clampTankCount(value) {
+   const parsed = Math.round(Number(value) || MIN_TANK_COUNT);
+   return Math.min(MAX_TANK_COUNT, Math.max(MIN_TANK_COUNT, parsed));
 }
 
 function RowUnitCountModalContent({
@@ -16,7 +23,11 @@ function RowUnitCountModalContent({
    calculatedCount,
    currentWorkingRanks,
    setupWorkingRanks,
+   currentTankCount,
+   setupTankCount,
+   showRowUnits,
    showWorkingRanks,
+   showCartTanks,
    onSave,
    onClose,
 }) {
@@ -28,10 +39,15 @@ function RowUnitCountModalContent({
       const initial = currentWorkingRanks > 0 ? currentWorkingRanks : MIN_WORKING_RANKS;
       return Math.min(MAX_WORKING_RANKS, Math.max(MIN_WORKING_RANKS, initial));
    });
+   const [tankCount, setTankCount] = useState(() => {
+      const initial = currentTankCount > 0 ? currentTankCount : setupTankCount > 0 ? setupTankCount : MIN_TANK_COUNT;
+      return clampTankCount(initial);
+   });
 
-   const hasValidRowUnits = count >= MIN_ROW_UNITS && count <= MAX_ROW_UNITS;
+   const hasValidRowUnits = !showRowUnits || (count >= MIN_ROW_UNITS && count <= MAX_ROW_UNITS);
    const hasValidWorkingRanks = !showWorkingRanks || (workingRanks >= MIN_WORKING_RANKS && workingRanks <= MAX_WORKING_RANKS);
-   const canSave = hasValidRowUnits && hasValidWorkingRanks;
+   const hasValidTankCount = !showCartTanks || (tankCount >= MIN_TANK_COUNT && tankCount <= MAX_TANK_COUNT);
+   const canSave = hasValidRowUnits && hasValidWorkingRanks && hasValidTankCount;
 
    function updateCount(nextValue) {
       setCount(clampRowUnits(nextValue));
@@ -42,19 +58,18 @@ function RowUnitCountModalContent({
       setWorkingRanks(Math.min(MAX_WORKING_RANKS, Math.max(MIN_WORKING_RANKS, parsed)));
    }
 
+   function updateTankCount(nextValue) {
+      setTankCount(clampTankCount(nextValue));
+   }
+
    function handleSubmit(event) {
       event.preventDefault();
       if (!canSave) return;
 
-      const nextWorkingRanks = workingRanks;
       onSave({
-         rowUnitCount: count > 0 ? count : null,
-         workingRanks:
-            showWorkingRanks && nextWorkingRanks > 0
-               ? nextWorkingRanks === setupWorkingRanks
-                  ? null
-                  : nextWorkingRanks
-               : undefined,
+         ...(showRowUnits ? { rowUnitCount: count } : {}),
+         ...(showWorkingRanks ? { workingRanks } : {}),
+         ...(showCartTanks ? { tankCount } : {}),
       });
       onClose();
    }
@@ -76,38 +91,40 @@ function RowUnitCountModalContent({
             </h2>
 
             <form onSubmit={handleSubmit} className="mt-6">
-               <div className="mb-4 flex flex-col gap-1">
-                  <label className="w-24 text-sm font-medium text-slate-700">Row-Units</label>
+               {showRowUnits && (
+                  <div className="mb-4 flex flex-col gap-1">
+                     <label className="w-24 text-sm font-medium text-slate-700">Row-Units</label>
 
-                  <div className="flex items-stretch gap-2">
-                     <CountStepper
-                        value={count}
-                        onChange={updateCount}
-                        onIncrement={() => updateCount(count + 1)}
-                        onDecrement={() => updateCount(count - 1)}
-                        canIncrement={count < MAX_ROW_UNITS}
-                        canDecrement={count > MIN_ROW_UNITS}
-                        min={MIN_ROW_UNITS}
-                        max={MAX_ROW_UNITS}
-                        ariaLabel="row-units"
-                        className={hasCalculatedCount && isManual ? "shrink-0" : "grow justify-between"}
-                     />
-                     {hasCalculatedCount && isManual && (
-                        <button
-                           type="button"
-                           onClick={() => {
-                              onSave({ rowUnitCount: null });
-                              onClose();
-                           }}
-                           className="flex grow cursor-pointer items-center justify-center rounded-xl border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50">
-                           Reset to {calculatedCount} row-unit{calculatedCount === 1 ? "" : "s"}
-                        </button>
-                     )}
+                     <div className="flex items-stretch gap-2">
+                        <CountStepper
+                           value={count}
+                           onChange={updateCount}
+                           onIncrement={() => updateCount(count + 1)}
+                           onDecrement={() => updateCount(count - 1)}
+                           canIncrement={count < MAX_ROW_UNITS}
+                           canDecrement={count > MIN_ROW_UNITS}
+                           min={MIN_ROW_UNITS}
+                           max={MAX_ROW_UNITS}
+                           ariaLabel="row-units"
+                           className={hasCalculatedCount && isManual ? "shrink-0" : "grow justify-between"}
+                        />
+                        {hasCalculatedCount && isManual && (
+                           <button
+                              type="button"
+                              onClick={() => {
+                                 onSave({ rowUnitCount: null });
+                                 onClose();
+                              }}
+                              className="flex grow cursor-pointer items-center justify-center rounded-xl border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50">
+                              Reset to {calculatedCount} row-unit{calculatedCount === 1 ? "" : "s"}
+                           </button>
+                        )}
+                     </div>
                   </div>
-               </div>
+               )}
 
                {showWorkingRanks && (
-                  <div className="mt-8 mb-10 flex flex-col gap-1">
+                  <div className={`flex flex-col gap-1 ${showRowUnits ? "mt-8" : "mb-4"}`}>
                      <label className="text-sm font-medium text-slate-700">Working Ranks</label>
                      <CountStepper
                         value={workingRanks}
@@ -117,6 +134,23 @@ function RowUnitCountModalContent({
                         canIncrement={workingRanks < MAX_WORKING_RANKS}
                         canDecrement={workingRanks > MIN_WORKING_RANKS}
                         ariaLabel="working ranks"
+                        className="grow justify-between"
+                     />
+                  </div>
+               )}
+
+               {showCartTanks && (
+                  <div
+                     className={`flex flex-col gap-1 ${showRowUnits || showWorkingRanks ? "mt-8" : "mb-4"} ${showWorkingRanks || showRowUnits ? "mb-10" : ""}`}>
+                     <label className="text-sm font-medium text-slate-700">Number of Tanks</label>
+                     <CountStepper
+                        value={tankCount}
+                        onChange={updateTankCount}
+                        onIncrement={() => updateTankCount(tankCount + 1)}
+                        onDecrement={() => updateTankCount(tankCount - 1)}
+                        canIncrement={tankCount < MAX_TANK_COUNT}
+                        canDecrement={tankCount > MIN_TANK_COUNT}
+                        ariaLabel="tanks"
                         className="grow justify-between"
                      />
                   </div>
@@ -149,7 +183,11 @@ function RowUnitCountModal({
    calculatedCount,
    currentWorkingRanks,
    setupWorkingRanks,
+   currentTankCount,
+   setupTankCount,
+   showRowUnits = true,
    showWorkingRanks,
+   showCartTanks,
    onSave,
    onClose,
 }) {
@@ -174,7 +212,11 @@ function RowUnitCountModal({
          calculatedCount={calculatedCount}
          currentWorkingRanks={currentWorkingRanks}
          setupWorkingRanks={setupWorkingRanks}
+         currentTankCount={currentTankCount}
+         setupTankCount={setupTankCount}
+         showRowUnits={showRowUnits}
          showWorkingRanks={showWorkingRanks}
+         showCartTanks={showCartTanks}
          onSave={onSave}
          onClose={onClose}
       />

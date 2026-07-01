@@ -14,8 +14,10 @@ import {
    getApplicableSteps,
    getCurrentMachineIdentity,
    isDrillIncluded,
+   isCartIncluded,
    isSameCurrentMachine,
    getDrillSetup,
+   getCartSetup,
    normalizeMachineSetup,
    persistMachineSetupDraft,
 } from "./data/machineCatalog";
@@ -35,6 +37,7 @@ function App() {
    const [answers, setAnswers] = useState(savedDraft.answers || {});
    const [rowUnitCountOverride, setRowUnitCountOverride] = useState(savedDraft.rowUnitCountOverride ?? null);
    const [workingRanksOverride, setWorkingRanksOverride] = useState(savedDraft.workingRanksOverride ?? null);
+   const [tankCountOverride, setTankCountOverride] = useState(savedDraft.tankCountOverride ?? null);
    const [currentMachine, setCurrentMachine] = useState(savedDraft.currentMachine ?? null);
 
    useEffect(() => {
@@ -61,20 +64,26 @@ function App() {
          answers,
          rowUnitCountOverride,
          workingRanksOverride,
+         tankCountOverride,
          currentMachine,
       });
-   }, [hasStarted, hasInspectionStarted, isFinished, currentIndex, answers, rowUnitCountOverride, workingRanksOverride, currentMachine]);
+   }, [hasStarted, hasInspectionStarted, isFinished, currentIndex, answers, rowUnitCountOverride, workingRanksOverride, tankCountOverride, currentMachine]);
 
    const machineSetup = useMemo(() => normalizeMachineSetup(answers["machine-setup"]), [answers]);
    const applicableSteps = useMemo(() => getApplicableSteps(steps, machineSetup), [steps, machineSetup]);
    const calculatedRowUnitCount = useMemo(() => calculateRowUnitCount(answers["machine-setup"]), [answers]);
    const setupWorkingRanks = Number(getDrillSetup(machineSetup).workingRanks) || 0;
    const showWorkingRanks = isDrillIncluded(machineSetup);
+   const showCartTanks = isCartIncluded(machineSetup);
+   const setupTankCount = Number(getCartSetup(machineSetup)?.tankCount) || 0;
    const summary = useMemo(
-      () => calculateInspectionSummary(applicableSteps, answers, rowUnitCountOverride, workingRanksOverride),
-      [applicableSteps, answers, rowUnitCountOverride, workingRanksOverride],
+      () => calculateInspectionSummary(applicableSteps, answers, rowUnitCountOverride, workingRanksOverride, tankCountOverride),
+      [applicableSteps, answers, rowUnitCountOverride, workingRanksOverride, tankCountOverride],
    );
    const currentStep = applicableSteps[currentIndex];
+   const canGoNext = currentStep
+      ? isAnswerComplete(currentStep, answers[currentStep.slug], answers, rowUnitCountOverride, workingRanksOverride)
+      : false;
    useEffect(() => {
       if (!applicableSteps.length) return;
 
@@ -95,21 +104,19 @@ function App() {
    const showScorecard = hasStarted && !isFinished && hasInspectionStarted && !(isMachineSetupStep && !hasRunningEstimate);
    const showCompactMachineCounts = hasStarted && !isFinished && isMainArmPivotStep && !showScorecard;
 
-   function syncMachineCountOverrides(setupAnswer) {
-      const setup = getDrillSetup(setupAnswer);
-      const count = Number(setup.rowUnitCount);
-      const ranks = Number(setup.workingRanks);
-      setRowUnitCountOverride(count > 0 ? count : null);
-      setWorkingRanksOverride(ranks > 0 ? ranks : null);
+   function syncMachineCountOverrides() {
+      setRowUnitCountOverride(null);
+      setWorkingRanksOverride(null);
+      setTankCountOverride(null);
    }
 
    function resetInspectionKeepingMachineSetup(setupAnswer) {
       setHasInspectionStarted(false);
       setAnswers(setupAnswer ? { "machine-setup": setupAnswer } : {});
-      syncMachineCountOverrides(setupAnswer);
+      syncMachineCountOverrides();
    }
 
-   function handleMachineCountsChange({ rowUnitCount, workingRanks }) {
+   function handleMachineCountsChange({ rowUnitCount, workingRanks, tankCount }) {
       if (rowUnitCount !== undefined) {
          setRowUnitCountOverride(rowUnitCount);
       }
@@ -118,37 +125,57 @@ function App() {
          setWorkingRanksOverride(workingRanks);
       }
 
-      if (rowUnitCount !== undefined || workingRanks !== undefined) {
-         setAnswers((prev) => {
-            const setup = normalizeMachineSetup(prev["machine-setup"]);
-            const next = { ...setup };
+      if (tankCount !== undefined) {
+         setTankCountOverride(tankCount);
+      }
 
-            if (setup.component === "both") {
+      if (rowUnitCount === undefined && workingRanks === undefined && tankCount === undefined) {
+         return;
+      }
+
+      setAnswers((prev) => {
+         const setup = normalizeMachineSetup(prev["machine-setup"]);
+         const next = { ...setup };
+
+         if (setup.component === "both") {
+            if (rowUnitCount != null || workingRanks != null || rowUnitCount === null) {
                next.drill = { ...setup.drill };
 
-               if (rowUnitCount !== undefined) {
-                  next.drill.rowUnitCount = rowUnitCount ? String(rowUnitCount) : "";
+               if (rowUnitCount != null) {
+                  next.drill.rowUnitCount = String(rowUnitCount);
+               } else if (rowUnitCount === null) {
+                  next.drill.rowUnitCount = "";
                }
 
-               if (workingRanks !== undefined) {
-                  next.drill.workingRanks = workingRanks ? String(workingRanks) : "";
-               }
-            } else {
-               if (rowUnitCount !== undefined) {
-                  next.rowUnitCount = rowUnitCount ? String(rowUnitCount) : "";
-               }
-
-               if (workingRanks !== undefined) {
-                  next.workingRanks = workingRanks ? String(workingRanks) : "";
+               if (workingRanks != null) {
+                  next.drill.workingRanks = String(workingRanks);
                }
             }
 
-            return {
-               ...prev,
-               "machine-setup": persistMachineSetupDraft(next),
-            };
-         });
-      }
+            if (tankCount != null) {
+               next.cart = { ...setup.cart, tankCount: String(tankCount) };
+            }
+         } else {
+            if (rowUnitCount != null) {
+               next.rowUnitCount = String(rowUnitCount);
+            } else if (rowUnitCount === null) {
+               next.rowUnitCount = "";
+            }
+
+            if (workingRanks != null) {
+               next.workingRanks = String(workingRanks);
+            }
+
+            if (tankCount != null) {
+               next.tankCount = String(tankCount);
+            }
+         }
+
+         return {
+            ...prev,
+            "machine-setup": persistMachineSetupDraft(next),
+         };
+      });
    }
 
    function handleAnswer(value) {
@@ -172,6 +199,14 @@ function App() {
          if (prevDrill.workingRanks !== nextDrill.workingRanks) {
             const ranks = Number(nextDrill.workingRanks);
             setWorkingRanksOverride(ranks > 0 ? ranks : null);
+         }
+
+         const prevCart = getCartSetup(prev);
+         const nextCart = getCartSetup(next);
+
+         if (prevCart?.tankCount !== nextCart?.tankCount) {
+            const tanks = Number(nextCart?.tankCount);
+            setTankCountOverride(tanks > 0 ? tanks : null);
          }
       }
 
@@ -230,6 +265,7 @@ function App() {
       setAnswers({});
       setRowUnitCountOverride(null);
       setWorkingRanksOverride(null);
+      setTankCountOverride(null);
       setCurrentMachine(null);
    }
 
@@ -250,7 +286,9 @@ function App() {
                      summary={summary}
                      calculatedRowUnitCount={calculatedRowUnitCount}
                      setupWorkingRanks={setupWorkingRanks}
+                     setupTankCount={setupTankCount}
                      showWorkingRanks={showWorkingRanks}
+                     showCartTanks={showCartTanks}
                      onMachineCountsChange={handleMachineCountsChange}
                   />
                )}
@@ -261,7 +299,9 @@ function App() {
                      summary={summary}
                      calculatedRowUnitCount={calculatedRowUnitCount}
                      setupWorkingRanks={setupWorkingRanks}
+                     setupTankCount={setupTankCount}
                      showWorkingRanks={showWorkingRanks}
+                     showCartTanks={showCartTanks}
                      onMachineCountsChange={handleMachineCountsChange}
                   />
                )}
@@ -277,19 +317,18 @@ function App() {
                            onAnswer={handleAnswer}
                            rowUnitCount={summary.rowUnitCount}
                            workingRanks={summary.workingRanks}
+                           onBack={goBack}
+                           onNext={goNext}
+                           canGoBack={currentIndex > 0}
+                           canGoNext={canGoNext}
+                           isLastStep={currentIndex >= applicableSteps.length - 1}
                         />
                         <InspectionNav
                            currentIndex={currentIndex}
                            totalSteps={applicableSteps.length}
                            onBack={goBack}
                            onNext={goNext}
-                           canGoNext={isAnswerComplete(
-                              currentStep,
-                              answers[currentStep.slug],
-                              answers,
-                              rowUnitCountOverride,
-                              workingRanksOverride,
-                           )}
+                           canGoNext={canGoNext}
                         />
                      </>
                   )

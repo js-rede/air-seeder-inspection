@@ -41,7 +41,44 @@ function StepSideImage({ url, caption, alt }) {
    );
 }
 
-function InspectionCard({ step, selectedAnswer, onAnswer, rowUnitCount = 0, workingRanks = 0 }) {
+function StepTitleNav({ onBack, onNext, canGoBack, canGoNext, isLastStep }) {
+   const navButtonClass =
+      "cursor-pointer rounded-lg border border-slate-300 bg-white px-2.5 py-1 text-sm leading-none text-slate-600 transition hover:bg-slate-50 disabled:cursor-default disabled:opacity-40";
+
+   return (
+      <div className="flex shrink-0 items-center gap-1.5">
+         <button
+            type="button"
+            onClick={onBack}
+            disabled={!canGoBack}
+            aria-label="Previous step"
+            className={navButtonClass}>
+            ←
+         </button>
+         <button
+            type="button"
+            onClick={onNext}
+            disabled={!canGoNext || isLastStep}
+            aria-label="Next step"
+            className={navButtonClass}>
+            →
+         </button>
+      </div>
+   );
+}
+
+function InspectionCard({
+   step,
+   selectedAnswer,
+   onAnswer,
+   rowUnitCount = 0,
+   workingRanks = 0,
+   onBack,
+   onNext,
+   canGoBack = false,
+   canGoNext = false,
+   isLastStep = false,
+}) {
    const answerType = step.answer_type || getAnswerType(step);
    const choices = getStepChoices(step);
    const effectiveWorkingRanks = step.answer_type === "working_rank_selection" ? Math.max(1, workingRanks) : workingRanks;
@@ -57,8 +94,19 @@ function InspectionCard({ step, selectedAnswer, onAnswer, rowUnitCount = 0, work
    return (
       <section className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm mt-5">
          {/* Title */}
-         <div className="text-sm font-semibold uppercase tracking-wide text-slate-500 mb-4">
-            Step {step.step_number}: {step.step_title}
+         <div className="mb-4 flex items-center justify-between gap-3">
+            <div className="min-w-0 text-sm font-semibold uppercase tracking-wide text-slate-500">
+               Step {step.step_number}: {step.step_title}
+            </div>
+            {onBack && onNext && (
+               <StepTitleNav
+                  onBack={onBack}
+                  onNext={onNext}
+                  canGoBack={canGoBack}
+                  canGoNext={canGoNext}
+                  isLastStep={isLastStep}
+               />
+            )}
          </div>
          {/* Video */}
          {step.video_url && (

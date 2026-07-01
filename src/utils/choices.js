@@ -34,6 +34,46 @@ export function getSelectionAnswerValue(answer) {
    return "";
 }
 
+export function getMultiSelectionAnswer(answer) {
+   return Array.isArray(answer) ? answer.filter(Boolean) : [];
+}
+
+export function getMultiSelectionCostMultiplier(step, rowUnitCount = 0) {
+   if (step?.cost_multiplies_by_row_units && rowUnitCount > 0) {
+      return rowUnitCount;
+   }
+
+   return 1;
+}
+
+export function getMultiSelectionCosts(step, answer, rowUnitCount = 0) {
+   const choices = getStepChoices(step);
+   const selectedValues = getMultiSelectionAnswer(answer);
+   const multiplier = getMultiSelectionCostMultiplier(step, rowUnitCount);
+
+   let estimatedLowCost = 0;
+   let estimatedHighCost = 0;
+
+   choices.forEach((choice) => {
+      const key = getChoiceValue(choice);
+      if (!selectedValues.includes(key)) return;
+
+      estimatedLowCost += (choice.estimated_low_cost || 0) * multiplier;
+      estimatedHighCost += (choice.estimated_high_cost || choice.estimated_low_cost || 0) * multiplier;
+   });
+
+   return { estimatedLowCost, estimatedHighCost };
+}
+
+export function formatMultiSelectionSummaryLine(choice, quantity, quantityLabel = "row-units") {
+   if (choice.summary_line) {
+      return choice.summary_line.replaceAll("{count}", String(quantity));
+   }
+
+   const units = quantity === 1 ? quantityLabel.replace(/s$/, "") : quantityLabel;
+   return `Replace ${choice.label.toLowerCase()} on ${quantity} ${units}`;
+}
+
 export function getWorkingRankSelections(answer) {
    if (answer && typeof answer === "object" && answer.ranks) {
       return answer.ranks;
@@ -461,6 +501,28 @@ export function getRecommendationForAnswer(step, selectedAnswer, rowUnitCount = 
          text: dominant.choice.recommended_action,
          lines,
          rating: dominant.choice.rating,
+         estimatedLowCost,
+         estimatedHighCost,
+      };
+   }
+
+   if (step.answer_type === "multi_selection") {
+      const choices = getStepChoices(step);
+      const selectedValues = getMultiSelectionAnswer(selectedAnswer);
+
+      if (!selectedValues.length) return null;
+
+      const selectedChoices = choices.filter((choice) => selectedValues.includes(getChoiceValue(choice)));
+      const quantity = getMultiSelectionCostMultiplier(step, rowUnitCount);
+      const { estimatedLowCost, estimatedHighCost } = getMultiSelectionCosts(step, selectedAnswer, rowUnitCount);
+      const quantityLabel = step.quantity_label || "row-units";
+
+      const lines = selectedChoices.map((choice) => formatMultiSelectionSummaryLine(choice, quantity, quantityLabel));
+
+      return {
+         text: step.recommended_action || "Plan replacement for selected SFP row-unit parts.",
+         lines,
+         rating: "bad",
          estimatedLowCost,
          estimatedHighCost,
       };

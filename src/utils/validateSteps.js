@@ -16,7 +16,7 @@ export function validateSteps(steps) {
          }
       });
 
-      if (step.answer_type === "selection" || step.answer_type === "row_unit_distribution" || step.answer_type === "working_rank_selection") {
+      if (step.answer_type === "selection" || step.answer_type === "row_unit_distribution" || step.answer_type === "working_rank_selection" || step.answer_type === "multi_selection") {
          if (!Array.isArray(step.choices) || step.choices.length === 0) {
             throw new Error(`Step "${stepLabel}" with answer_type "${step.answer_type}" must include a non-empty choices array.`);
          }
@@ -24,6 +24,10 @@ export function validateSteps(steps) {
          step.choices.forEach((choice, choiceIndex) => {
             if (!choice?.label) {
                throw new Error(`Step "${stepLabel}" choice ${choiceIndex + 1} is missing a label.`);
+            }
+
+            if (step.answer_type === "multi_selection") {
+               return;
             }
 
             if (choice.rating && !VALID_RATINGS.has(choice.rating)) {

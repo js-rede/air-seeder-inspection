@@ -571,7 +571,7 @@
       ],
       "video_url": "",
       "video_caption": "",
-      "image_url": "https://rede-ag.com/wp-content/uploads/2026/06/depth-arm-cover-and-handle.webp",
+      "image_url": "https://rede-ag.com/wp-content/uploads/2026/07/depth-arm-cover-and-handle.webp",
       "image_caption": "",
       "question_multi_rank": "Rate the depth arm, cover, and handle condition for each working rank:",
       "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect depth arms, covers, and handles on several row-units in each rank. Look for bent arms, missing covers, damaged handles, and loose hardware.",
@@ -889,8 +889,74 @@
       "cost_multiplies_by_row_units": true
    },
    {
-      "slug": "drill-notes",
+      "slug": "other-sfp-row-unit-parts",
       "step_number": 20,
+      "section": "drill",
+      "step_title": "Other SFP Row Unit Parts",
+      "instructions": "",
+      "question": "Are any of these needed for your separate fertilizer placement (SFP) rank?",
+      "answer_type": "multi_selection",
+      "cost_multiplies_by_row_units": true,
+      "quantity_label": "row-units",
+      "recommended_action": "Plan replacement for the selected SFP row-unit parts before seeding season.",
+      "choices": [
+         {
+            "label": "Bumper Stops",
+            "value": "bumper-stops",
+            "rating": "bad",
+            "summary_line": "{count} bumper stops needed across the SFP rank",
+            "estimated_low_cost": 8,
+            "estimated_high_cost": 12
+         },
+         {
+            "label": "SS Liquid Tubes (2A)",
+            "value": "ss-liquid-tubes-2a",
+            "rating": "bad",
+            "summary_line": "{count} SS liquid tubes (2A) needed across the SFP rank",
+            "estimated_low_cost": 35,
+            "estimated_high_cost": 65
+         },
+         {
+            "label": "SS Dry Tubes (2B)",
+            "value": "ss-dry-tubes-2b",
+            "rating": "bad",
+            "summary_line": "{count} SS dry tubes (2B) needed across the SFP rank",
+            "estimated_low_cost": 35,
+            "estimated_high_cost": 65
+         },
+         {
+            "label": "SS NH3 Tubes (2C)",
+            "value": "ss-nh3-tubes-2c",
+            "rating": "bad",
+            "summary_line": "{count} SS NH3 tubes (2C) needed across the SFP rank",
+            "estimated_low_cost": 45,
+            "estimated_high_cost": 85
+         },
+         {
+            "label": "SFP Cruiser CW",
+            "value": "sfp-cruiser-cw",
+            "rating": "bad",
+            "summary_line": "{count} SFP cruiser closing wheels needed across the SFP rank",
+            "estimated_low_cost": 75,
+            "estimated_high_cost": 125
+         },
+         {
+            "label": "SFP Springs",
+            "value": "sfp-springs",
+            "rating": "bad",
+            "summary_line": "{count} SFP springs needed across the SFP rank",
+            "estimated_low_cost": 30,
+            "estimated_high_cost": 55
+         }
+      ],
+      "video_url": "",
+      "video_caption": "",
+      "image_url": "",
+      "image_caption": ""
+   },
+   {
+      "slug": "drill-notes",
+      "step_number": 21,
       "section": "drill",
       "step_title": "Drill Notes",
       "instructions": "",
@@ -899,7 +965,7 @@
    },
    {
       "slug": "air-cart",
-      "step_number": 21,
+      "step_number": 22,
       "section": "air_cart",
       "step_title": "Air Cart Inspection",
       "instructions": "Inspect the air cart meters, fans, manifolds, sensors, and drive components for wear, damage, or operational issues.",
@@ -946,7 +1012,7 @@
    },
    {
       "slug": "cart-notes",
-      "step_number": 22,
+      "step_number": 23,
       "section": "air_cart",
       "step_title": "Cart Notes",
       "instructions": "",

@@ -1,4 +1,4 @@
-import { normalizeMachineSetup, getDrillSetup } from "../data/machineCatalog";
+import { normalizeMachineSetup, getDrillSetup, getCartSetup } from "../data/machineCatalog";
 import {
    getChoiceUnitCost,
    getChoiceValue,
@@ -10,6 +10,8 @@ import {
    getWorkingRankChoiceCost,
    getWorkingRankCostMultiplier,
    isSkipChoiceValue,
+   getMultiSelectionAnswer,
+   getMultiSelectionCostMultiplier,
    normalizeRowUnitDistribution,
    normalizeWorkingRankSelections,
    usesSecondaryCostForRating,
@@ -81,6 +83,16 @@ export function getEffectiveWorkingRanks(machineSetupAnswer, override) {
    return Number(setup.workingRanks) || 0;
 }
 
+export function getEffectiveTankCount(machineSetupAnswer, override) {
+   const overrideCount = Number(override);
+   if (overrideCount > 0) return overrideCount;
+
+   const cart = getCartSetup(machineSetupAnswer);
+   if (!cart) return 0;
+
+   return Number(cart.tankCount) || 0;
+}
+
 function normalizeRowUnitCounts(answer, choices) {
    return normalizeRowUnitDistribution(answer, choices);
 }
@@ -92,10 +104,11 @@ function addCost(totalLow, totalHigh, low, high, quantity = 1) {
    };
 }
 
-export function calculateInspectionSummary(steps, answers, rowUnitCountOverride, workingRanksOverride) {
+export function calculateInspectionSummary(steps, answers, rowUnitCountOverride, workingRanksOverride, tankCountOverride) {
    const machineSetup = normalizeMachineSetup(answers["machine-setup"]);
    const rowUnitCount = getEffectiveRowUnitCount(answers["machine-setup"], rowUnitCountOverride);
    const workingRanks = getEffectiveWorkingRanks(answers["machine-setup"], workingRanksOverride);
+   const tankCount = getEffectiveTankCount(answers["machine-setup"], tankCountOverride);
    const ratingCounts = { good: 0, maybe: 0, bad: 0, unknown: 0 };
    let estimatedLow = 0;
    let estimatedHigh = 0;
@@ -227,6 +240,41 @@ export function calculateInspectionSummary(steps, answers, rowUnitCountOverride,
          return;
       }
 
+      if (step.answer_type === "multi_selection") {
+         const choices = getStepChoices(step);
+         const selectedValues = getMultiSelectionAnswer(answer);
+         const multiplier = getMultiSelectionCostMultiplier(step, rowUnitCount);
+
+         choices.forEach((choice) => {
+            const key = getChoiceValue(choice);
+            if (!selectedValues.includes(key)) return;
+
+            const rating = choice.rating || "bad";
+            ratingCounts[rating] = (ratingCounts[rating] || 0) + multiplier;
+
+            const itemLow = (choice.estimated_low_cost || 0) * multiplier;
+            const itemHigh = (choice.estimated_high_cost || choice.estimated_low_cost || 0) * multiplier;
+
+            estimatedLow += itemLow;
+            estimatedHigh += itemHigh;
+
+            if (itemLow > 0 || itemHigh > 0) {
+               lineItems.push({
+                  slug: step.slug,
+                  stepTitle: step.step_title,
+                  label: choice.label,
+                  rating,
+                  quantity: multiplier,
+                  quantityLabel: step.quantity_label || "row-units",
+                  estimatedLowCost: itemLow,
+                  estimatedHighCost: itemHigh,
+               });
+            }
+         });
+
+         return;
+      }
+
       if (step.answer_type === "yes_no") {
          const rating = answer === "Yes" ? "bad" : answer === "No" ? "good" : "unknown";
          ratingCounts[rating] = (ratingCounts[rating] || 0) + 1;
@@ -253,6 +301,7 @@ export function calculateInspectionSummary(steps, answers, rowUnitCountOverride,
    return {
       rowUnitCount,
       workingRanks,
+      tankCount,
       ratingCounts,
       estimatedLow,
       estimatedHigh,

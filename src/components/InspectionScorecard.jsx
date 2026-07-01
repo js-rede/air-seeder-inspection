@@ -12,7 +12,9 @@ function InspectionScorecard({
    summary,
    calculatedRowUnitCount = 0,
    setupWorkingRanks = 0,
+   setupTankCount = 0,
    showWorkingRanks = false,
+   showCartTanks = false,
    compact = false,
    onMachineCountsChange,
 }) {
@@ -20,22 +22,33 @@ function InspectionScorecard({
    const costRange = formatCostRange(summary.estimatedLow, summary.estimatedHigh);
    const rowUnitCount = summary.rowUnitCount;
    const workingRanks = summary.workingRanks;
+   const tankCount = summary.tankCount;
+   const showRowUnits = showWorkingRanks;
    const isManualCount = calculatedRowUnitCount > 0 && rowUnitCount !== calculatedRowUnitCount;
+   const isManualTankCount = setupTankCount > 0 && tankCount !== setupTankCount;
    const rowUnitLabel = rowUnitCount === 1 ? "row-unit" : "row-units";
    const workingRankLabel = workingRanks === 1 ? "working rank" : "working ranks";
+   const tankLabel = tankCount === 1 ? "tank" : "tanks";
+
+   const countParts = [];
+
+   if (showRowUnits) {
+      countParts.push(rowUnitCount > 0 ? `${rowUnitCount} ${rowUnitLabel}` : "Row-unit count not set");
+      if (isManualCount) countParts[countParts.length - 1] += " (edited)";
+   }
+
+   if (showWorkingRanks && workingRanks > 0) {
+      countParts.push(`${workingRanks} ${workingRankLabel}`);
+   }
+
+   if (showCartTanks) {
+      const tankText = tankCount > 0 ? `${tankCount} ${tankLabel}` : "Tank count not set";
+      countParts.push(isManualTankCount ? `${tankText} (edited)` : tankText);
+   }
 
    const machineCounts = (
       <div className="flex items-center justify-start gap-2 text-sm text-slate-500 lg:justify-end">
-         <span>
-            {rowUnitCount > 0 ? `${rowUnitCount} ${rowUnitLabel}` : "Row-unit count not set"}
-            {isManualCount && " (edited)"}
-            {showWorkingRanks && workingRanks > 0 && (
-               <>
-                  {" • "}
-                  {workingRanks} {workingRankLabel}
-               </>
-            )}
-         </span>
+         <span>{countParts.join(" • ")}</span>
          <button
             type="button"
             onClick={() => setIsModalOpen(true)}
@@ -83,7 +96,11 @@ function InspectionScorecard({
             calculatedCount={calculatedRowUnitCount}
             currentWorkingRanks={workingRanks}
             setupWorkingRanks={setupWorkingRanks}
+            currentTankCount={tankCount}
+            setupTankCount={setupTankCount}
+            showRowUnits={showRowUnits}
             showWorkingRanks={showWorkingRanks}
+            showCartTanks={showCartTanks}
             onSave={onMachineCountsChange}
             onClose={() => setIsModalOpen(false)}
          />

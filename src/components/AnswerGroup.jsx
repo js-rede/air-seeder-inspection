@@ -1,6 +1,7 @@
 import MachineSetupForm from "./MachineSetupForm";
 import RowUnitDistributionForm from "./RowUnitDistributionForm";
 import WorkingRankSelectionForm from "./WorkingRankSelectionForm";
+import MultiSelectionForm from "./MultiSelectionForm";
 import SecondaryQuestionFields from "./SecondaryQuestionFields";
 import { DISC_DIAMETER_OPTIONS } from "../data/discDiameterOptions";
 import { selectClass, selectStyle } from "../utils/selectClass";
@@ -70,6 +71,10 @@ function AnswerGroup({
             secondaryShowForValues={secondaryShowForValues}
          />
       );
+   }
+
+   if (answerType === "multi_selection") {
+      return <MultiSelectionForm choices={choices} value={selectedAnswer} onChange={onAnswer} />;
    }
 
    if (answerType === "selection") {
