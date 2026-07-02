@@ -8,6 +8,9 @@ const ratingLabels = [
    { key: "bad", label: "Needs Replacement", className: "bg-red-100 text-red-800" },
 ];
 
+const scorecardBoxClass =
+   "-mx-4 mt-4 rounded-none border border-slate-200 border-x-0 bg-white px-4 py-4 shadow-sm sm:mx-0 sm:rounded-xl sm:border-x sm:px-8";
+
 function InspectionScorecard({
    summary,
    calculatedRowUnitCount = 0,
@@ -61,14 +64,14 @@ function InspectionScorecard({
    return (
       <>
          {compact ? (
-            <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className={scorecardBoxClass}>
                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-500"></p>
                   {machineCounts}
                </div>
             </div>
          ) : (
-            <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className={scorecardBoxClass}>
                <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                   <div>
                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Inspection tally</p>

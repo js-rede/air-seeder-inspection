@@ -292,28 +292,47 @@
       "answer_type": "working_rank_selection",
       "choices": [
          {
-            "label": "Good",
-            "value": "good",
+            "label": "Wheel and bearing in good working condition",
+            "value": "wheel-and-bearing-working",
             "rating": "good",
-            "recommended_action": "Closing wheels are in acceptable condition. Continue monitoring during the season.",
+            "recommended_action": "Closing wheels and bearings are in good working order. No immediate replacement is needed.",
             "estimated_low_cost": 0,
             "estimated_high_cost": 0
          },
          {
-            "label": "Needs Attention",
-            "value": "needs-attention",
+            "label": "Wheel and bearing showing wear",
+            "value": "wheel-and-bearing-showing-wear",
             "rating": "maybe",
-            "recommended_action": "Some closing wheels show early wear. Schedule replacement and inspect pivots and bearings.",
+            "recommended_action": "Closing wheel performance may vary. Experiment with setup adjustments and monitor during seeding.",
             "estimated_low_cost": 200,
             "estimated_high_cost": 800
          },
          {
-            "label": "Worn Out",
-            "value": "worn-out",
+            "label": "Deteriorated wheel or bearing",
+            "value": "deteriorated-wheel-or-bearing",
             "rating": "bad",
-            "recommended_action": "Replace damaged closing wheels and inspect associated pivots and bearings before seeding.",
+            "recommended_action": "Replace deteriorated closing wheels and/or bearings before operating.",
             "estimated_low_cost": 800,
             "estimated_high_cost": 1800
+         }
+      ],
+      "secondary_question": "Current setup",
+      "secondary_choices": [
+         {
+            "label": "Smooth Cast",
+            "value": "smooth-cast"
+         },
+         {
+            "label": "Copperhead or JD Notch",
+            "value": "copperhead-or-jd-notch"
+         },
+         {
+            "label": "Bolt-On",
+            "value": "bolt-on"
+         },
+         {
+            "label": "Other",
+            "value": "other"
          }
       ],
       "video_url": "",
@@ -328,37 +347,60 @@
       "slug": "press-wheel-pivot",
       "step_number": 7,
       "section": "press_wheels",
-      "step_title": "Press Wheel Pivot Inspection",
-      "instructions": "Inspect several row-units and check for side-to-side movement at the press wheel pivot. Measure slop between the arm and pivot point, then rate pivot condition for this section of the drill.",
-      "instructions_multi_rank": "Evaluate press wheel pivot condition by working rank. <br/>Inspect several row-units in each rank, check for side-to-side movement at the pivot, then rate pivot condition for each rank.",
+      "step_title": "Press-Wheel-Pivot Inspection",
+      "instructions": "If the pivot is sloppy or broken it won't properly press the seed into the furrow. Inspect several row-units and check for side-to-side movement at the press wheel pivot. Measure slop between the arm and pivot point, then rate pivot condition for this section of the drill.",
+      "instructions_multi_rank": "Evaluate press-wheel-pivot condition by working rank. <br/>If the pivot is sloppy or broken it won't properly press the seed into the furrow. Inspect several row-units in each rank, check for side-to-side movement at the pivot, then rate pivot condition for each rank.",
       "question": "How much side-to-side movement is present at the press wheel pivot?",
       "question_multi_rank": "Rate the press wheel pivot condition for each working rank:",
       "answer_type": "working_rank_selection",
       "cost_multiplies_by_row_units": true,
       "choices": [
          {
-            "label": "Less than 1/4-inch",
-            "value": "less-than-quarter-inch",
+            "label": "All move up and down, and are tight from side-to-side",
+            "value": "all-move-up-and-down-and-are-tight-from-side-to-side",
             "rating": "good",
             "recommended_action": "Press wheel pivot wear is within an acceptable range. No immediate bushing or hardware replacement is needed.",
             "estimated_low_cost": 0,
             "estimated_high_cost": 0
          },
          {
-            "label": "Between 1/4-inch and 1/2-inch slop",
-            "value": "quarter-to-half-inch-slop",
+            "label": "Less than 1/4\" slop from side-to-side",
+            "value": "less-than-quarter-inch-slop-from-side-to-side",
             "rating": "maybe",
             "recommended_action": "Moderate press wheel pivot wear is present. Plan to replace bushings and inspect pins before the next seeding season.",
             "estimated_low_cost": 200,
             "estimated_high_cost": 500
          },
          {
-            "label": "Greater than 1/2-inch",
-            "value": "greater-than-half-inch",
+            "label": "Stuck or greater than 1/4\" slop from side-to-side",
+            "value": "stuck-or-greater-than-quarter-inch-slop-from-side-to-side",
             "rating": "bad",
-            "recommended_action": "Excessive press wheel pivot movement indicates worn bushings and pins. Replace hardware before operating.",
+            "recommended_action": "Replace press wheel pivot hardware before operating.",
             "estimated_low_cost": 500,
             "estimated_high_cost": 1000
+         }
+      ],
+      "secondary_question": "Current setup",
+      "secondary_choices": [
+         {
+            "label": "OEM Pivots",
+            "value": "oem-pivots"
+         },
+         {
+            "label": "Needham",
+            "value": "needham"
+         },
+         {
+            "label": "Red E HD",
+            "value": "red-e-hd"
+         },
+         {
+            "label": "Red E Bearings",
+            "value": "red-e-bearings"
+         },
+         {
+            "label": "Other",
+            "value": "other"
          }
       ],
       "video_url": "",
@@ -370,43 +412,54 @@
       "slug": "press-wheel-spring-arm",
       "step_number": 8,
       "section": "press_wheels",
-      "step_title": "Press Wheel Spring and Arm Inspection",
-      "instructions": "Inspect press wheel springs and arms on several row-units in each rank. Look for weak springs, bent arms, cracked welds, and loose hardware.",
+      "step_title": "Press Wheel Spring & Arm Inspection",
+      "instructions": "If the spring is sloppy or broken it won't properly press the seeds into the furrow. Inspect press wheel springs and arms on several row-units. Look for sloppy or broken springs, plastic deformation, and whether springs are on the top adjustment setting.",
+      "instructions_multi_rank": "Evaluate press wheel spring and arm condition by working rank. <br/>If the spring is sloppy or broken it won't properly press the seeds into the furrow. Inspect several row-units in each rank and rate spring and arm condition for each rank.",
       "question": "What is the overall press wheel spring and arm condition?",
+      "question_multi_rank": "Rate the press wheel spring and arm condition for each working rank:",
       "answer_type": "working_rank_selection",
+      "cost_multiplies_by_row_units": true,
       "choices": [
          {
-            "label": "Good",
-            "value": "good",
+            "label": "Good working order",
+            "value": "good-working-order",
             "rating": "good",
-            "recommended_action": "Press wheel springs and arms are in acceptable condition.",
+            "recommended_action": "Press wheel springs and arms are in good working order. No immediate replacement is needed.",
             "estimated_low_cost": 0,
             "estimated_high_cost": 0
          },
          {
-            "label": "Needs Attention",
-            "value": "needs-attention",
+            "label": "On top adjustment setting (can we do better?)",
+            "value": "on-top-adjustment-setting",
             "rating": "maybe",
-            "recommended_action": "Some press wheel springs or arms show early wear. Plan replacement before seeding season.",
-            "estimated_low_cost": 150,
-            "estimated_high_cost": 450
+            "recommended_action": "Springs are on the top adjustment setting. Monitor press wheel performance and adjust as needed before seeding.",
+            "estimated_low_cost": 0,
+            "estimated_high_cost": 0
          },
          {
-            "label": "Worn Out",
-            "value": "worn-out",
+            "label": "Broken or plastic deformation (can we do better?)",
+            "value": "broken-or-plastic-deformation",
             "rating": "bad",
-            "recommended_action": "Replace worn press wheel springs and arms to restore proper down pressure and alignment.",
+            "recommended_action": "Replace broken springs or arms showing plastic deformation to restore proper seed press into the furrow.",
             "estimated_low_cost": 450,
             "estimated_high_cost": 1100
+         }
+      ],
+      "secondary_question": "Current setup",
+      "secondary_choices": [
+         {
+            "label": "HD Red E Square Wire",
+            "value": "hd-red-e-square-wire"
+         },
+         {
+            "label": "Standard Round Wire",
+            "value": "standard-round-wire"
          }
       ],
       "video_url": "",
       "video_caption": "",
       "image_url": "https://rede-ag.com/wp-content/uploads/2026/06/press-wheel-spring-and-arm.webp",
-      "image_caption": "",
-      "question_multi_rank": "Rate the press wheel spring and arm condition for each working rank:",
-      "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect press wheel springs and arms on several row-units in each rank. Look for weak springs, bent arms, cracked welds, and loose hardware.",
-      "cost_multiplies_by_row_units": true
+      "image_caption": ""
    },
    {
       "slug": "press-wheel",
@@ -418,26 +471,26 @@
       "answer_type": "working_rank_selection",
       "choices": [
          {
-            "label": "Good",
-            "value": "good",
+            "label": "Wheel and bearing in good working condition",
+            "value": "wheel-and-bearing-in-good-working-condition",
             "rating": "good",
-            "recommended_action": "Press wheels are in acceptable condition. Continue monitoring during the season.",
+            "recommended_action": "Press wheels and bearings are in good working order. No immediate replacement is needed.",
             "estimated_low_cost": 0,
             "estimated_high_cost": 0
          },
          {
-            "label": "Needs Attention",
-            "value": "needs-attention",
+            "label": "Wheel and bearing showing wear",
+            "value": "wheel-and-bearing-showing-wear",
             "rating": "maybe",
             "recommended_action": "Some press wheels show early wear. Schedule replacement and inspect pivots and bearings.",
             "estimated_low_cost": 200,
             "estimated_high_cost": 800
          },
          {
-            "label": "Worn Out",
-            "value": "worn-out",
+            "label": "Deteriorated wheel or bearing",
+            "value": "deteriorated-wheel-or-bearing",
             "rating": "bad",
-            "recommended_action": "Replace damaged press wheels and inspect associated pivots and bearings before seeding.",
+            "recommended_action": "Replace deteriorated press wheels and/or bearings before operating.",
             "estimated_low_cost": 800,
             "estimated_high_cost": 1800
          }
@@ -461,26 +514,26 @@
       "quantity_label": "discs",
       "choices": [
          {
-            "label": "Good",
-            "value": "good",
+            "label": "All spin freely with no catching",
+            "value": "all-spin-freely-no-catching",
             "rating": "good",
-            "recommended_action": "Disc hubs and bearings are in acceptable condition.",
+            "recommended_action": "Disc hubs spin freely with no catching. No immediate hub or bearing replacement is needed.",
             "estimated_low_cost": 0,
             "estimated_high_cost": 0
          },
          {
-            "label": "Needs Attention",
-            "value": "needs-attention",
+            "label": "Some discs are tight but spin smoothly",
+            "value": "some-discs-tight-but-spin-smoothly",
             "rating": "maybe",
-            "recommended_action": "Some disc hubs show early bearing wear. Plan hub or bearing service before seeding season.",
+            "recommended_action": "Some disc hubs are tight but still spin smoothly. Monitor during seeding and plan service if catching develops.",
             "estimated_low_cost": 150,
             "estimated_high_cost": 500
          },
          {
-            "label": "Worn Out",
-            "value": "worn-out",
+            "label": "Discs don't spin or catching is felt",
+            "value": "discs-dont-spin-or-catching-felt",
             "rating": "bad",
-            "recommended_action": "Replace worn disc hubs and bearings before operating to prevent field failures.",
+            "recommended_action": "Replace or service disc hubs and bearings that do not spin freely or are catching before operating.",
             "estimated_low_cost": 400,
             "estimated_high_cost": 1200
          }
@@ -506,28 +559,51 @@
       "cost_multiplies_by_row_units": true,
       "choices": [
          {
-            "label": "Less than 1/4-inch",
-            "value": "less-than-quarter-inch",
+            "label": "Adjustment moves freely",
+            "value": "adjustment-moves-freely",
             "rating": "good",
-            "recommended_action": "Depth adjustment pivot wear is within an acceptable range. No immediate bushing or hardware replacement is needed.",
+            "recommended_action": "Depth adjustment pivots move freely. No immediate bushing or hardware replacement is needed.",
             "estimated_low_cost": 0,
             "estimated_high_cost": 0
          },
          {
-            "label": "Between 1/4-inch and 1/2-inch slop",
-            "value": "quarter-to-half-inch-slop",
+            "label": "All move, but some are tighter",
+            "value": "all-move-but-some-are-tighter",
             "rating": "maybe",
-            "recommended_action": "Moderate depth adjustment pivot wear is present. Plan to replace bushings and inspect pins before the next seeding season.",
+            "recommended_action": "Some depth adjustment pivots are tighter than others. Plan to inspect and service before the next seeding season.",
             "estimated_low_cost": 175,
             "estimated_high_cost": 450
          },
          {
-            "label": "Greater than 1/2-inch",
-            "value": "greater-than-half-inch",
+            "label": "Many stuck or barely moving",
+            "value": "many-stuck-or-barely-moving",
             "rating": "bad",
-            "recommended_action": "Excessive depth adjustment pivot movement indicates worn bushings and pins. Replace hardware before operating.",
+            "recommended_action": "Replace or service depth adjustment pivot hardware that is stuck or barely moving before operating.",
             "estimated_low_cost": 450,
             "estimated_high_cost": 950
+         }
+      ],
+      "secondary_question": "Current setup",
+      "secondary_choices": [
+         {
+            "label": "OEM Pivots",
+            "value": "oem-pivots"
+         },
+         {
+            "label": "Needham",
+            "value": "needham"
+         },
+         {
+            "label": "Red E",
+            "value": "red-e"
+         },
+         {
+            "label": "Aricks",
+            "value": "aricks"
+         },
+         {
+            "label": "Other",
+            "value": "other"
          }
       ],
       "video_url": "",
@@ -543,30 +619,54 @@
       "instructions": "Inspect depth arms, covers, and handles on several row-units in each rank. Look for bent arms, missing covers, damaged handles, and loose hardware.",
       "question": "What is the overall depth arm, cover, and handle condition?",
       "answer_type": "working_rank_selection",
+      "cost_multiplies_by_row_units": true,
       "choices": [
          {
-            "label": "Good",
-            "value": "good",
+            "label": "All parts are tight, and in good working order",
+            "value": "all-parts-are-tight-and-in-good-working-order",
             "rating": "good",
-            "recommended_action": "Depth arms, covers, and handles are in acceptable condition.",
+            "recommended_action": "Depth arms, covers, and handles are all tight. No immediate repair is needed.",
             "estimated_low_cost": 0,
             "estimated_high_cost": 0
          },
          {
-            "label": "Needs Attention",
-            "value": "needs-attention",
+            "label": "Some play is present, but depth will be consistent",
+            "value": "some-play-is-present-but-will-be-consistent",
             "rating": "maybe",
-            "recommended_action": "Some depth arms, covers, or handles show early wear or damage. Plan repairs before seeding season.",
+            "recommended_action": "Some play is present but depth control should stay consistent. Monitor and plan repairs before seeding season.",
             "estimated_low_cost": 100,
             "estimated_high_cost": 350
          },
          {
-            "label": "Worn Out",
-            "value": "worn-out",
+            "label": "Lots of movement is present, and parts are in poor working order",
+            "value": "lots-of-movement-is-present-and-parts-are-in-poor-working-order",
             "rating": "bad",
-            "recommended_action": "Replace or repair worn depth arms, covers, and handles to maintain proper depth control.",
+            "recommended_action": "Replace or repair depth arms, covers, and handles with excessive movement to maintain proper depth control.",
             "estimated_low_cost": 300,
             "estimated_high_cost": 800
+         }
+      ],
+      "secondary_question": "Current setup",
+      "secondary_choices": [
+         {
+            "label": "OEM",
+            "value": "oem"
+         },
+         {
+            "label": "Needham",
+            "value": "needham"
+         },
+         {
+            "label": "Red E",
+            "value": "red-e"
+         },
+         {
+            "label": "Aricks",
+            "value": "aricks"
+         },
+         {
+            "label": "Other",
+            "value": "other"
          }
       ],
       "video_url": "",
@@ -574,8 +674,7 @@
       "image_url": "https://rede-ag.com/wp-content/uploads/2026/07/depth-arm-cover-and-handle.webp",
       "image_caption": "",
       "question_multi_rank": "Rate the depth arm, cover, and handle condition for each working rank:",
-      "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect depth arms, covers, and handles on several row-units in each rank. Look for bent arms, missing covers, damaged handles, and loose hardware.",
-      "cost_multiplies_by_row_units": true
+      "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect depth arms, covers, and handles on several row-units in each rank. Look for bent arms, missing covers, damaged handles, and loose hardware."
    },
    {
       "slug": "gauge-wheel",
@@ -587,28 +686,67 @@
       "answer_type": "working_rank_selection",
       "choices": [
          {
-            "label": "Good",
-            "value": "good",
+            "label": "Tires are in good shape",
+            "value": "tires-in-good-shape",
             "rating": "good",
-            "recommended_action": "Gauge wheels are contacting properly with acceptable tread and bearing condition.",
+            "recommended_action": "Gauge wheel tires are in good shape. No immediate replacement is needed.",
             "estimated_low_cost": 0,
             "estimated_high_cost": 0
          },
          {
-            "label": "Needs Attention",
-            "value": "needs-attention",
+            "label": "Some wear is present, tires could be replaced",
+            "value": "some-wear-is-present-tires-could-be-replaced",
             "rating": "maybe",
-            "recommended_action": "Some gauge wheels show early wear or contact issues. Plan replacement of wheels, bearings, or arms as needed.",
+            "recommended_action": "Some gauge wheel wear is present. Plan replacement of wheels, bearings, or arms as needed.",
             "estimated_low_cost": 150,
             "estimated_high_cost": 600
          },
          {
-            "label": "Worn Out",
-            "value": "worn-out",
+            "label": "Damaged / cracked / weathered tires, should be replaced",
+            "value": "damaged-cracked-weathered-tires-should-be-replaced",
             "rating": "bad",
-            "recommended_action": "Replace worn gauge wheels, bearings, or arms to restore proper depth control and disc contact.",
+            "recommended_action": "Replace damaged, cracked, or weathered gauge wheels, bearings, or arms to restore proper depth control and disc contact.",
             "estimated_low_cost": 600,
             "estimated_high_cost": 1500
+         }
+      ],
+      "secondary_question": "Current wheel",
+      "secondary_choices": [
+         {
+            "label": "3\"",
+            "value": "3-inch"
+         },
+         {
+            "label": "4.5\"",
+            "value": "4-5-inch"
+         },
+         {
+            "label": "Rbr",
+            "value": "rubber"
+         },
+         {
+            "label": "3/8\" Lip",
+            "value": "3-8-inch-lip"
+         },
+         {
+            "label": "7/8\" Lip",
+            "value": "7-8-inch-lip"
+         },
+         {
+            "label": "Ureth",
+            "value": "urethane"
+         },
+         {
+            "label": "Spoked",
+            "value": "spoked"
+         },
+         {
+            "label": "Steel / Steel",
+            "value": "steel-steel"
+         },
+         {
+            "label": "Poly / Steel",
+            "value": "poly-steel"
          }
       ],
       "video_url": "",
@@ -624,36 +762,59 @@
       "step_number": 14,
       "section": "seed_boots",
       "step_title": "Seed Boot Pivot Inspection",
-      "instructions": "Inspect several row-units and check for movement at the seed boot pivot. Measure slop and rate pivot condition for this section of the drill.",
-      "instructions_multi_rank": "Evaluate seed boot pivot condition by working rank. <br/>Inspect several row-units in each rank, check pivot movement, then rate pivot condition for each rank.",
-      "question": "How much movement is present at the seed boot pivot?",
+      "instructions": "If the boot can move vertically it will cause erratic seed placement. Inspect several row-units and check for movement at the seed boot pivot. Measure slop and rate pivot condition for this section of the drill.",
+      "instructions_multi_rank": "Evaluate seed boot pivot condition by working rank. <br/>If the boot can move vertically it will cause erratic seed placement. Inspect several row-units in each rank, check pivot movement, then rate pivot condition for each rank.",
+      "question": "How much slop is present at the seed boot pivot?",
       "question_multi_rank": "Rate the seed boot pivot condition for each working rank:",
       "answer_type": "working_rank_selection",
       "cost_multiplies_by_row_units": true,
       "choices": [
          {
-            "label": "Less than 1/4-inch",
-            "value": "less-than-quarter-inch",
+            "label": "Less than 1/4\" slop",
+            "value": "less-than-quarter-inch-slop",
             "rating": "good",
             "recommended_action": "Seed boot pivot wear is within an acceptable range. No immediate bushing or hardware replacement is needed.",
             "estimated_low_cost": 0,
             "estimated_high_cost": 0
          },
          {
-            "label": "Between 1/4-inch and 1/2-inch slop",
-            "value": "quarter-to-half-inch-slop",
+            "label": "Less than 1/2\" slop",
+            "value": "less-than-half-inch-slop",
             "rating": "maybe",
             "recommended_action": "Moderate seed boot pivot wear is present. Plan to replace bushings and inspect pins before the next seeding season.",
             "estimated_low_cost": 175,
             "estimated_high_cost": 450
          },
          {
-            "label": "Greater than 1/2-inch",
-            "value": "greater-than-half-inch",
+            "label": "Greater than 3/4\" slop",
+            "value": "greater-than-three-quarter-inch-slop",
             "rating": "bad",
             "recommended_action": "Excessive seed boot pivot movement indicates worn bushings and pins. Replace hardware before operating.",
             "estimated_low_cost": 450,
             "estimated_high_cost": 950
+         }
+      ],
+      "secondary_question": "Current setup",
+      "secondary_choices": [
+         {
+            "label": "OEM",
+            "value": "oem"
+         },
+         {
+            "label": "Drill Bushings",
+            "value": "drill-bushings"
+         },
+         {
+            "label": "Stabilizers",
+            "value": "stabilizers"
+         },
+         {
+            "label": "Needham Boot",
+            "value": "needham-boot"
+         },
+         {
+            "label": "Other",
+            "value": "other"
          }
       ],
       "video_url": "",
@@ -666,73 +827,99 @@
       "step_number": 15,
       "section": "seed_boots",
       "step_title": "Seed Boot Inspection",
-      "instructions": "Inspect seed boots on several row-units in each rank. Check delivery surfaces for wear, cracks, and excessive material loss.",
+      "instructions": "A worn seed boot can throw seed out the side of the furrow instead of placing it where it belongs. Inspect seed boots on several row-units in each rank. Check the delivery surfaces for wear, cracks, and missing material.",
+      "instructions_multi_rank": "Evaluate seed boot condition by working rank. <br/>A worn seed boot can throw seed out the side of the furrow instead of placing it where it belongs. Inspect several row-units in each rank and check delivery surfaces for wear, cracks, and missing material.",
       "question": "What is the overall seed boot condition?",
+      "question_multi_rank": "Rate the seed boot condition for each working rank:",
       "answer_type": "working_rank_selection",
+      "cost_multiplies_by_row_units": true,
       "choices": [
          {
-            "label": "Good",
-            "value": "good",
+            "label": "Like new",
+            "value": "like-new",
             "rating": "good",
-            "recommended_action": "Seed boots are in acceptable condition for proper seed placement.",
+            "recommended_action": "Seed boots are in like-new condition. No immediate replacement is needed.",
             "estimated_low_cost": 0,
             "estimated_high_cost": 0
          },
          {
-            "label": "Needs Attention",
-            "value": "needs-attention",
+            "label": "Some wear is present, but in okay condition",
+            "value": "some-wear-is-present-but-in-okay-condition",
             "rating": "maybe",
-            "recommended_action": "Some seed boots show early wear. Plan replacement to maintain seed placement and emergence.",
+            "recommended_action": "Seed boots still have some life left but show wear. Plan replacement to maintain accurate seed placement.",
             "estimated_low_cost": 250,
             "estimated_high_cost": 1200
          },
          {
-            "label": "Worn Out",
-            "value": "worn-out",
+            "label": "Worn through",
+            "value": "worn-through",
             "rating": "bad",
-            "recommended_action": "Replace worn seed boots before seeding to prevent poor placement and emergence issues.",
+            "recommended_action": "Replace worn-through seed boots before seeding to prevent seed from being ejected out the side of the furrow.",
             "estimated_low_cost": 1200,
             "estimated_high_cost": 3000
+         }
+      ],
+      "secondary_question": "Current setup",
+      "secondary_choices": [
+         {
+            "label": "Standard",
+            "value": "standard"
+         },
+         {
+            "label": "OEM Ext",
+            "value": "oem-ext"
+         },
+         {
+            "label": "Red E Ext",
+            "value": "red-e-ext"
+         },
+         {
+            "label": "Needham",
+            "value": "needham"
+         },
+         {
+            "label": "Other",
+            "value": "other"
          }
       ],
       "video_url": "",
       "video_caption": "",
       "image_url": "https://rede-ag.com/wp-content/uploads/2026/06/seed-boot.webp",
-      "image_caption": "",
-      "question_multi_rank": "Rate the seed boot condition for each working rank:",
-      "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect seed boots on several row-units in each rank. Check delivery surfaces for wear, cracks, and excessive material loss.",
-      "cost_multiplies_by_row_units": true
+      "image_caption": ""
    },
    {
-      "slug": "boot-springs",
+      "slug": "seed-boot-springs",
       "step_number": 16,
       "section": "seed_boots",
-      "step_title": "Boot Spring Inspection",
-      "instructions": "Inspect boot springs on several row-units in each rank. Look for weak, broken, or missing springs and loose hardware.",
-      "question": "What is the overall boot spring condition?",
+      "step_title": "Seed Boot Spring Inspection",
+      "instructions": "A worn seed-boot-spring may not hold the boot against the disc or keep it in the furrow. Inspect boot springs on several row-units in each rank. Look for weak, broken, missing, or overstretched springs and loose hardware.",
+      "instructions_multi_rank": "Evaluate seed-boot-spring condition by working rank. <br/>A worn seed-boot-spring may not hold the boot against the disc or keep it in the furrow. Inspect several row-units in each rank and look for weak, broken, missing, or overstretched springs and loose hardware.",
+      "question": "What is the overall seed-boot-spring condition?",
+      "question_multi_rank": "Rate the seed-boot-spring condition for each working rank:",
       "answer_type": "working_rank_selection",
+      "cost_multiplies_by_row_units": true,
       "choices": [
          {
-            "label": "Good",
-            "value": "good",
+            "label": "Good condition",
+            "value": "good-condition",
             "rating": "good",
-            "recommended_action": "Boot springs are in acceptable condition.",
+            "recommended_action": "Seed-boot-springs are in like-new condition. No replacement is needed.",
             "estimated_low_cost": 0,
             "estimated_high_cost": 0
          },
          {
-            "label": "Needs Attention",
-            "value": "needs-attention",
+            "label": "Marginal condition. Replace, if already servicing this part of the row-unit.",
+            "value": "marginal-condition-replace-if-already-servicing-this-part-of-the-row-unit",
             "rating": "maybe",
-            "recommended_action": "Some boot springs show early wear or weakness. Plan replacement before seeding season.",
+            "recommended_action": "Seed-boot-springs are worn but still serviceable. Plan replacement when other row-unit work is scheduled.",
             "estimated_low_cost": 100,
             "estimated_high_cost": 400
          },
          {
-            "label": "Worn Out",
-            "value": "worn-out",
+            "label": "Replace",
+            "value": "replace",
             "rating": "bad",
-            "recommended_action": "Replace worn or broken boot springs to maintain proper seed boot down pressure.",
+            "recommended_action": "Replace worn or broken seed-boot-springs before seeding so the boot stays against the disc and in the furrow.",
             "estimated_low_cost": 300,
             "estimated_high_cost": 900
          }
@@ -740,64 +927,94 @@
       "video_url": "",
       "video_caption": "",
       "image_url": "https://rede-ag.com/wp-content/uploads/2026/06/seed-boot-spring.webp",
-      "image_caption": "",
-      "question_multi_rank": "Rate the boot spring condition for each working rank:",
-      "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect boot springs on several row-units in each rank. Look for weak, broken, or missing springs and loose hardware.",
-      "cost_multiplies_by_row_units": true
+      "image_caption": ""
    },
    {
       "slug": "seed-tabs",
       "step_number": 17,
       "section": "seed_boots",
       "step_title": "Seed Tab Inspection",
-      "instructions": "Inspect seed tabs on several row-units in each rank. Check tab height, wear, and ability to hold seed in the furrow.",
-      "question": "What is the overall seed tab condition?",
+      "instructions": "Worn seed tabs make it easier for seed to bounce out of the furrow. Inspect seed tabs on several row-units in each rank. Check tab height, how much material is left, and overall wear.",
+      "instructions_multi_rank": "Evaluate seed tab condition by working rank. <br/>Worn seed tabs make it easier for seed to bounce out of the furrow. Inspect several row-units in each rank and check tab height, remaining material, and wear.",
+      "question": "How much material is left on the seed tabs?",
+      "question_multi_rank": "Rate the seed tab condition for each working rank:",
       "answer_type": "working_rank_selection",
+      "cost_multiplies_by_row_units": true,
       "choices": [
          {
-            "label": "Good",
-            "value": "good",
+            "label": "90% or more remaining",
+            "value": "ninety-percent-or-more-remaining",
             "rating": "good",
-            "recommended_action": "Seed tabs are in acceptable condition for proper seed retention.",
+            "recommended_action": "Seed tabs have plenty of material left. No immediate replacement is needed.",
             "estimated_low_cost": 0,
             "estimated_high_cost": 0
          },
          {
-            "label": "Needs Attention",
-            "value": "needs-attention",
+            "label": "40% or more remaining",
+            "value": "forty-percent-or-more-remaining",
             "rating": "maybe",
-            "recommended_action": "Some seed tabs show early wear. Plan replacement before seeding season.",
+            "recommended_action": "Seed tabs are wearing but still have usable life. Plan replacement before seeding season.",
             "estimated_low_cost": 50,
             "estimated_high_cost": 200
          },
          {
-            "label": "Worn Out",
-            "value": "worn-out",
+            "label": "Less than 15% remaining",
+            "value": "less-than-fifteen-percent-remaining",
             "rating": "bad",
-            "recommended_action": "Replace worn seed tabs to improve seed placement and furrow retention.",
+            "recommended_action": "Replace worn seed tabs before seeding to help keep seed in the furrow.",
             "estimated_low_cost": 150,
             "estimated_high_cost": 600
+         }
+      ],
+      "secondary_question": "Current setup",
+      "secondary_choices": [
+         {
+            "label": "Blue Bonilla",
+            "value": "blue-bonilla"
+         },
+         {
+            "label": "Yel Bonilla",
+            "value": "yellow-bonilla"
+         },
+         {
+            "label": "Black Red E",
+            "value": "black-red-e"
+         },
+         {
+            "label": "Ninja",
+            "value": "ninja"
+         },
+         {
+            "label": "White OEM",
+            "value": "white-oem"
+         },
+         {
+            "label": "Black OEM",
+            "value": "black-oem"
+         },
+         {
+            "label": "Split Boot Flap",
+            "value": "split-boot-flap"
          }
       ],
       "video_url": "",
       "video_caption": "",
       "image_url": "https://rede-ag.com/wp-content/uploads/2026/06/seed-tab.webp",
-      "image_caption": "",
-      "question_multi_rank": "Rate the seed tab condition for each working rank:",
-      "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect seed tabs on several row-units in each rank. Check tab height, wear, and ability to hold seed in the furrow.",
-      "cost_multiplies_by_row_units": true
+      "image_caption": ""
    },
    {
       "slug": "hoses",
       "step_number": 18,
       "section": "drill",
       "step_title": "Hose Inspection",
-      "instructions": "Inspect product hoses on the drill by working rank. Look for cracks, wear spots, loose clamps, and leaks at fittings.",
+      "instructions": "Inspect hoses on the drill by working rank. Look for cracks, UV damage, and overall wear.",
+      "instructions_multi_rank": "Inspect hoses on the drill by working rank. Look for cracks, UV damage, and overall wear.",
       "question": "What is the overall hose condition?",
+      "question_multi_rank": "Rate the hose condition for each working rank:",
       "answer_type": "working_rank_selection",
       "choices": [
          {
-            "label": "Good",
+            "label": "Good condition",
             "value": "good",
             "rating": "good",
             "recommended_action": "Drill hoses are in acceptable condition.",
@@ -805,7 +1022,7 @@
             "estimated_high_cost": 0
          },
          {
-            "label": "Needs Attention",
+            "label": "Okay condition",
             "value": "needs-attention",
             "rating": "maybe",
             "recommended_action": "Some drill hoses show early wear or loose fittings. Plan hose replacement or service before seeding season.",
@@ -813,20 +1030,12 @@
             "estimated_high_cost": 2500
          },
          {
-            "label": "Worn Out",
+            "label": "Replace",
             "value": "worn-out",
             "rating": "bad",
             "recommended_action": "Replace damaged drill hoses and fittings before operating to prevent product loss and downtime.",
             "estimated_low_cost": 2500,
             "estimated_high_cost": 8000
-         },
-         {
-            "label": "Not Sure",
-            "value": "not-sure",
-            "rating": "unknown",
-            "recommended_action": "Contact Red E for an onsite inspection or further guidance on drill hose condition.",
-            "estimated_low_cost": 0,
-            "estimated_high_cost": 0
          }
       ],
       "video_url": "",
@@ -834,63 +1043,116 @@
       "image_url": "https://rede-ag.com/wp-content/uploads/2026/06/hoses-2.webp",
       "image_caption": "",
       "image_padding": "p-0",
-      "question_multi_rank": "Rate the hose condition for each working rank:",
-      "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect product hoses on the drill by working rank. Look for cracks, wear spots, loose clamps, and leaks at fittings.",
       "cost_multiplies_by_row_units": true
    },
    {
       "slug": "towers",
       "step_number": 19,
       "section": "drill",
-      "step_title": "Tower Inspection",
-      "instructions": "Inspect towers on the drill by working rank. Check for cracks, loose hardware, worn mounting points, and product buildup.",
-      "question": "What is the overall tower condition?",
-      "answer_type": "working_rank_selection",
+      "step_title": "Drill Tower Inspection",
+      "instructions": "Inspect all towers on the drill. Check for cracks, corrosion, and overall wear.",
+      "question": "How many towers need replacing?",
+      "answer_type": "replacement_tally",
+      "quantity_label": "towers",
+      "choices": [
+         {
+            "label": "Replace",
+            "value": "worn-out",
+            "rating": "bad",
+            "recommended_action": "Repair or replace damaged towers with stainless steel replacements.",
+            "summary_line": "{count} towers will likely need replacing",
+            "estimated_low_cost": 400,
+            "estimated_high_cost": 500
+         }
+      ],
+      "good_condition_action": "Drill towers are in acceptable condition.",
+      "video_url": "",
+      "video_caption": "",
+      "image_url": "https://rede-ag.com/wp-content/uploads/2026/06/tower.webp",
+      "image_caption": ""
+   },
+   {
+      "slug": "blockage-system",
+      "step_number": 20,
+      "section": "drill",
+      "step_title": "Blockage System Inspection",
+      "instructions": "",
+      "question": "What is the condition of your blockage system?",
+      "answer_type": "selection",
       "choices": [
          {
             "label": "Good",
             "value": "good",
             "rating": "good",
-            "recommended_action": "Drill towers are in acceptable condition.",
+            "recommended_action": "The blockage system is in good working order.",
             "estimated_low_cost": 0,
             "estimated_high_cost": 0
          },
          {
-            "label": "Needs Attention",
-            "value": "needs-attention",
+            "label": "Needs Fixing",
+            "value": "needs-fixing",
             "rating": "maybe",
-            "recommended_action": "Some drill towers show early wear or loose hardware. Plan repairs before seeding season.",
-            "estimated_low_cost": 400,
-            "estimated_high_cost": 2000
+            "recommended_action": "The blockage system needs fixing. Plan service before seeding season.",
+            "estimated_low_cost": 500,
+            "estimated_high_cost": 2500
          },
          {
-            "label": "Worn Out",
-            "value": "worn-out",
+            "label": "Needs Replacing",
+            "value": "needs-replacing",
             "rating": "bad",
-            "recommended_action": "Repair or replace damaged drill towers before operating.",
-            "estimated_low_cost": 2000,
-            "estimated_high_cost": 6000
+            "recommended_action": "The blockage system needs replacing before operating.",
+            "estimated_low_cost": 2500,
+            "estimated_high_cost": 8000
          },
          {
-            "label": "Not Sure",
-            "value": "not-sure",
+            "label": "Not Installed",
+            "value": "not-installed",
             "rating": "unknown",
-            "recommended_action": "Contact Red E for an onsite inspection or further guidance on drill tower condition.",
+            "recommended_action": "No blockage system is currently installed on this drill.",
             "estimated_low_cost": 0,
             "estimated_high_cost": 0
          }
       ],
+      "secondary_question": "Are you interested in a blockage system?",
+      "secondary_show_for_values": ["not-installed"],
+      "secondary_choices": [
+         {
+            "label": "Yes",
+            "value": "yes"
+         },
+         {
+            "label": "No",
+            "value": "no"
+         }
+      ],
+      "tertiary_question": "Which blockage system?",
+      "tertiary_show_for_secondary_values": ["yes"],
+      "tertiary_choices": [
+         {
+            "label": "Intelligent Ag / Precision Planting",
+            "value": "intelligent-ag"
+         },
+         {
+            "label": "J.Assy (a fully-wireless system that clamps on to your hoses)",
+            "value": "j-assy-fully-wireless-clamp-on"
+         },
+         {
+            "label": "Both Intelligent Ag and & J.Assy",
+            "value": "both-intelligent-ag-and-j-assy"
+         },
+         {
+            "label": "Not sure",
+            "value": "not-sure"
+         }
+      ],
       "video_url": "",
       "video_caption": "",
-      "image_url": "https://rede-ag.com/wp-content/uploads/2026/06/tower.webp",
-      "image_caption": "",
-      "question_multi_rank": "Rate the tower condition for each working rank:",
-      "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect towers on the drill by working rank. Check for cracks, loose hardware, worn mounting points, and product buildup.",
-      "cost_multiplies_by_row_units": true
+      "image_url": "",
+      "image_caption": ""
    },
    {
       "slug": "other-sfp-row-unit-parts",
-      "step_number": 20,
+      "step_number": 21,
       "section": "drill",
       "step_title": "Other SFP Row Unit Parts",
       "instructions": "",
@@ -909,26 +1171,26 @@
             "estimated_high_cost": 12
          },
          {
-            "label": "SS Liquid Tubes (2A)",
-            "value": "ss-liquid-tubes-2a",
+            "label": "SS Liquid Tubes",
+            "value": "ss-liquid-tubes",
             "rating": "bad",
-            "summary_line": "{count} SS liquid tubes (2A) needed across the SFP rank",
+            "summary_line": "{count} SS liquid tubes needed across the SFP rank",
             "estimated_low_cost": 35,
             "estimated_high_cost": 65
          },
          {
-            "label": "SS Dry Tubes (2B)",
-            "value": "ss-dry-tubes-2b",
+            "label": "SS Dry Tubes",
+            "value": "ss-dry-tubes",
             "rating": "bad",
-            "summary_line": "{count} SS dry tubes (2B) needed across the SFP rank",
+            "summary_line": "{count} SS dry tubes needed across the SFP rank",
             "estimated_low_cost": 35,
             "estimated_high_cost": 65
          },
          {
-            "label": "SS NH3 Tubes (2C)",
-            "value": "ss-nh3-tubes-2c",
+            "label": "SS NH3 Tubes",
+            "value": "ss-nh3-tubes",
             "rating": "bad",
-            "summary_line": "{count} SS NH3 tubes (2C) needed across the SFP rank",
+            "summary_line": "{count} SS NH3 tubes needed across the SFP rank",
             "estimated_low_cost": 45,
             "estimated_high_cost": 85
          },
@@ -956,7 +1218,7 @@
    },
    {
       "slug": "drill-notes",
-      "step_number": 21,
+      "step_number": 22,
       "section": "drill",
       "step_title": "Drill Notes",
       "instructions": "",
@@ -965,42 +1227,170 @@
    },
    {
       "slug": "air-cart",
-      "step_number": 22,
+      "step_number": 23,
       "section": "air_cart",
-      "step_title": "Air Cart Inspection",
-      "instructions": "Inspect the air cart meters, fans, manifolds, sensors, and drive components for wear, damage, or operational issues.",
-      "question": "What is the overall air cart condition?",
-      "answer_type": "selection",
+      "is_cart_tank_template": true,
+      "step_title": "Air Cart Tank Inspection",
+      "instructions": "Inspect each component on the tank for wear, damage, or operational issues.",
+      "hide_section_secondary": true,
+      "question": "Rate each component on this tank.",
+      "answer_type": "section_selection",
+      "inspection_sections": [
+         {
+            "label": "Lower",
+            "value": "current-lower",
+            "image_url": "https://rede-ag.com/wp-content/uploads/2026/07/cart-lower.webp",
+            "image_caption": "",
+            "secondary_question": "Current lower",
+            "secondary_choices": [
+               { "label": "OEM Plastic", "value": "oem-plastic" },
+               { "label": "Airseeder Parts", "value": "airseeder-parts" },
+               { "label": "Romafa", "value": "romafa" },
+               { "label": "Kanpar", "value": "kanpar" },
+               { "label": "Other", "value": "other" }
+            ]
+         },
+         {
+            "label": "Meter Housing",
+            "value": "current-meter-housing",
+            "image_url": "https://rede-ag.com/wp-content/uploads/2026/07/cart-meter.webp",
+            "image_caption": "",
+            "secondary_question": "Current meter housing",
+            "secondary_choices": [
+               { "label": "OEM", "value": "oem" },
+               { "label": "Airseeder Parts", "value": "airseeder-parts" },
+               { "label": "Romafa", "value": "romafa" },
+               { "label": "Romafa IR", "value": "romafa-ir" },
+               { "label": "Kanpar", "value": "kanpar" },
+               { "label": "Other", "value": "other" }
+            ]
+         },
+         {
+            "label": "Upper Kit",
+            "value": "current-upper-kit",
+            "image_url": "https://rede-ag.com/wp-content/uploads/2026/07/cart-upper.webp",
+            "image_caption": "",
+            "secondary_question": "Current upper kit",
+            "secondary_choices": [
+               { "label": "OEM", "value": "oem" },
+               { "label": "Stainless Steel", "value": "stainless-steel" },
+               { "label": "Other", "value": "other" }
+            ]
+         }
+      ],
       "choices": [
          {
-            "label": "Good",
-            "value": "good",
+            "label": "Good shape, minimal rust and swelling",
+            "value": "good-shape-minimal-rust-and-swelling",
             "rating": "good",
-            "recommended_action": "Air cart components are in acceptable condition.",
+            "recommended_action": "Component is in good shape with minimal rust and swelling.",
             "estimated_low_cost": 0,
             "estimated_high_cost": 0
          },
          {
-            "label": "Needs Attention",
-            "value": "needs-attention",
+            "label": "Starting to rust or swell but no air leaks",
+            "value": "starting-to-rust-or-swell-but-no-air-leaks",
             "rating": "maybe",
-            "recommended_action": "Some air cart components show early wear. Plan service before seeding season.",
+            "recommended_action": "Component is starting to rust or swell. Plan service before seeding season.",
             "estimated_low_cost": 500,
-            "estimated_high_cost": 5000
+            "estimated_high_cost": 2500
          },
          {
-            "label": "Worn Out",
-            "value": "worn-out",
+            "label": "Leaking air, major rust or swelling",
+            "value": "leaking-air-major-rust-or-swelling",
             "rating": "bad",
-            "recommended_action": "Repair or replace damaged air cart components before operating.",
+            "recommended_action": "Repair or replace component before operating.",
             "estimated_low_cost": 2000,
-            "estimated_high_cost": 10000
+            "estimated_high_cost": 8000
+         }
+      ],
+      "video_url": "",
+      "video_caption": "",
+      "image_url": "",
+      "image_caption": ""
+   },
+   {
+      "slug": "air-cart-fans",
+      "step_number": 24,
+      "section": "air_cart",
+      "step_title": "Fan Inspection",
+      "instructions": "Inspect the air cart fans for wear, damage, or operational issues.",
+      "question": "How many fans need replacing?",
+      "answer_type": "replacement_tally",
+      "quantity_label": "fans",
+      "max_count": 3,
+      "choices": [
+         {
+            "label": "Replace",
+            "value": "not-working",
+            "rating": "bad",
+            "recommended_action": "Repair or replace damaged air cart fans before operating.",
+            "summary_line": "{count} fans will likely need replacing",
+            "estimated_low_cost": 2000,
+            "estimated_high_cost": 3000
+         }
+      ],
+      "good_condition_action": "Air cart fans are in acceptable condition.",
+      "video_url": "",
+      "video_caption": "",
+      "image_url": "",
+      "image_caption": ""
+   },
+   {
+      "slug": "air-cart-auger",
+      "step_number": 25,
+      "section": "air_cart",
+      "allow_skip": false,
+      "step_title": "Auger Inspection",
+      "instructions": "Inspect the auger for wear, damage, or operational issues.",
+      "question": "Do you need to replace your auger?",
+      "answer_type": "selection",
+      "choices": [
+         {
+            "label": "Yes",
+            "value": "yes",
+            "rating": "unknown",
+            "recommended_action": "Plan to replace the auger before operating.",
+            "estimated_low_cost": 9000,
+            "estimated_high_cost": 15000
          },
          {
-            "label": "Not Sure",
-            "value": "not-sure",
+            "label": "No",
+            "value": "no",
             "rating": "unknown",
-            "recommended_action": "Contact Red E for an onsite inspection or further guidance on air cart condition.",
+            "recommended_action": "Auger is in acceptable condition.",
+            "estimated_low_cost": 0,
+            "estimated_high_cost": 0
+         }
+      ],
+      "video_url": "",
+      "video_caption": "",
+      "image_url": "",
+      "image_caption": ""
+   },
+   {
+      "slug": "air-cart-conveyor",
+      "step_number": 26,
+      "section": "air_cart",
+      "allow_skip": false,
+      "step_title": "Conveyor Inspection",
+      "instructions": "Inspect the conveyor for wear, damage, or operational issues.",
+      "question": "Do you need to replace your conveyor?",
+      "answer_type": "selection",
+      "choices": [
+         {
+            "label": "Yes",
+            "value": "yes",
+            "rating": "unknown",
+            "recommended_action": "Plan to replace the conveyor before operating.",
+            "estimated_low_cost": 9000,
+            "estimated_high_cost": 15000
+         },
+         {
+            "label": "No",
+            "value": "no",
+            "rating": "unknown",
+            "recommended_action": "Conveyor is in acceptable condition.",
             "estimated_low_cost": 0,
             "estimated_high_cost": 0
          }
@@ -1012,12 +1402,78 @@
    },
    {
       "slug": "cart-notes",
-      "step_number": 23,
+      "step_number": 27,
       "section": "air_cart",
       "step_title": "Cart Notes",
       "instructions": "",
       "question": "Anything else about the air cart?",
       "answer_type": "notes",
+      "video_url": "",
+      "video_caption": "",
+      "image_url": "",
+      "image_caption": ""
+   },
+   {
+      "slug": "camera-kit",
+      "step_number": 28,
+      "section": "wrap_up",
+      "informational_only": true,
+      "allow_skip": false,
+      "step_title": "Camera Kit",
+      "instructions": "",
+      "question": "Are you interested in a camera kit?",
+      "answer_type": "selection",
+      "choices": [
+         {
+            "label": "Yes",
+            "value": "yes",
+            "rating": "unknown",
+            "recommended_action": "A Red E representative can follow up with more information.",
+            "estimated_low_cost": 0,
+            "estimated_high_cost": 0
+         },
+         {
+            "label": "No",
+            "value": "no",
+            "rating": "unknown",
+            "recommended_action": "No follow-up needed.",
+            "estimated_low_cost": 0,
+            "estimated_high_cost": 0
+         }
+      ],
+      "video_url": "",
+      "video_caption": "",
+      "image_url": "",
+      "image_caption": ""
+   },
+   {
+      "slug": "hydraulic-drive-conversion",
+      "step_number": 29,
+      "section": "wrap_up",
+      "informational_only": true,
+      "allow_skip": false,
+      "step_title": "Hydraulic Drive Conversion",
+      "instructions": "",
+      "question": "Are you interested in a hydraulic drive conversion?",
+      "answer_type": "selection",
+      "choices": [
+         {
+            "label": "Yes",
+            "value": "yes",
+            "rating": "unknown",
+            "recommended_action": "A Red E representative can follow up with more information.",
+            "estimated_low_cost": 0,
+            "estimated_high_cost": 0
+         },
+         {
+            "label": "No",
+            "value": "no",
+            "rating": "unknown",
+            "recommended_action": "No follow-up needed.",
+            "estimated_low_cost": 0,
+            "estimated_high_cost": 0
+         }
+      ],
       "video_url": "",
       "video_caption": "",
       "image_url": "",

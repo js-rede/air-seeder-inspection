@@ -1,9 +1,10 @@
-import { normalizeMachineSetup, getDrillSetup, getCartSetup } from "../data/machineCatalog";
+import { normalizeMachineSetup, getDrillSetup, getEffectiveTankCount } from "../data/machineCatalog";
 import {
    getChoiceUnitCost,
    getChoiceValue,
    getSecondaryChoice,
    getSelectedChoice,
+   getSelectionAnswerValue,
    getSelectionCostMultiplier,
    getSelectionCosts,
    getStepChoices,
@@ -13,7 +14,11 @@ import {
    getMultiSelectionAnswer,
    getMultiSelectionCostMultiplier,
    normalizeRowUnitDistribution,
+   normalizeSectionSelections,
    normalizeWorkingRankSelections,
+   getStepInspectionSections,
+   getSectionChoices,
+   getSectionConditionValue,
    usesSecondaryCostForRating,
 } from "./choices";
 
@@ -83,15 +88,7 @@ export function getEffectiveWorkingRanks(machineSetupAnswer, override) {
    return Number(setup.workingRanks) || 0;
 }
 
-export function getEffectiveTankCount(machineSetupAnswer, override) {
-   const overrideCount = Number(override);
-   if (overrideCount > 0) return overrideCount;
-
-   const cart = getCartSetup(machineSetupAnswer);
-   if (!cart) return 0;
-
-   return Number(cart.tankCount) || 0;
-}
+export { getEffectiveTankCount };
 
 function normalizeRowUnitCounts(answer, choices) {
    return normalizeRowUnitDistribution(answer, choices);
@@ -113,10 +110,57 @@ export function calculateInspectionSummary(steps, answers, rowUnitCountOverride,
    let estimatedLow = 0;
    let estimatedHigh = 0;
    const lineItems = [];
+   const interestItems = [];
 
    steps.forEach((step) => {
       const answer = answers[step.slug];
       if (answer == null || answer === "") return;
+
+      if (step.informational_only) {
+         if (step.answer_type === "selection" && getSelectionAnswerValue(answer) === "yes") {
+            const choice = getSelectedChoice(step, answer);
+
+            interestItems.push({
+               slug: step.slug,
+               stepTitle: step.step_title,
+               label: choice?.recommended_action || "Interested in follow-up",
+            });
+         }
+
+         return;
+      }
+
+      if (step.answer_type === "replacement_tally") {
+         const count = Number(answer) || 0;
+         if (count <= 0) return;
+
+         const choice = getStepChoices(step).find((item) => item.rating === "bad") || getStepChoices(step)[0];
+         if (!choice) return;
+
+         const rating = choice.rating || "bad";
+         ratingCounts[rating] = (ratingCounts[rating] || 0) + count;
+
+         const itemLow = (choice.estimated_low_cost || 0) * count;
+         const itemHigh = (choice.estimated_high_cost || 0) * count;
+
+         estimatedLow += itemLow;
+         estimatedHigh += itemHigh;
+
+         if (itemLow > 0 || itemHigh > 0) {
+            lineItems.push({
+               slug: step.slug,
+               stepTitle: step.step_title,
+               label: choice.label,
+               rating,
+               quantity: count,
+               quantityLabel: step.quantity_label || "items",
+               estimatedLowCost: itemLow,
+               estimatedHighCost: itemHigh,
+            });
+         }
+
+         return;
+      }
 
       if (step.answer_type === "row_unit_distribution") {
          const choices = getStepChoices(step);
@@ -202,6 +246,46 @@ export function calculateInspectionSummary(steps, answers, rowUnitCountOverride,
                   rating,
                   quantity,
                   quantityLabel: step.quantity_label || "row-units",
+                  estimatedLowCost: itemLow,
+                  estimatedHighCost: itemHigh,
+               });
+            }
+         });
+
+         return;
+      }
+
+      if (step.answer_type === "section_selection") {
+         const choices = getStepChoices(step);
+         const sections = getStepInspectionSections(step);
+         const selections = normalizeSectionSelections(answer, sections);
+
+         sections.forEach((section) => {
+            const key = section.value ?? section.label;
+            const sectionAnswer = selections[key];
+            const choiceValue = getSectionConditionValue(sectionAnswer);
+            if (!choiceValue || isSkipChoiceValue(choiceValue)) return;
+
+            const choice = getSectionChoices(section, choices).find((item) => getChoiceValue(item) === choiceValue);
+            if (!choice) return;
+
+            const rating = choice.rating || "unknown";
+            ratingCounts[rating] = (ratingCounts[rating] || 0) + 1;
+
+            const itemLow = choice.estimated_low_cost || 0;
+            const itemHigh = choice.estimated_high_cost || 0;
+
+            estimatedLow += itemLow;
+            estimatedHigh += itemHigh;
+
+            if (itemLow > 0 || itemHigh > 0) {
+               lineItems.push({
+                  slug: step.slug,
+                  stepTitle: step.step_title,
+                  label: `${section.label}: ${choice.label}`,
+                  rating,
+                  quantity: 1,
+                  quantityLabel: "item",
                   estimatedLowCost: itemLow,
                   estimatedHighCost: itemHigh,
                });
@@ -306,6 +390,7 @@ export function calculateInspectionSummary(steps, answers, rowUnitCountOverride,
       estimatedLow,
       estimatedHigh,
       lineItems,
+      interestItems,
    };
 }
 

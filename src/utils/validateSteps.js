@@ -16,7 +16,7 @@ export function validateSteps(steps) {
          }
       });
 
-      if (step.answer_type === "selection" || step.answer_type === "row_unit_distribution" || step.answer_type === "working_rank_selection" || step.answer_type === "multi_selection") {
+      if (step.answer_type === "selection" || step.answer_type === "row_unit_distribution" || step.answer_type === "replacement_tally" || step.answer_type === "working_rank_selection" || step.answer_type === "section_selection" || step.answer_type === "multi_selection") {
          if (!Array.isArray(step.choices) || step.choices.length === 0) {
             throw new Error(`Step "${stepLabel}" with answer_type "${step.answer_type}" must include a non-empty choices array.`);
          }
@@ -38,6 +38,28 @@ export function validateSteps(steps) {
 
             if (!choice.recommended_action) {
                throw new Error(`Step "${stepLabel}" choice ${choiceIndex + 1} is missing recommended_action.`);
+            }
+         });
+      }
+
+      if (step.answer_type === "section_selection") {
+         if (!Array.isArray(step.inspection_sections) || step.inspection_sections.length === 0) {
+            throw new Error(`Step "${stepLabel}" with answer_type "section_selection" must include a non-empty inspection_sections array.`);
+         }
+
+         step.inspection_sections.forEach((section, sectionIndex) => {
+            if (!section?.label) {
+               throw new Error(`Step "${stepLabel}" inspection section ${sectionIndex + 1} is missing a label.`);
+            }
+
+            if (section.secondary_choices) {
+               section.secondary_choices.forEach((choice, choiceIndex) => {
+                  if (!choice?.label) {
+                     throw new Error(
+                        `Step "${stepLabel}" inspection section ${sectionIndex + 1} secondary choice ${choiceIndex + 1} is missing a label.`,
+                     );
+                  }
+               });
             }
          });
       }

@@ -10,6 +10,76 @@ export function getStepChoices(step) {
    return step?.choices ?? [];
 }
 
+export function getSectionChoices(section, stepChoices = []) {
+   return section?.choices?.length ? section.choices : stepChoices;
+}
+
+export function getStepInspectionSections(step) {
+   return step?.inspection_sections ?? [];
+}
+
+export function getSectionSelections(answer) {
+   if (answer && typeof answer === "object" && answer.sections) {
+      return answer.sections;
+   }
+
+   return {};
+}
+
+export function getSectionConditionValue(sectionAnswer) {
+   if (!sectionAnswer) return "";
+   if (typeof sectionAnswer === "string") return sectionAnswer;
+   return sectionAnswer.value ?? "";
+}
+
+export function getSectionSecondaryAnswer(sectionAnswer) {
+   if (!sectionAnswer || typeof sectionAnswer !== "object") return "";
+   return sectionAnswer.secondary ?? "";
+}
+
+export function getSectionSecondaryOtherAnswer(sectionAnswer) {
+   if (!sectionAnswer || typeof sectionAnswer !== "object") return "";
+   return sectionAnswer.secondaryOther ?? "";
+}
+
+export function isSectionEntryComplete(section, sectionAnswer, { hideSectionSecondary = false } = {}) {
+   const condition = getSectionConditionValue(sectionAnswer);
+   if (!condition || isSkipChoiceValue(condition)) return false;
+
+   if (section.secondary_choices?.length && !hideSectionSecondary && !section.hide_secondary) {
+      const secondary = getSectionSecondaryAnswer(sectionAnswer);
+      if (!secondary) return false;
+
+      const otherChoice = section.secondary_choices.find((choice) => getChoiceValue(choice) === "other");
+      if (otherChoice && secondary === getChoiceValue(otherChoice)) {
+         return Boolean(getSectionSecondaryOtherAnswer(sectionAnswer).trim());
+      }
+   }
+
+   return true;
+}
+
+export function normalizeSectionSelections(answer, sections) {
+   const selections = getSectionSelections(answer);
+   const normalized = {};
+
+   sections.forEach((section) => {
+      const key = section.value ?? section.label;
+      normalized[key] = selections[key] ?? "";
+   });
+
+   return normalized;
+}
+
+export function isSectionSelectionComplete(answer, sections, { hideSectionSecondary = false } = {}) {
+   if (!sections.length) return false;
+
+   const selections = getSectionSelections(answer);
+   return sections.every((section) =>
+      isSectionEntryComplete(section, selections[section.value ?? section.label], { hideSectionSecondary }),
+   );
+}
+
 export function getRowUnitDistributionAnswer(answer) {
    if (answer && typeof answer === "object" && answer.distribution) {
       return answer.distribution;
@@ -208,6 +278,52 @@ export function getSecondaryOtherAnswer(answer) {
    return "";
 }
 
+export function getTertiaryAnswer(answer) {
+   if (answer && typeof answer === "object" && "tertiary" in answer) {
+      return answer.tertiary ?? "";
+   }
+
+   return "";
+}
+
+export function shouldShowTertiaryQuestion(step, secondaryValue) {
+   if (!step?.tertiary_question || !step?.tertiary_choices?.length) {
+      return false;
+   }
+
+   if (!secondaryValue) {
+      return false;
+   }
+
+   const showForValues = step.tertiary_show_for_secondary_values ?? [];
+
+   if (showForValues.length > 0) {
+      return showForValues.includes(secondaryValue);
+   }
+
+   return true;
+}
+
+export function isTertiaryAnswerComplete(answer, tertiaryChoices = []) {
+   const tertiary = getTertiaryAnswer(answer);
+   if (!tertiary) return false;
+
+   const otherChoice = tertiaryChoices.find((choice) => getChoiceValue(choice) === "other");
+   if (otherChoice && tertiary === getChoiceValue(otherChoice)) {
+      return Boolean(getTertiaryOtherAnswer(answer).trim());
+   }
+
+   return true;
+}
+
+export function getTertiaryOtherAnswer(answer) {
+   if (answer && typeof answer === "object" && "tertiaryOther" in answer) {
+      return answer.tertiaryOther ?? "";
+   }
+
+   return "";
+}
+
 export function getSecondaryChoice(step, answer) {
    const secondary = getSecondaryAnswer(answer);
    if (!secondary || !step?.secondary_choices?.length) return null;
@@ -306,6 +422,30 @@ export function getRowUnitDistributionCosts(step, answer) {
 
       estimatedLowCost += (choice.estimated_low_cost || 0) * count;
       estimatedHighCost += (choice.estimated_high_cost || 0) * count;
+   });
+
+   return { estimatedLowCost, estimatedHighCost };
+}
+
+export function getSectionSelectionCosts(step, answer) {
+   const choices = getStepChoices(step);
+   const sections = getStepInspectionSections(step);
+   const selections = normalizeSectionSelections(answer, sections);
+
+   let estimatedLowCost = 0;
+   let estimatedHighCost = 0;
+
+   sections.forEach((section) => {
+      const key = section.value ?? section.label;
+      const sectionAnswer = selections[key];
+      const choiceValue = getSectionConditionValue(sectionAnswer);
+      if (!choiceValue || isSkipChoiceValue(choiceValue)) return;
+
+      const choice = getSectionChoices(section, choices).find((item) => getChoiceValue(item) === choiceValue);
+      if (!choice) return;
+
+      estimatedLowCost += choice.estimated_low_cost || 0;
+      estimatedHighCost += choice.estimated_high_cost || 0;
    });
 
    return { estimatedLowCost, estimatedHighCost };
@@ -418,7 +558,62 @@ function formatRowUnitSummaryLine(choice, count) {
       : `${count} row-units are ${choice.label.toLowerCase()}`;
 }
 
+export function getReplacementTallyChoice(step) {
+   const choices = getStepChoices(step);
+   return choices.find((choice) => choice.rating === "bad") || choices[0] || null;
+}
+
+export function getReplacementTallyCount(answer) {
+   if (answer === "" || answer == null) return 0;
+   const count = Number(answer);
+   return Number.isFinite(count) && count > 0 ? count : 0;
+}
+
+export function getReplacementTallyCosts(step, answer) {
+   const count = getReplacementTallyCount(answer);
+   const choice = getReplacementTallyChoice(step);
+
+   if (!choice || count <= 0) {
+      return { estimatedLowCost: 0, estimatedHighCost: 0 };
+   }
+
+   const estimatedLowCost = (choice.estimated_low_cost || 0) * count;
+   const estimatedHighCost = (choice.estimated_high_cost || 0) * count;
+
+   return { estimatedLowCost, estimatedHighCost };
+}
+
 export function getRecommendationForAnswer(step, selectedAnswer, rowUnitCount = 0, workingRanks = 1) {
+   if (step.informational_only) return null;
+
+   if (step.answer_type === "replacement_tally") {
+      const count = getReplacementTallyCount(selectedAnswer);
+      const choice = getReplacementTallyChoice(step);
+
+      if (count <= 0) {
+         return {
+            text: step.good_condition_action || "No replacements are needed.",
+            lines: [],
+            rating: "good",
+            estimatedLowCost: 0,
+            estimatedHighCost: 0,
+         };
+      }
+
+      const { estimatedLowCost, estimatedHighCost } = getReplacementTallyCosts(step, selectedAnswer);
+      const summaryLine = choice?.summary_line
+         ? choice.summary_line.replaceAll("{count}", String(count))
+         : `${count} ${count === 1 ? (step.quantity_label === "towers" ? "tower" : "item") : step.quantity_label || "items"} will likely need replacing`;
+
+      return {
+         text: choice?.recommended_action || "",
+         lines: [summaryLine],
+         rating: choice?.rating || "bad",
+         estimatedLowCost,
+         estimatedHighCost,
+      };
+   }
+
    if (step.answer_type === "row_unit_distribution") {
       const choices = getStepChoices(step);
       const counts = normalizeRowUnitDistribution(selectedAnswer, choices);
@@ -447,6 +642,46 @@ export function getRecommendationForAnswer(step, selectedAnswer, rowUnitCount = 
          text: dominant.recommended_action,
          lines,
          rating: dominant.rating,
+         estimatedLowCost,
+         estimatedHighCost,
+      };
+   }
+
+   if (step.answer_type === "section_selection") {
+      const choices = getStepChoices(step);
+      const sections = getStepInspectionSections(step);
+      const selections = normalizeSectionSelections(selectedAnswer, sections);
+      const activeChoices = sections
+         .map((section) => {
+            const key = section.value ?? section.label;
+            const sectionAnswer = selections[key];
+            const choiceValue = getSectionConditionValue(sectionAnswer);
+            if (!choiceValue || isSkipChoiceValue(choiceValue)) return null;
+
+            const choice = getSectionChoices(section, choices).find((item) => getChoiceValue(item) === choiceValue);
+            if (!choice) return null;
+
+            return { section, choice };
+         })
+         .filter(Boolean);
+
+      if (activeChoices.length === 0) return null;
+
+      const dominant = activeChoices.reduce((best, entry) => {
+         const bestPriority = RATING_PRIORITY[best.choice.rating] ?? 0;
+         const nextPriority = RATING_PRIORITY[entry.choice.rating] ?? 0;
+         return nextPriority > bestPriority ? entry : best;
+      }, activeChoices[0]);
+
+      const { estimatedLowCost, estimatedHighCost } = getSectionSelectionCosts(step, selectedAnswer);
+      const lines = activeChoices
+         .filter(({ choice }) => choice.rating !== "good")
+         .map(({ section, choice }) => `${section.label}: ${choice.label}`);
+
+      return {
+         text: dominant.choice.recommended_action,
+         lines,
+         rating: dominant.choice.rating,
          estimatedLowCost,
          estimatedHighCost,
       };

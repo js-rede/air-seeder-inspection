@@ -42,7 +42,7 @@ function InspectionResults({ summary, onRestart }) {
 
          {summary.lineItems.length > 0 && (
             <div className="mt-8">
-               <h3 className="text-xl font-semibold text-slate-900">Items affecting estimate</h3>
+               <h3 className="text-xl font-semibold text-slate-900">Items Affecting Estimate</h3>
                <ul className="mt-4 space-y-3">
                   {summary.lineItems.map((item) => (
                      <li key={`${item.slug}-${item.label}`} className="rounded-xl border border-slate-200 p-4">
@@ -58,6 +58,20 @@ function InspectionResults({ summary, onRestart }) {
                               {formatCostRange(item.estimatedLowCost, item.estimatedHighCost)}
                            </p>
                         </div>
+                     </li>
+                  ))}
+               </ul>
+            </div>
+         )}
+
+         {summary.interestItems?.length > 0 && (
+            <div className="mt-8">
+               <h3 className="text-xl font-semibold text-slate-900">Interested In</h3>
+               <ul className="mt-4 space-y-3">
+                  {summary.interestItems.map((item) => (
+                     <li key={item.slug} className="rounded-xl border border-slate-200 p-4">
+                        <p className="font-semibold text-slate-900">{item.stepTitle}</p>
+                        <p className="mt-1 text-sm text-slate-600">{item.label}</p>
                      </li>
                   ))}
                </ul>

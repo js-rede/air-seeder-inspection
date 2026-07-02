@@ -69,6 +69,7 @@ function StepTitleNav({ onBack, onNext, canGoBack, canGoNext, isLastStep }) {
 
 function InspectionCard({
    step,
+   displayStepNumber,
    selectedAnswer,
    onAnswer,
    rowUnitCount = 0,
@@ -92,11 +93,11 @@ function InspectionCard({
    const hasRecommendationIssues = recommendation?.rating && recommendation.rating !== "good";
 
    return (
-      <section className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm mt-5">
+      <section className="-mx-4 mt-5 rounded-none border border-slate-200 border-x-0 bg-white p-4 shadow-sm sm:mx-0 sm:rounded-2xl sm:border-x sm:p-8">
          {/* Title */}
          <div className="mb-4 flex items-center justify-between gap-3">
             <div className="min-w-0 text-sm font-semibold uppercase tracking-wide text-slate-500">
-               Step {step.step_number}: {step.step_title}
+               Step {displayStepNumber ?? step.step_number}: {step.step_title}
             </div>
             {onBack && onNext && (
                <StepTitleNav
@@ -168,7 +169,14 @@ function InspectionCard({
             secondaryChoices={step.secondary_choices}
             secondaryHideForValues={step.secondary_hide_for_values}
             secondaryShowForValues={step.secondary_show_for_values}
+            tertiaryQuestion={step.tertiary_question}
+            tertiaryChoices={step.tertiary_choices}
+            tertiaryShowForSecondaryValues={step.tertiary_show_for_secondary_values}
+            inspectionSections={step.inspection_sections}
+            hideSectionSecondary={step.hide_section_secondary === true}
             quantityLabel={step.quantity_label}
+            maxCount={step.max_count ?? null}
+            allowSkip={step.allow_skip !== false}
          />
 
          {/* Recommendation */}

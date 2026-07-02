@@ -1,4 +1,6 @@
+import SectionSelectionForm from "./SectionSelectionForm";
 import MachineSetupForm from "./MachineSetupForm";
+import ReplacementTallyForm from "./ReplacementTallyForm";
 import RowUnitDistributionForm from "./RowUnitDistributionForm";
 import WorkingRankSelectionForm from "./WorkingRankSelectionForm";
 import MultiSelectionForm from "./MultiSelectionForm";
@@ -9,6 +11,7 @@ import {
    getChoiceValue,
    getSecondaryAnswer,
    getSecondaryOtherAnswer,
+   getTertiaryAnswer,
    getSelectionAnswerValue,
    getSkipChoiceLabel,
    shouldShowSecondaryQuestion,
@@ -38,11 +41,44 @@ function AnswerGroup({
    secondaryChoices = [],
    secondaryHideForValues = [],
    secondaryShowForValues = [],
+   tertiaryQuestion,
+   tertiaryChoices = [],
+   tertiaryShowForSecondaryValues = [],
+   inspectionSections = [],
+   hideSectionSecondary = false,
    quantityLabel = "row-units",
+   maxCount = null,
+   allowSkip = true,
 }) {
    const buttonBase = "w-full rounded-xl border p-4 text-left transition cursor-pointer";
    const input =
       "w-full rounded-xl border border-slate-300 p-2.5 bg-gray-100 text-lg focus:border-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-200";
+
+   if (answerType === "section_selection") {
+      return (
+         <SectionSelectionForm
+            sections={inspectionSections}
+            choices={choices}
+            value={selectedAnswer}
+            onChange={onAnswer}
+            hideSectionSecondary={hideSectionSecondary}
+         />
+      );
+   }
+
+   if (answerType === "replacement_tally") {
+      const hasFixedMax = maxCount != null;
+
+      return (
+         <ReplacementTallyForm
+            quantityCount={hasFixedMax ? maxCount : rowUnitCount}
+            quantityLabel={quantityLabel}
+            value={selectedAnswer}
+            onChange={onAnswer}
+            requireQuantity={!hasFixedMax}
+         />
+      );
+   }
 
    if (answerType === "row_unit_distribution") {
       return (
@@ -99,6 +135,7 @@ function AnswerGroup({
             value,
             secondary: keepSecondary ? getSecondaryAnswer(selectedAnswer) : "",
             secondaryOther: keepSecondary ? getSecondaryOtherAnswer(selectedAnswer) : "",
+            tertiary: keepSecondary ? getTertiaryAnswer(selectedAnswer) : "",
          });
       }
 
@@ -122,16 +159,21 @@ function AnswerGroup({
                );
             })}
 
-            <SkipChoiceButton
-               label={getSkipChoiceLabel()}
-               isSelected={selectionValue === SKIP_CHOICE_VALUE}
-               onClick={() => selectPrimary(SKIP_CHOICE_VALUE)}
-            />
+            {allowSkip && (
+               <SkipChoiceButton
+                  label={getSkipChoiceLabel()}
+                  isSelected={selectionValue === SKIP_CHOICE_VALUE}
+                  onClick={() => selectPrimary(SKIP_CHOICE_VALUE)}
+               />
+            )}
 
             {showSecondaryQuestion && (
                <SecondaryQuestionFields
                   secondaryQuestion={secondaryQuestion}
                   secondaryChoices={secondaryChoices}
+                  tertiaryQuestion={tertiaryQuestion}
+                  tertiaryChoices={tertiaryChoices}
+                  tertiaryShowForSecondaryValues={tertiaryShowForSecondaryValues}
                   value={selectedAnswer && typeof selectedAnswer === "object" ? selectedAnswer : { value: selectionValue }}
                   onChange={onAnswer}
                />

@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import InspectionHeader from "./components/InspectionHeader";
 import InspectionCard from "./components/InspectionCard";
 import InspectionNav from "./components/InspectionNav";
 import InspectionWelcome from "./components/InspectionWelcome";
 import InspectionScorecard from "./components/InspectionScorecard";
 import InspectionResults from "./components/InspectionResults";
+import ComponentSetupModal from "./components/ComponentSetupModal";
 import { getSavedDraft, saveDraft } from "./utils/storage";
 import { isAnswerComplete } from "./utils/answers";
 import Loading from "./components/Loading";
@@ -12,6 +13,8 @@ import { validateSteps } from "./utils/validateSteps";
 import { calculateInspectionSummary, calculateRowUnitCount } from "./utils/inspectionSummary";
 import {
    getApplicableSteps,
+   getFirstCartStepSlug,
+   getFirstDrillStepSlug,
    getCurrentMachineIdentity,
    isDrillIncluded,
    isCartIncluded,
@@ -20,6 +23,13 @@ import {
    getCartSetup,
    normalizeMachineSetup,
    persistMachineSetupDraft,
+   canOfferOptionalCartInspection,
+   canOfferOptionalDrillInspection,
+   enableCartInspection,
+   enableDrillInspection,
+   isLastInspectableStepIndex,
+   isCartPartConfigurationComplete,
+   isDrillPartConfigurationComplete,
 } from "./data/machineCatalog";
 import { STEPS_URL } from "./config";
 
@@ -39,6 +49,9 @@ function App() {
    const [workingRanksOverride, setWorkingRanksOverride] = useState(savedDraft.workingRanksOverride ?? null);
    const [tankCountOverride, setTankCountOverride] = useState(savedDraft.tankCountOverride ?? null);
    const [currentMachine, setCurrentMachine] = useState(savedDraft.currentMachine ?? null);
+   const [componentSetupModal, setComponentSetupModal] = useState(null);
+   const navigationTargetSlug = useRef(null);
+   const pendingComponentSetup = useRef(null);
 
    useEffect(() => {
       fetch(STEPS_URL)
@@ -67,17 +80,31 @@ function App() {
          tankCountOverride,
          currentMachine,
       });
-   }, [hasStarted, hasInspectionStarted, isFinished, currentIndex, answers, rowUnitCountOverride, workingRanksOverride, tankCountOverride, currentMachine]);
+   }, [
+      hasStarted,
+      hasInspectionStarted,
+      isFinished,
+      currentIndex,
+      answers,
+      rowUnitCountOverride,
+      workingRanksOverride,
+      tankCountOverride,
+      currentMachine,
+   ]);
 
-   const machineSetup = useMemo(() => normalizeMachineSetup(answers["machine-setup"]), [answers]);
-   const applicableSteps = useMemo(() => getApplicableSteps(steps, machineSetup), [steps, machineSetup]);
+   const machineSetup = useMemo(() => normalizeMachineSetup(answers["machine-setup"]), [answers["machine-setup"]]);
+   const applicableSteps = useMemo(
+      () => getApplicableSteps(steps, machineSetup, tankCountOverride),
+      [steps, machineSetup, tankCountOverride],
+   );
    const calculatedRowUnitCount = useMemo(() => calculateRowUnitCount(answers["machine-setup"]), [answers]);
    const setupWorkingRanks = Number(getDrillSetup(machineSetup).workingRanks) || 0;
    const showWorkingRanks = isDrillIncluded(machineSetup);
    const showCartTanks = isCartIncluded(machineSetup);
    const setupTankCount = Number(getCartSetup(machineSetup)?.tankCount) || 0;
    const summary = useMemo(
-      () => calculateInspectionSummary(applicableSteps, answers, rowUnitCountOverride, workingRanksOverride, tankCountOverride),
+      () =>
+         calculateInspectionSummary(applicableSteps, answers, rowUnitCountOverride, workingRanksOverride, tankCountOverride),
       [applicableSteps, answers, rowUnitCountOverride, workingRanksOverride, tankCountOverride],
    );
    const currentStep = applicableSteps[currentIndex];
@@ -87,8 +114,18 @@ function App() {
    useEffect(() => {
       if (!applicableSteps.length) return;
 
+      if (navigationTargetSlug.current) {
+         const targetIndex = applicableSteps.findIndex((step) => step.slug === navigationTargetSlug.current);
+         navigationTargetSlug.current = null;
+
+         if (targetIndex >= 0) {
+            setCurrentIndex(targetIndex);
+            return;
+         }
+      }
+
       setCurrentIndex((prev) => {
-         const previousStep = steps[prev] || applicableSteps[prev];
+         const previousStep = applicableSteps[prev];
          if (previousStep?.slug) {
             const nextIndex = applicableSteps.findIndex((step) => step.slug === previousStep.slug);
             if (nextIndex >= 0) return nextIndex;
@@ -96,8 +133,34 @@ function App() {
 
          return Math.min(prev, applicableSteps.length - 1);
       });
-   }, [applicableSteps, steps]);
+   }, [applicableSteps]);
 
+   useEffect(() => {
+      if (!pendingComponentSetup.current || !currentStep) return;
+
+      if (pendingComponentSetup.current === "drill") {
+         const firstDrillSlug = getFirstDrillStepSlug(applicableSteps);
+         if (currentStep.slug === firstDrillSlug) {
+            pendingComponentSetup.current = null;
+            setComponentSetupModal("drill");
+         }
+         return;
+      }
+
+      if (pendingComponentSetup.current === "cart") {
+         const firstCartSlug = getFirstCartStepSlug(applicableSteps);
+         if (currentStep.slug === firstCartSlug) {
+            pendingComponentSetup.current = null;
+            setComponentSetupModal("cart");
+         }
+      }
+   }, [currentStep, applicableSteps]);
+
+   const isLastStep = currentIndex >= applicableSteps.length - 1;
+   const showOptionalCartInspection =
+      isLastInspectableStepIndex(applicableSteps, currentIndex) && canOfferOptionalCartInspection(machineSetup);
+   const showOptionalDrillInspection =
+      isLastInspectableStepIndex(applicableSteps, currentIndex) && canOfferOptionalDrillInspection(machineSetup);
    const isMachineSetupStep = currentStep?.answer_type === "machine_setup";
    const hasRunningEstimate = summary.estimatedLow > 0 || summary.estimatedHigh > 0;
    const isMainArmPivotStep = currentStep?.slug === "main-arm-pivot";
@@ -225,6 +288,7 @@ function App() {
          }
 
          setCurrentMachine(nextMachine);
+         setHasInspectionStarted(true);
       }
       if (currentStep?.slug === "main-arm-pivot") {
          setHasInspectionStarted(true);
@@ -267,10 +331,94 @@ function App() {
       setWorkingRanksOverride(null);
       setTankCountOverride(null);
       setCurrentMachine(null);
+      setComponentSetupModal(null);
+      navigationTargetSlug.current = null;
+      pendingComponentSetup.current = null;
+   }
+
+   function startCartInspection() {
+      const setup = normalizeMachineSetup(answers["machine-setup"]);
+      const nextSetup = enableCartInspection(setup);
+      const nextApplicable = getApplicableSteps(steps, nextSetup);
+      const cartSlug = getFirstCartStepSlug(nextApplicable);
+
+      navigationTargetSlug.current = cartSlug;
+      if (!isCartPartConfigurationComplete(setup)) {
+         pendingComponentSetup.current = "cart";
+      }
+
+      setAnswers((prev) => ({
+         ...prev,
+         "machine-setup": nextSetup,
+      }));
+
+      const cart = getCartSetup(nextSetup);
+      const tanks = Number(cart?.tankCount);
+      if (tanks > 0) {
+         setTankCountOverride(tanks);
+      }
+   }
+
+   function startDrillInspection() {
+      const setup = normalizeMachineSetup(answers["machine-setup"]);
+      const nextSetup = enableDrillInspection(setup);
+      const nextApplicable = getApplicableSteps(steps, nextSetup);
+      const drillSlug = getFirstDrillStepSlug(nextApplicable);
+
+      navigationTargetSlug.current = drillSlug;
+      if (!isDrillPartConfigurationComplete(setup)) {
+         pendingComponentSetup.current = "drill";
+      }
+
+      setAnswers((prev) => ({
+         ...prev,
+         "machine-setup": nextSetup,
+      }));
+
+      const drill = getDrillSetup(nextSetup);
+      const rowUnits = Number(drill?.rowUnitCount);
+      const ranks = Number(drill?.workingRanks);
+      if (rowUnits > 0) {
+         setRowUnitCountOverride(rowUnits);
+      }
+      if (ranks > 0) {
+         setWorkingRanksOverride(ranks);
+      }
+   }
+
+   function handleComponentSetupSave(nextSetup) {
+      const persistedSetup = persistMachineSetupDraft(nextSetup);
+
+      setAnswers((prev) => ({
+         ...prev,
+         "machine-setup": persistedSetup,
+      }));
+
+      if (componentSetupModal === "drill") {
+         const drill = getDrillSetup(persistedSetup);
+         const rowUnits = Number(drill?.rowUnitCount);
+         const ranks = Number(drill?.workingRanks);
+         if (rowUnits > 0) {
+            setRowUnitCountOverride(rowUnits);
+         }
+         if (ranks > 0) {
+            setWorkingRanksOverride(ranks);
+         }
+      }
+
+      if (componentSetupModal === "cart") {
+         const cart = getCartSetup(persistedSetup);
+         const tanks = Number(cart?.tankCount);
+         if (tanks > 0) {
+            setTankCountOverride(tanks);
+         }
+      }
+
+      setComponentSetupModal(null);
    }
 
    return (
-      <div id="air-seeder-inspection-app" className="relative min-h-[600px] bg-slate-50 p-10 flex items-start">
+      <div id="air-seeder-inspection-app" className="relative min-h-[600px] bg-slate-50 px-4 py-10 sm:px-10 flex items-start">
          <Loading isLoaded={steps.length > 0} />
 
          {!!steps.length && (
@@ -313,6 +461,7 @@ function App() {
                      <>
                         <InspectionCard
                            step={currentStep}
+                           displayStepNumber={currentIndex + 1}
                            selectedAnswer={answers[currentStep.slug]}
                            onAnswer={handleAnswer}
                            rowUnitCount={summary.rowUnitCount}
@@ -329,6 +478,10 @@ function App() {
                            onBack={goBack}
                            onNext={goNext}
                            canGoNext={canGoNext}
+                           showOptionalCartInspection={showOptionalCartInspection}
+                           onStartCartInspection={startCartInspection}
+                           showOptionalDrillInspection={showOptionalDrillInspection}
+                           onStartDrillInspection={startDrillInspection}
                         />
                      </>
                   )
@@ -337,6 +490,13 @@ function App() {
                )}
             </div>
          )}
+
+         <ComponentSetupModal
+            isOpen={Boolean(componentSetupModal)}
+            type={componentSetupModal}
+            setup={machineSetup}
+            onSave={handleComponentSetupSave}
+         />
       </div>
    );
 }

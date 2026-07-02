@@ -48,8 +48,117 @@ export const CART_TANK_COUNTS = [
    { value: "1", label: "1 tank" },
    { value: "2", label: "2 tanks" },
    { value: "3", label: "3 tanks" },
-   { value: "4", label: "4 tanks" },
 ];
+
+export const MAX_CART_TANK_COUNT = 3;
+
+export const CART_TANK_TEMPLATE_SLUG = "air-cart";
+
+const CART_LID_LADDER_CHOICES = [
+   {
+      label: "Good condition",
+      value: "good",
+      rating: "good",
+      recommended_action: "Component is in good condition.",
+      estimated_low_cost: 0,
+      estimated_high_cost: 0,
+   },
+   {
+      label: "Needs replacing",
+      value: "needs-replacing",
+      rating: "bad",
+      recommended_action: "Plan to replace this component before operating.",
+      estimated_low_cost: 250,
+      estimated_high_cost: 2500,
+   },
+];
+
+export const CART_TANK_STEP_LAYOUTS = {
+   1: [
+      {
+         position: null,
+         slug: "air-cart-tank",
+         step_title: "Front Tank Inspection",
+         question: "Rate each component on the front tank.",
+         instructions:
+            "Starting at the front of your machine, inspect the first tank on your air cart for wear, damage, or operational issues.",
+         tank_label: "Front Tank",
+         tank_index: 1,
+         run_sections: {
+            hoses: "Inspect hoses running from the front of the cart to the front tank.",
+            tubes: "Inspect stainless steel tubes running from the front of the cart to the front tank.",
+         },
+      },
+   ],
+   2: [
+      {
+         position: "front",
+         slug: "air-cart-front-tank",
+         step_title: "Front Tank Inspection",
+         question: "Rate each component on the front tank.",
+         instructions:
+            "Starting at the front of your machine, inspect the first tank on your air cart for wear, damage, or operational issues.",
+         tank_label: "Front Tank",
+         tank_index: 1,
+         run_sections: {
+            hoses: "Inspect hoses running from the front of the cart to the front tank.",
+            tubes: "Inspect stainless steel tubes running from the front of the cart to the front tank.",
+         },
+      },
+      {
+         position: "rear",
+         slug: "air-cart-rear-tank",
+         step_title: "Rear Tank Inspection",
+         question: "Rate each component on the rear tank.",
+         tank_label: "Rear Tank",
+         tank_index: 2,
+         run_sections: {
+            hoses: "Inspect hoses running from the front tank to the rear tank.",
+            tubes: "Inspect stainless steel tubes running from the front tank to the rear tank.",
+         },
+      },
+   ],
+   3: [
+      {
+         position: "front",
+         slug: "air-cart-front-tank",
+         step_title: "Front Tank Inspection",
+         question: "Rate each component on the front tank.",
+         instructions:
+            "Starting at the front of your machine, inspect the first tank on your air cart for wear, damage, or operational issues.",
+         tank_label: "Front Tank",
+         tank_index: 1,
+         run_sections: {
+            hoses: "Inspect hoses running from the front of the cart to the front tank.",
+            tubes: "Inspect stainless steel tubes running from the front of the cart to the front tank.",
+         },
+      },
+      {
+         position: "middle",
+         slug: "air-cart-middle-tank",
+         step_title: "Middle Tank Inspection",
+         question: "Rate each component on the middle tank.",
+         tank_label: "Middle Tank",
+         tank_index: 2,
+         run_sections: {
+            hoses: "Inspect hoses running from the front tank to the middle tank.",
+            tubes: "Inspect stainless steel tubes running from the front tank to the middle tank.",
+         },
+      },
+      {
+         position: "rear",
+         slug: "air-cart-rear-tank",
+         step_title: "Rear Tank Inspection",
+         question: "Rate each component on the rear tank.",
+         tank_label: "Rear Tank",
+         tank_index: 3,
+         run_sections: {
+            hoses: "Inspect hoses running from the middle tank to the rear tank.",
+            tubes: "Inspect stainless steel tubes running from the middle tank to the rear tank.",
+         },
+      },
+   ],
+};
 
 export const CART_TANK_SIZES = [
    "265 bu",
@@ -238,14 +347,203 @@ export function isInspectionStepApplicable(step, setup) {
 
    if (step.section === "air_cart") return isCartIncluded(setup);
    if (DRILL_INSPECTION_SECTIONS.has(step.section)) return isDrillIncluded(setup);
+   if (step.section === "wrap_up") return true;
 
    return true;
 }
 
-export function getApplicableSteps(steps, setup) {
+function getInspectionOrder(setup) {
+   const normalized = normalizeMachineSetup(setup);
+
+   if (normalized.component !== "both") return "drill_first";
+   if (normalized.inspectionOrder === "cart_first") return "cart_first";
+   if (normalized.inspectionOrder === "drill_first") return "drill_first";
+   if (normalized.includeDrill === false && normalized.includeCart !== false) return "cart_first";
+
+   return "drill_first";
+}
+
+function getStepSectionOrder(step, inspectionOrder) {
+   if (step.section === "machine_setup") return 0;
+   if (step.section === "wrap_up") return 4;
+
+   if (inspectionOrder === "cart_first") {
+      if (step.section === "air_cart") return 1;
+      if (DRILL_INSPECTION_SECTIONS.has(step.section)) return 2;
+   } else {
+      if (DRILL_INSPECTION_SECTIONS.has(step.section)) return 1;
+      if (step.section === "air_cart") return 2;
+   }
+
+   return 3;
+}
+
+export function getEffectiveTankCount(setup, override) {
+   const overrideCount = Number(override);
+   if (overrideCount > 0) return Math.min(MAX_CART_TANK_COUNT, Math.round(overrideCount));
+
+   const cart = getCartSetup(setup);
+   if (!cart) return 0;
+
+   const count = Number(cart.tankCount) || 0;
+   return count > 0 ? Math.min(MAX_CART_TANK_COUNT, count) : 0;
+}
+
+function prefixTankSectionLabel(tankLabel, label) {
+   return `${tankLabel} ${label}`;
+}
+
+function buildCartTankTrailingSections(tankLabel) {
+   return [
+      {
+         label: prefixTankSectionLabel(tankLabel, "Tank Lid with Hardware"),
+         value: "tank-lid-and-hardware",
+         choices: CART_LID_LADDER_CHOICES,
+      },
+      {
+         label: prefixTankSectionLabel(tankLabel, "Ladder"),
+         value: "ladder",
+         choices: CART_LID_LADDER_CHOICES,
+      },
+   ];
+}
+
+function buildCartTankInspectionSections(template, tankStep) {
+   const tankLabel = tankStep.tank_label ?? "Front Tank";
+   const baseSections = (template.inspection_sections ?? []).map((section) => ({
+      ...section,
+      label: prefixTankSectionLabel(tankLabel, section.label),
+   }));
+   const runCopy = tankStep.run_sections;
+   const trailingSections = buildCartTankTrailingSections(tankLabel);
+
+   if (!runCopy) return [...baseSections, ...trailingSections];
+
+   return [
+      ...baseSections,
+      {
+         label: prefixTankSectionLabel(tankLabel, "Hoses"),
+         value: "hoses",
+         question: runCopy.hoses,
+      },
+      {
+         label: prefixTankSectionLabel(tankLabel, "Stainless Steel Tubes"),
+         value: "stainless-steel-tubes",
+         question: runCopy.tubes,
+      },
+      ...trailingSections,
+   ];
+}
+
+function buildCartTankStep(template, tankStep) {
+   return {
+      ...template,
+      slug: tankStep.slug,
+      step_title: tankStep.step_title,
+      question: tankStep.question,
+      instructions: tankStep.instructions ?? template.instructions,
+      tank_position: tankStep.position,
+      tank_index: tankStep.tank_index,
+      inspection_sections: buildCartTankInspectionSections(template, tankStep),
+      is_cart_tank_template: false,
+   };
+}
+
+function expandCartTankSteps(steps, tankCount) {
+   const template = steps.find((step) => step.slug === CART_TANK_TEMPLATE_SLUG && step.is_cart_tank_template);
+   if (!template) return steps;
+
+   const layout = CART_TANK_STEP_LAYOUTS[tankCount];
+   const expanded = [];
+
+   for (const step of steps) {
+      if (step.slug === CART_TANK_TEMPLATE_SLUG && step.is_cart_tank_template) {
+         if (layout) {
+            layout.forEach((tankStep) => {
+               expanded.push(buildCartTankStep(template, tankStep));
+            });
+         }
+         continue;
+      }
+
+      expanded.push(step);
+   }
+
+   return expanded;
+}
+
+export function getApplicableSteps(steps, setup, tankCountOverride = null) {
    if (!Array.isArray(steps)) return [];
 
-   return steps.filter((step) => isInspectionStepApplicable(step, setup));
+   const normalized = normalizeMachineSetup(setup);
+   const inspectionOrder = getInspectionOrder(normalized);
+   const tankCount = isCartIncluded(normalized) ? getEffectiveTankCount(normalized, tankCountOverride) : 0;
+
+   const filtered = steps
+      .filter((step) => isInspectionStepApplicable(step, normalized))
+      .sort((a, b) => {
+         const orderA = getStepSectionOrder(a, inspectionOrder);
+         const orderB = getStepSectionOrder(b, inspectionOrder);
+
+         if (orderA !== orderB) return orderA - orderB;
+
+         return a.step_number - b.step_number;
+      });
+
+   return expandCartTankSteps(filtered, tankCount);
+}
+
+export function hasWrapUpFinalStep(applicableSteps) {
+   const lastStep = applicableSteps[applicableSteps.length - 1];
+   return lastStep?.section === "wrap_up";
+}
+
+export function isLastInspectableStepIndex(applicableSteps, currentIndex) {
+   if (hasWrapUpFinalStep(applicableSteps)) {
+      return currentIndex === applicableSteps.length - 2;
+   }
+
+   return currentIndex >= applicableSteps.length - 1;
+}
+
+export function getFirstDrillStepSlug(applicableSteps) {
+   const step = applicableSteps.find((item) => DRILL_INSPECTION_SECTIONS.has(item.section));
+
+   return step?.slug ?? null;
+}
+
+export function getFirstCartStepSlug(applicableSteps) {
+   const step = applicableSteps.find((item) => item.section === "air_cart" && item.answer_type !== "notes");
+
+   return step?.slug ?? null;
+}
+
+export function canOfferOptionalCartInspection(setup) {
+   const normalized = normalizeMachineSetup(setup);
+
+   return normalized.equipmentType === "air_seeder" && normalized.component === "both" && normalized.includeCart === false;
+}
+
+export function canOfferOptionalDrillInspection(setup) {
+   const normalized = normalizeMachineSetup(setup);
+
+   return normalized.equipmentType === "air_seeder" && normalized.component === "both" && normalized.includeDrill === false;
+}
+
+export function enableCartInspection(setup) {
+   return persistMachineSetupDraft({
+      ...normalizeMachineSetup(setup),
+      includeCart: true,
+      inspectionOrder: "drill_first",
+   });
+}
+
+export function enableDrillInspection(setup) {
+   return persistMachineSetupDraft({
+      ...normalizeMachineSetup(setup),
+      includeDrill: true,
+      inspectionOrder: "cart_first",
+   });
 }
 
 export function createEmptyMachineSetup() {
@@ -254,6 +552,7 @@ export function createEmptyMachineSetup() {
       component: "",
       includeDrill: true,
       includeCart: true,
+      inspectionOrder: "drill_first",
       manufacturer: "",
       model: "",
       width: "",
@@ -317,6 +616,32 @@ function isCartPartComplete(cart) {
    return true;
 }
 
+export function isDrillConfigurationComplete(setup) {
+   const normalized = normalizeMachineSetup(setup);
+
+   if (!isDrillIncluded(normalized)) return true;
+   if (normalized.component === "both") return isDrillPartComplete(normalized.drill);
+
+   return isDrillPartComplete(normalized);
+}
+
+export function isCartConfigurationComplete(setup) {
+   const normalized = normalizeMachineSetup(setup);
+
+   if (!isCartIncluded(normalized)) return true;
+   if (normalized.component === "both") return isCartPartComplete(normalized.cart);
+
+   return isCartPartComplete(normalized);
+}
+
+export function isDrillPartConfigurationComplete(setup) {
+   return isDrillPartComplete(normalizeMachineSetup(setup).drill);
+}
+
+export function isCartPartConfigurationComplete(setup) {
+   return isCartPartComplete(normalizeMachineSetup(setup).cart);
+}
+
 export function getMachineSetupPath(setup) {
    if (setup.equipmentType === "planter") return "planter";
    if (setup.equipmentType === "air_seeder" && setup.component === "both") return "air_seeder";
@@ -373,9 +698,8 @@ export function isSameCurrentMachine(previous, next) {
       if (previousIdentity.component !== nextIdentity.component) return false;
       if (previousIdentity.equipmentType !== nextIdentity.equipmentType) return false;
 
+      // Include toggles change which steps run, not the machine identity — keep existing answers.
       return (
-         previousIdentity.includeDrill === nextIdentity.includeDrill &&
-         previousIdentity.includeCart === nextIdentity.includeCart &&
          DRILL_IDENTITY_FIELDS.every((field) => previousIdentity.drill?.[field] === nextIdentity.drill?.[field]) &&
          CART_IDENTITY_FIELDS.every((field) => previousIdentity.cart?.[field] === nextIdentity.cart?.[field])
       );

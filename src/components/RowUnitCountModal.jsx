@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import CountStepper from "./CountStepper";
+import { MAX_CART_TANK_COUNT } from "../data/machineCatalog";
 
 const MIN_ROW_UNITS = 10;
 const MAX_ROW_UNITS = 150;
 const MIN_WORKING_RANKS = 1;
 const MAX_WORKING_RANKS = 4;
 const MIN_TANK_COUNT = 1;
-const MAX_TANK_COUNT = 4;
+const MAX_TANK_COUNT = MAX_CART_TANK_COUNT;
 
 function clampRowUnits(value) {
    const parsed = Math.round(Number(value) || MIN_ROW_UNITS);
