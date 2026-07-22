@@ -62,6 +62,7 @@ const CART_LID_LADDER_CHOICES = [
       recommended_action: "Component is in good condition.",
       estimated_low_cost: 0,
       estimated_high_cost: 0,
+      labor_cost: 0,
    },
    {
       label: "Needs replacing",
@@ -70,6 +71,7 @@ const CART_LID_LADDER_CHOICES = [
       recommended_action: "Plan to replace this component before operating.",
       estimated_low_cost: 250,
       estimated_high_cost: 2500,
+      labor_cost: 0,
    },
 ];
 

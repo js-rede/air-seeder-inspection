@@ -172,6 +172,9 @@ function InspectionCard({
             tertiaryQuestion={step.tertiary_question}
             tertiaryChoices={step.tertiary_choices}
             tertiaryShowForSecondaryValues={step.tertiary_show_for_secondary_values}
+            notesQuestion={step.notes_question}
+            notesShowForValues={step.notes_show_for_values}
+            notesPlaceholder={step.notes_placeholder}
             inspectionSections={step.inspection_sections}
             hideSectionSecondary={step.hide_section_secondary === true}
             quantityLabel={step.quantity_label}

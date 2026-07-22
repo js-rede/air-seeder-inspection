@@ -381,6 +381,31 @@ export function shouldShowSecondaryQuestion(step, selectionValue) {
    return true;
 }
 
+export function getNotesAnswer(answer) {
+   if (answer && typeof answer === "object" && "notes" in answer) {
+      return answer.notes ?? "";
+   }
+
+   return "";
+}
+
+export function shouldShowNotesQuestion(step, selectionValue) {
+   if (!step?.notes_question) {
+      return false;
+   }
+
+   if (!selectionValue || isSkipChoiceValue(selectionValue)) {
+      return false;
+   }
+
+   const showForValues = step.notes_show_for_values ?? [];
+   if (!showForValues.length) {
+      return false;
+   }
+
+   return showForValues.includes(selectionValue);
+}
+
 export function shouldShowSecondaryForWorkingRankAnswer(step, answer, workingRanks) {
    if (!step?.secondary_question || !step?.secondary_choices?.length) {
       return false;

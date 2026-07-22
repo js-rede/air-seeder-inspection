@@ -156,11 +156,11 @@ function ComponentSetupModalContent({ type, setup, onSave }) {
                   </>
                )}
 
-               <div className="pt-2">
+               <div className="flex justify-end pt-2">
                   <button
                      type="submit"
                      disabled={!isComplete}
-                     className="w-full cursor-pointer rounded-xl bg-[#e21313] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#c91010] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto">
+                     className="cursor-pointer rounded-xl bg-[#e21313] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#c91010] disabled:cursor-not-allowed disabled:opacity-50">
                      Save & Continue
                   </button>
                </div>

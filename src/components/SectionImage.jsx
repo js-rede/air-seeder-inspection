@@ -55,7 +55,7 @@ function SectionImage({ imageUrl, alt, caption, imagePadding = "p-0" }) {
                <img
                   src={imageUrl}
                   alt={alt}
-                  className="max-h-[85vh] max-w-[min(90vw,56rem)] rounded-xl border border-slate-300 bg-white object-contain shadow-2xl"
+                  className="max-h-[92vh] max-w-[min(96vw,80rem)] rounded-xl border border-slate-300 bg-white object-contain shadow-2xl"
                   onClick={(event) => event.stopPropagation()}
                />
             </div>

@@ -52,6 +52,24 @@ function App() {
    const [componentSetupModal, setComponentSetupModal] = useState(null);
    const navigationTargetSlug = useRef(null);
    const pendingComponentSetup = useRef(null);
+   const skipInitialScroll = useRef(true);
+
+   useEffect(() => {
+      if (skipInitialScroll.current) {
+         skipInitialScroll.current = false;
+         return;
+      }
+
+      if (!hasStarted) return;
+
+      const appRoot = document.getElementById("air-seeder-inspection-app");
+      if (appRoot) {
+         appRoot.scrollIntoView({ behavior: "smooth", block: "start" });
+         return;
+      }
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+   }, [currentIndex, isFinished, hasStarted]);
 
    useEffect(() => {
       fetch(STEPS_URL)

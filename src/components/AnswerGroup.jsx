@@ -9,11 +9,14 @@ import { DISC_DIAMETER_OPTIONS } from "../data/discDiameterOptions";
 import { selectClass, selectStyle } from "../utils/selectClass";
 import {
    getChoiceValue,
+   getNotesAnswer,
    getSecondaryAnswer,
    getSecondaryOtherAnswer,
    getTertiaryAnswer,
+   getTertiaryOtherAnswer,
    getSelectionAnswerValue,
    getSkipChoiceLabel,
+   shouldShowNotesQuestion,
    shouldShowSecondaryQuestion,
    SKIP_CHOICE_VALUE,
 } from "../utils/choices";
@@ -44,6 +47,9 @@ function AnswerGroup({
    tertiaryQuestion,
    tertiaryChoices = [],
    tertiaryShowForSecondaryValues = [],
+   notesQuestion,
+   notesShowForValues = [],
+   notesPlaceholder = "Optional notes…",
    inspectionSections = [],
    hideSectionSecondary = false,
    quantityLabel = "row-units",
@@ -121,21 +127,44 @@ function AnswerGroup({
          secondary_hide_for_values: secondaryHideForValues,
          secondary_show_for_values: secondaryShowForValues,
       };
+      const notesStep = {
+         notes_question: notesQuestion,
+         notes_show_for_values: notesShowForValues,
+      };
       const showSecondaryQuestion = shouldShowSecondaryQuestion(secondaryStep, selectionValue);
+      const showNotesQuestion = shouldShowNotesQuestion(notesStep, selectionValue);
+      const hasStructuredAnswer = Boolean(
+         (secondaryQuestion && secondaryChoices.length) || notesQuestion,
+      );
 
-      function selectPrimary(value) {
+      function buildSelectionAnswer(value) {
          const keepSecondary = shouldShowSecondaryQuestion(secondaryStep, value);
+         const keepNotes = shouldShowNotesQuestion(notesStep, value);
 
-         if (!secondaryQuestion || !secondaryChoices.length) {
-            onAnswer(value);
-            return;
+         if (!hasStructuredAnswer) {
+            return value;
          }
 
-         onAnswer({
+         return {
             value,
             secondary: keepSecondary ? getSecondaryAnswer(selectedAnswer) : "",
             secondaryOther: keepSecondary ? getSecondaryOtherAnswer(selectedAnswer) : "",
             tertiary: keepSecondary ? getTertiaryAnswer(selectedAnswer) : "",
+            tertiaryOther: keepSecondary ? getTertiaryOtherAnswer(selectedAnswer) : "",
+            notes: keepNotes ? getNotesAnswer(selectedAnswer) : "",
+         };
+      }
+
+      function selectPrimary(value) {
+         onAnswer(buildSelectionAnswer(value));
+      }
+
+      function updateNotes(nextNotes) {
+         const value = getSelectionAnswerValue(selectedAnswer);
+         onAnswer({
+            ...(typeof selectedAnswer === "object" ? selectedAnswer : { value }),
+            value,
+            notes: nextNotes,
          });
       }
 
@@ -177,6 +206,22 @@ function AnswerGroup({
                   value={selectedAnswer && typeof selectedAnswer === "object" ? selectedAnswer : { value: selectionValue }}
                   onChange={onAnswer}
                />
+            )}
+
+            {showNotesQuestion && (
+               <div className="mt-10 border-t border-slate-200 pt-8">
+                  <label htmlFor={stepSlug ? `inspection-notes-${stepSlug}` : "inspection-notes"} className="text-xl font-semibold text-slate-900">
+                     {notesQuestion}
+                  </label>
+                  <textarea
+                     id={stepSlug ? `inspection-notes-${stepSlug}` : "inspection-notes"}
+                     value={getNotesAnswer(selectedAnswer)}
+                     onChange={(e) => updateNotes(e.target.value)}
+                     rows={5}
+                     placeholder={notesPlaceholder}
+                     className="mt-4 w-full resize-y rounded-xl border border-slate-300 bg-white p-4 text-base text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                  />
+               </div>
             )}
          </div>
       );
