@@ -5,6 +5,8 @@ import InspectionNav from "./components/InspectionNav";
 import InspectionWelcome from "./components/InspectionWelcome";
 import InspectionScorecard from "./components/InspectionScorecard";
 import InspectionResults from "./components/InspectionResults";
+import InspectionContactForm from "./components/InspectionContactForm";
+import { createEmptyContact, normalizeContact } from "./utils/contactInfo";
 import ComponentSetupModal from "./components/ComponentSetupModal";
 import { getSavedDraft, saveDraft } from "./utils/storage";
 import { isAnswerComplete } from "./utils/answers";
@@ -42,6 +44,8 @@ function App() {
    const [hasStarted, setHasStarted] = useState(hasSavedProgress);
    const [hasInspectionStarted, setHasInspectionStarted] = useState(hasSavedInspection);
    const [isFinished, setIsFinished] = useState(Boolean(savedDraft.isFinished));
+   const [hasSubmittedContact, setHasSubmittedContact] = useState(Boolean(savedDraft.hasSubmittedContact));
+   const [contactInfo, setContactInfo] = useState(() => normalizeContact(savedDraft.contactInfo));
    const [currentIndex, setCurrentIndex] = useState(savedDraft.currentIndex || 0);
    const [answers, setAnswers] = useState(savedDraft.answers || {});
    const [rowUnitCountOverride, setRowUnitCountOverride] = useState(savedDraft.rowUnitCountOverride ?? null);
@@ -50,7 +54,6 @@ function App() {
    const [currentMachine, setCurrentMachine] = useState(savedDraft.currentMachine ?? null);
    const [componentSetupModal, setComponentSetupModal] = useState(null);
    const navigationTargetSlug = useRef(null);
-   const pendingComponentSetup = useRef(null);
    const skipInitialScroll = useRef(true);
 
    useEffect(() => {
@@ -68,7 +71,7 @@ function App() {
       }
 
       window.scrollTo({ top: 0, behavior: "smooth" });
-   }, [currentIndex, isFinished, hasStarted]);
+   }, [currentIndex, isFinished, hasStarted, hasSubmittedContact]);
 
    useEffect(() => {
       fetch(STEPS_URL)
@@ -90,6 +93,8 @@ function App() {
          hasStarted,
          hasInspectionStarted,
          isFinished,
+         hasSubmittedContact,
+         contactInfo,
          currentIndex,
          answers,
          rowUnitCountOverride,
@@ -101,6 +106,8 @@ function App() {
       hasStarted,
       hasInspectionStarted,
       isFinished,
+      hasSubmittedContact,
+      contactInfo,
       currentIndex,
       answers,
       rowUnitCountOverride,
@@ -109,12 +116,13 @@ function App() {
       currentMachine,
    ]);
 
-   const machineSetup = useMemo(() => normalizeMachineSetup(answers["machine-setup"]), [answers["machine-setup"]]);
+   const machineSetupAnswer = answers["machine-setup"];
+   const machineSetup = useMemo(() => normalizeMachineSetup(machineSetupAnswer), [machineSetupAnswer]);
    const applicableSteps = useMemo(
       () => getApplicableSteps(steps, machineSetup, tankCountOverride),
       [steps, machineSetup, tankCountOverride],
    );
-   const calculatedRowUnitCount = useMemo(() => calculateRowUnitCount(answers["machine-setup"]), [answers]);
+   const calculatedRowUnitCount = useMemo(() => calculateRowUnitCount(machineSetupAnswer), [machineSetupAnswer]);
    const setupWorkingRanks = Number(getDrillSetup(machineSetup).workingRanks) || 0;
    const showWorkingRanks = isDrillIncluded(machineSetup);
    const showCartTanks = isCartIncluded(machineSetup);
@@ -152,27 +160,6 @@ function App() {
       });
    }, [applicableSteps]);
 
-   useEffect(() => {
-      if (!pendingComponentSetup.current || !currentStep) return;
-
-      if (pendingComponentSetup.current === "drill") {
-         const firstDrillSlug = getFirstDrillStepSlug(applicableSteps);
-         if (currentStep.slug === firstDrillSlug) {
-            pendingComponentSetup.current = null;
-            setComponentSetupModal("drill");
-         }
-         return;
-      }
-
-      if (pendingComponentSetup.current === "cart") {
-         const firstCartSlug = getFirstCartStepSlug(applicableSteps);
-         if (currentStep.slug === firstCartSlug) {
-            pendingComponentSetup.current = null;
-            setComponentSetupModal("cart");
-         }
-      }
-   }, [currentStep, applicableSteps]);
-
    const isLastStep = currentIndex >= applicableSteps.length - 1;
    // Offer the skipped component next to Finish Inspection (final wrap-up step).
    const showOptionalCartInspection = isLastStep && canOfferOptionalCartInspection(machineSetup);
@@ -191,6 +178,8 @@ function App() {
 
    function resetInspectionKeepingMachineSetup(setupAnswer) {
       setHasInspectionStarted(false);
+      setIsFinished(false);
+      setHasSubmittedContact(false);
       setAnswers(setupAnswer ? { "machine-setup": setupAnswer } : {});
       syncMachineCountOverrides();
    }
@@ -319,6 +308,11 @@ function App() {
    }
 
    function goBack() {
+      if (isFinished && hasSubmittedContact) {
+         setHasSubmittedContact(false);
+         return;
+      }
+
       if (isFinished) {
          setIsFinished(false);
          return;
@@ -335,12 +329,25 @@ function App() {
    function startInspection() {
       setHasStarted(true);
       setIsFinished(false);
+      setHasSubmittedContact(false);
+   }
+
+   function handleContactSubmit(nextContact) {
+      setContactInfo(nextContact);
+      setHasSubmittedContact(true);
+      // HubSpot upsert will plug in here later.
+   }
+
+   function handleContactSkip() {
+      setHasSubmittedContact(true);
    }
 
    function restartInspection() {
       setHasStarted(false);
       setHasInspectionStarted(false);
       setIsFinished(false);
+      setHasSubmittedContact(false);
+      setContactInfo(createEmptyContact());
       setCurrentIndex(0);
       setAnswers({});
       setRowUnitCountOverride(null);
@@ -349,7 +356,6 @@ function App() {
       setCurrentMachine(null);
       setComponentSetupModal(null);
       navigationTargetSlug.current = null;
-      pendingComponentSetup.current = null;
    }
 
    function startCartInspection() {
@@ -360,7 +366,7 @@ function App() {
 
       navigationTargetSlug.current = cartSlug;
       if (!isCartPartConfigurationComplete(setup)) {
-         pendingComponentSetup.current = "cart";
+         setComponentSetupModal("cart");
       }
 
       setAnswers((prev) => ({
@@ -383,7 +389,7 @@ function App() {
 
       navigationTargetSlug.current = drillSlug;
       if (!isDrillPartConfigurationComplete(setup)) {
-         pendingComponentSetup.current = "drill";
+         setComponentSetupModal("drill");
       }
 
       setAnswers((prev) => ({
@@ -472,7 +478,16 @@ function App() {
 
                {hasStarted ? (
                   isFinished ? (
-                     <InspectionResults summary={summary} machineSetup={machineSetup} onRestart={restartInspection} />
+                     hasSubmittedContact ? (
+                        <InspectionResults summary={summary} machineSetup={machineSetup} onRestart={restartInspection} />
+                     ) : (
+                        <InspectionContactForm
+                           initialContact={contactInfo}
+                           onSubmit={handleContactSubmit}
+                           onSkip={handleContactSkip}
+                           onBack={goBack}
+                        />
+                     )
                   ) : (
                      <>
                         <InspectionCard

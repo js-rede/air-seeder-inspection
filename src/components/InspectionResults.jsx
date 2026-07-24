@@ -250,14 +250,14 @@ function InspectionResults({ summary, machineSetup, onRestart }) {
                   <ul className="space-y-1 text-sm text-slate-600">
                      <li>
                         Your estimate of <span className="font-semibold text-slate-900">{rangeWithMarginal || "$0"}</span>{" "}
-                        includes all items marked as <span className="font-semibold text-amber-500 italic">marginal</span> or{" "}
+                        includes all items rated as <span className="font-semibold text-amber-500 italic">marginal</span> or{" "}
                         <span className="font-semibold text-red-700 italic">need replacement</span>.
                      </li>
                      {hasMarginalItems && (
                         <li>
-                           Note: If only items marked as{" "}
-                           <span className="font-semibold text-red-700 italic">need replacement</span> are included, the
-                           estimate drops to{" "}
+                           Note: If only items rated as{" "}
+                           <span className="font-semibold text-red-700 italic">need replacement</span> are included in the
+                           estimate, the total drops to{" "}
                            <span className="font-semibold text-slate-900">{rangeWithoutMarginal || "$0"}</span>.
                         </li>
                      )}
