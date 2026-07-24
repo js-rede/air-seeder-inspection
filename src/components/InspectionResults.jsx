@@ -24,12 +24,13 @@ function getLineItemId(item) {
 
 function buildEquipmentDetails(machineSetup, summary) {
    const setup = normalizeMachineSetup(machineSetup);
-   const details = [];
+   const groups = [];
 
    if (isDrillIncluded(setup)) {
       const drill = getDrillSetup(setup);
       const nameParts = [drill.manufacturer, drill.model].filter(Boolean);
       if (drill.rowUnitSeries) nameParts.push(getRowUnitSeriesLabel(drill.rowUnitSeries));
+      const details = [];
 
       if (setup.component === "both") {
          details.push({
@@ -57,11 +58,14 @@ function buildEquipmentDetails(machineSetup, summary) {
       if (drill.otherDetails?.trim()) {
          details.push({ label: "Notes", value: drill.otherDetails.trim() });
       }
+
+      if (details.length) groups.push({ key: "drill", details });
    }
 
    if (isCartIncluded(setup)) {
       const cart = getCartSetup(setup);
       const nameParts = [cart?.manufacturer, cart?.model].filter(Boolean);
+      const details = [];
 
       if (setup.component === "both") {
          details.push({
@@ -82,9 +86,11 @@ function buildEquipmentDetails(machineSetup, summary) {
       if (cart?.otherDetails?.trim()) {
          details.push({ label: "Cart notes", value: cart.otherDetails.trim() });
       }
+
+      if (details.length) groups.push({ key: "cart", details });
    }
 
-   return details;
+   return groups;
 }
 
 function LineItemRow({ item, included, onToggleIncluded }) {
@@ -205,7 +211,9 @@ function InspectionResults({ summary, machineSetup, onRestart }) {
    const rangeWithoutMarginal = formatCostRange(withoutMarginalCosts.low, withoutMarginalCosts.high);
    const rangeWithMarginal = formatCostRange(withMarginalCosts.low, withMarginalCosts.high);
    const lineItemGroups = groupItemsBySection(summary.lineItems);
-   const interestGroups = groupItemsBySection(summary.interestItems);
+   const hasBothMachines =
+      lineItemGroups.some((group) => group.section === "air_cart") &&
+      lineItemGroups.some((group) => group.section !== "air_cart");
    const equipment = useMemo(() => buildEquipmentDetails(machineSetup, summary), [machineSetup, summary]);
    const hasCustomExclusions = excludedIds.size > 0;
    const onlyMarginalExcluded =
@@ -222,13 +230,17 @@ function InspectionResults({ summary, machineSetup, onRestart }) {
             {equipment.length > 0 && (
                <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-5">
                   <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">Equipment</p>
-                  <ul className="mt-3 space-y-1 text-sm text-slate-600">
-                     {equipment.map((detail) => (
-                        <li key={`${detail.label}-${detail.value}`}>
-                           {detail.label}: {detail.value}
-                        </li>
+                  <div className="mt-3 space-y-4 text-sm text-slate-600">
+                     {equipment.map((group) => (
+                        <ul key={group.key} className="space-y-1">
+                           {group.details.map((detail) => (
+                              <li key={`${group.key}-${detail.label}-${detail.value}`}>
+                                 {detail.label}: {detail.value}
+                              </li>
+                           ))}
+                        </ul>
                      ))}
-                  </ul>
+                  </div>
                </div>
             )}
 
@@ -268,7 +280,7 @@ function InspectionResults({ summary, machineSetup, onRestart }) {
             {summary.lineItems.length > 0 && (
                <div className="mt-8">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                     <h3 className="text-xl font-semibold text-slate-900">Items Affecting Estimate</h3>
+                     <h3 className="text-xl font-semibold text-slate-900"></h3>
                      <div className="flex flex-wrap items-center gap-3 sm:justify-end">
                         <div
                            className={`overflow-hidden transition-all duration-200 ease-out max-w-[12rem] ${
@@ -307,53 +319,53 @@ function InspectionResults({ summary, machineSetup, onRestart }) {
                         )}
                      </div>
                   </div>
+
+                  <hr className="mt-7 border-slate-200 -mb-2" />
+
                   {lineItemGroups.length > 0 && (
                      <div className="mt-4">
-                        {lineItemGroups.map((group) => (
-                           <div key={group.section} className="mt-8">
-                              <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-500 -mb-1">
-                                 {group.label}
-                              </h4>
-                              <ul className="mt-3 space-y-3">
-                                 {group.items.map((item) => {
-                                    const itemId = getLineItemId(item);
-                                    return (
-                                       <LineItemRow
-                                          key={itemId}
-                                          item={item}
-                                          included={!excludedIds.has(itemId)}
-                                          onToggleIncluded={() => toggleItemExcluded(itemId)}
-                                       />
-                                    );
-                                 })}
-                              </ul>
-                           </div>
-                        ))}
+                        {lineItemGroups.map((group, index) => {
+                           const machine = group.section === "air_cart" ? "cart" : "drill";
+                           const prevMachine =
+                              index > 0 ? (lineItemGroups[index - 1].section === "air_cart" ? "cart" : "drill") : machine;
+                           const showMachineDivider = index > 0 && machine !== prevMachine;
+                           const showMachineLabel = hasBothMachines && (index === 0 || machine !== prevMachine);
+                           const hideSectionLabel =
+                              hasBothMachines && (group.section === "air_cart" || group.section === "drill");
+                           return (
+                              <div key={group.section}>
+                                 {showMachineDivider && <hr className="mt-9 border-slate-200" />}
+                                 {showMachineLabel && (
+                                    <h3
+                                       className={`text-lg font-bold text-slate-900 ${index === 0 ? "mt-6" : "mt-8"} ${machine === "cart" ? "-mb-3" : ""}`}>
+                                       {machine === "cart" ? "Air Cart" : "Drill"}
+                                    </h3>
+                                 )}
+                                 <div className="mt-6">
+                                    {!hideSectionLabel && (
+                                       <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-500 -mb-1">
+                                          {group.label}
+                                       </h4>
+                                    )}
+                                    <ul className={`${hideSectionLabel ? "" : "mt-3"} space-y-3`}>
+                                       {group.items.map((item) => {
+                                          const itemId = getLineItemId(item);
+                                          return (
+                                             <LineItemRow
+                                                key={itemId}
+                                                item={item}
+                                                included={!excludedIds.has(itemId)}
+                                                onToggleIncluded={() => toggleItemExcluded(itemId)}
+                                             />
+                                          );
+                                       })}
+                                    </ul>
+                                 </div>
+                              </div>
+                           );
+                        })}
                      </div>
                   )}
-               </div>
-            )}
-
-            {interestGroups.length > 0 && (
-               <div className="mt-8">
-                  <h3 className="text-xl font-semibold text-slate-900">Interested In</h3>
-                  <div className="mt-4 space-y-6">
-                     {interestGroups.map((group) => (
-                        <div key={group.section}>
-                           {interestGroups.length > 1 && (
-                              <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-500">{group.label}</h4>
-                           )}
-                           <ul className={`${interestGroups.length > 1 ? "mt-3" : ""} space-y-3`}>
-                              {group.items.map((item) => (
-                                 <li key={item.slug} className="rounded-xl border border-slate-200 p-4">
-                                    <p className="font-semibold text-slate-900">{item.stepTitle}</p>
-                                    <p className="mt-1 text-sm text-slate-600">{item.label}</p>
-                                 </li>
-                              ))}
-                           </ul>
-                        </div>
-                     ))}
-                  </div>
                </div>
             )}
 
@@ -374,6 +386,26 @@ function InspectionResults({ summary, machineSetup, onRestart }) {
             <p className="mt-2 text-right text-sm italic text-slate-500">
                All price estimates are for informational purposes only and are subject to change.
             </p>
+
+            {summary.interestItems.length > 0 && (
+               <div className="mt-8">
+                  <div className="rounded-xl border border-slate-200 bg-slate-50 p-5">
+                     <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">Interested In</p>
+
+                     <ul className="mt-2 list-disc space-y-2 pl-5">
+                        {summary.interestItems.map((item) => (
+                           <li key={item.slug} className="text-sm text-slate-900">
+                              {item.stepTitle}
+                           </li>
+                        ))}
+                     </ul>
+
+                     <p className="mt-4 text-sm text-slate-600 italic">
+                        A Red E representative can follow up with more information.
+                     </p>
+                  </div>
+               </div>
+            )}
          </section>
          <footer className="mt-7 flex justify-end">
             <button
