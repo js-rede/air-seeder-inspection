@@ -104,6 +104,34 @@ export function getSelectionAnswerValue(answer) {
    return "";
 }
 
+export function getChoiceLaborCost(choice) {
+   return Number(choice?.labor_cost) || 0;
+}
+
+export function getChoicePartsCostRange(choice) {
+   const low = Number(choice?.estimated_low_cost) || 0;
+   const high = Number(choice?.estimated_high_cost ?? choice?.estimated_low_cost) || 0;
+
+   return { low, high };
+}
+
+/**
+ * Per-item cost range: parts (estimated_low/high) + labor_cost + optional extra material.
+ * Callers multiply by quantity/row-units when cost_multiplies_by_row_units (or tally count) applies.
+ */
+export function getChoiceCostRange(choice, extras = {}) {
+   if (!choice) return { low: 0, high: 0 };
+
+   const parts = getChoicePartsCostRange(choice);
+   const labor = getChoiceLaborCost(choice);
+   const material = Number(extras.materialCost) || 0;
+
+   return {
+      low: parts.low + labor + material,
+      high: parts.high + labor + material,
+   };
+}
+
 export function getMultiSelectionAnswer(answer) {
    return Array.isArray(answer) ? answer.filter(Boolean) : [];
 }
@@ -128,8 +156,9 @@ export function getMultiSelectionCosts(step, answer, rowUnitCount = 0) {
       const key = getChoiceValue(choice);
       if (!selectedValues.includes(key)) return;
 
-      estimatedLowCost += (choice.estimated_low_cost || 0) * multiplier;
-      estimatedHighCost += (choice.estimated_high_cost || choice.estimated_low_cost || 0) * multiplier;
+      const range = getChoiceCostRange(choice);
+      estimatedLowCost += range.low * multiplier;
+      estimatedHighCost += range.high * multiplier;
    });
 
    return { estimatedLowCost, estimatedHighCost };
@@ -207,15 +236,12 @@ export function getWorkingRankChoiceCost(step, choice, secondaryChoice, multipli
       return { estimatedLowCost: 0, estimatedHighCost: 0, lineItemLabel: null };
    }
 
-   const laborLow = choice.estimated_low_cost || 0;
-   const laborHigh = choice.estimated_high_cost || laborLow;
    const materialCost = getRankMaterialCost(step, choice, secondaryChoice);
-   const unitLow = laborLow + materialCost;
-   const unitHigh = laborHigh + materialCost;
+   const range = getChoiceCostRange(choice, { materialCost });
 
    return {
-      estimatedLowCost: unitLow * multiplier,
-      estimatedHighCost: unitHigh * multiplier,
+      estimatedLowCost: range.low * multiplier,
+      estimatedHighCost: range.high * multiplier,
       lineItemLabel:
          materialCost > 0 && secondaryChoice
             ? `${secondaryChoice.label} (replacement)`
@@ -435,18 +461,14 @@ export function getRowUnitDistributionCosts(step, answer) {
       const count = counts[getChoiceValue(choice)] || 0;
       if (count <= 0) return;
 
-      if (usesSecondaryCostForRating(step, choice.rating) && secondaryChoice) {
-         const materialCost = getChoiceUnitCost(secondaryChoice);
-         const laborLow = choice.estimated_low_cost || 0;
-         const laborHigh = choice.estimated_high_cost || laborLow;
+      const materialCost =
+         usesSecondaryCostForRating(step, choice.rating) && secondaryChoice
+            ? getChoiceUnitCost(secondaryChoice)
+            : 0;
+      const range = getChoiceCostRange(choice, { materialCost });
 
-         estimatedLowCost += (materialCost + laborLow) * count;
-         estimatedHighCost += (materialCost + laborHigh) * count;
-         return;
-      }
-
-      estimatedLowCost += (choice.estimated_low_cost || 0) * count;
-      estimatedHighCost += (choice.estimated_high_cost || 0) * count;
+      estimatedLowCost += range.low * count;
+      estimatedHighCost += range.high * count;
    });
 
    return { estimatedLowCost, estimatedHighCost };
@@ -469,8 +491,9 @@ export function getSectionSelectionCosts(step, answer) {
       const choice = getSectionChoices(section, choices).find((item) => getChoiceValue(item) === choiceValue);
       if (!choice) return;
 
-      estimatedLowCost += choice.estimated_low_cost || 0;
-      estimatedHighCost += choice.estimated_high_cost || 0;
+      const range = getChoiceCostRange(choice);
+      estimatedLowCost += range.low;
+      estimatedHighCost += range.high;
    });
 
    return { estimatedLowCost, estimatedHighCost };
@@ -486,6 +509,52 @@ export function isSecondaryAnswerComplete(answer, secondaryChoices = []) {
    }
 
    return true;
+}
+
+export function getFollowUpQuestions(step) {
+   return Array.isArray(step?.follow_up_questions) ? step.follow_up_questions : [];
+}
+
+export function getFollowUpAnswers(answer) {
+   if (answer && typeof answer === "object" && answer.followUps && typeof answer.followUps === "object") {
+      return answer.followUps;
+   }
+
+   return {};
+}
+
+export function getFollowUpQuestionKey(question) {
+   return question?.key || question?.slug || "";
+}
+
+export function isFollowUpQuestionsComplete(answer, followUpQuestions = []) {
+   if (!followUpQuestions.length) return true;
+
+   const followUps = getFollowUpAnswers(answer);
+
+   return followUpQuestions.every((question) => {
+      const key = getFollowUpQuestionKey(question);
+      if (!key) return false;
+
+      const value = followUps[key];
+      if (!value) return false;
+
+      const otherChoice = question.choices?.find((choice) => getChoiceValue(choice) === "other");
+      if (otherChoice && value === getChoiceValue(otherChoice)) {
+         return Boolean(String(followUps[`${key}Other`] || "").trim());
+      }
+
+      return true;
+   });
+}
+
+export function shouldShowFollowUpQuestionsForWorkingRankAnswer(step, answer, workingRanks) {
+   if (!getFollowUpQuestions(step).length) return false;
+
+   const selections = normalizeWorkingRankSelections(answer, workingRanks);
+   const selectedValues = Object.values(selections).filter((value) => Boolean(value) && !isSkipChoiceValue(value));
+
+   return selectedValues.length > 0;
 }
 
 export function normalizeRowUnitDistribution(answer, choices) {
@@ -533,23 +602,47 @@ export function getSelectionCosts(step, answer, rowUnitCount = 0) {
    const multiplier = getSelectionCostMultiplier(step, rowUnitCount);
    const secondaryChoice = getSecondaryChoice(step, answer);
 
-   if (usesSecondaryCostForRating(step, selectedChoice.rating) && secondaryChoice) {
-      const materialCost = getChoiceUnitCost(secondaryChoice);
-      const laborLow = selectedChoice.estimated_low_cost || 0;
-      const laborHigh = selectedChoice.estimated_high_cost || laborLow;
+   if (
+      secondaryChoice &&
+      (secondaryChoice.estimated_low_cost != null || secondaryChoice.estimated_high_cost != null)
+   ) {
+      const range = getChoiceCostRange(secondaryChoice);
+      const primaryLabor = getChoiceLaborCost(selectedChoice);
 
       return {
-         estimatedLowCost: (materialCost + laborLow) * multiplier,
-         estimatedHighCost: (materialCost + laborHigh) * multiplier,
+         estimatedLowCost: (range.low + primaryLabor) * multiplier,
+         estimatedHighCost: (range.high + primaryLabor) * multiplier,
+         lineItemLabel:
+            range.low > 0 || range.high > 0
+               ? `${selectedChoice.label} replacement`
+               : selectedChoice.label,
+      };
+   }
+
+   if (usesSecondaryCostForRating(step, selectedChoice.rating) && secondaryChoice) {
+      const materialCost = getChoiceUnitCost(secondaryChoice);
+      const range = getChoiceCostRange(selectedChoice, { materialCost });
+
+      return {
+         estimatedLowCost: range.low * multiplier,
+         estimatedHighCost: range.high * multiplier,
          lineItemLabel: `${secondaryChoice.label} (replacement)`,
       };
    }
 
+   const range = getChoiceCostRange(selectedChoice);
+
    return {
-      estimatedLowCost: (selectedChoice.estimated_low_cost || 0) * multiplier,
-      estimatedHighCost: (selectedChoice.estimated_high_cost || 0) * multiplier,
+      estimatedLowCost: range.low * multiplier,
+      estimatedHighCost: range.high * multiplier,
       lineItemLabel: selectedChoice.label,
    };
+}
+
+export function resolveQuestionTemplate(template, choiceLabel = "") {
+   if (!template) return template;
+
+   return String(template).replaceAll("{choice}", String(choiceLabel).toLowerCase());
 }
 
 function applyQuantitySingular(line, count) {
@@ -602,10 +695,12 @@ export function getReplacementTallyCosts(step, answer) {
       return { estimatedLowCost: 0, estimatedHighCost: 0 };
    }
 
-   const estimatedLowCost = (choice.estimated_low_cost || 0) * count;
-   const estimatedHighCost = (choice.estimated_high_cost || 0) * count;
+   const range = getChoiceCostRange(choice);
 
-   return { estimatedLowCost, estimatedHighCost };
+   return {
+      estimatedLowCost: range.low * count,
+      estimatedHighCost: range.high * count,
+   };
 }
 
 export function getRecommendationForAnswer(step, selectedAnswer, rowUnitCount = 0, workingRanks = 1) {
@@ -794,12 +889,19 @@ export function getRecommendationForAnswer(step, selectedAnswer, rowUnitCount = 
 
    const selectedChoice = getSelectedChoice(step, selectedAnswer);
 
-   if (selectedChoice?.recommended_action) {
+   if (selectedChoice?.hide_recommendation) {
+      return null;
+   }
+
+   if (selectedChoice?.recommended_action || getSecondaryChoice(step, selectedAnswer)?.recommended_action) {
       const { estimatedLowCost, estimatedHighCost } = getSelectionCosts(step, selectedAnswer, rowUnitCount);
+      const secondaryChoice = getSecondaryChoice(step, selectedAnswer);
+      const recommendationChoice = secondaryChoice?.recommended_action ? secondaryChoice : selectedChoice;
+      const choiceLabel = String(selectedChoice.label || "").toLowerCase();
 
       return {
-         text: selectedChoice.recommended_action,
-         rating: selectedChoice.rating,
+         text: resolveQuestionTemplate(recommendationChoice.recommended_action, choiceLabel),
+         rating: recommendationChoice.rating ?? selectedChoice.rating,
          estimatedLowCost,
          estimatedHighCost,
       };

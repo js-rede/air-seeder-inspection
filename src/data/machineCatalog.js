@@ -37,6 +37,23 @@ export const DRILL_WIDTHS = [
 
 export const ROW_SPACINGS = ["7.5 in", "10 in", "12 in", "12.5 in", "15 in", "20 in"];
 
+export const ROW_UNIT_SERIES_OPTIONS = [
+   { value: "60-90", label: "60-90" },
+   { value: "proseries", label: "ProSeries" },
+];
+
+const ROW_UNIT_SERIES_MODEL_PREFIXES = ["1860", "1890", "1990"];
+
+export function requiresRowUnitSeries(model) {
+   if (!model) return false;
+
+   return ROW_UNIT_SERIES_MODEL_PREFIXES.some((prefix) => model === prefix || model.startsWith(`${prefix} `));
+}
+
+export function getRowUnitSeriesLabel(value) {
+   return ROW_UNIT_SERIES_OPTIONS.find((option) => option.value === value)?.label ?? value;
+}
+
 export const WORKING_RANKS = [
    { value: "1", label: "1 rank" },
    { value: "2", label: "2 ranks" },
@@ -81,13 +98,13 @@ export const CART_TANK_STEP_LAYOUTS = {
          position: null,
          slug: "air-cart-tank",
          step_title: "Front Tank Inspection",
+         summary_title: "Front Tank",
          question: "Rate each component on the front tank.",
          instructions:
             "Starting at the front of your machine, inspect the first tank on your air cart for wear, damage, or operational issues.",
          tank_label: "Front Tank",
          tank_index: 1,
          run_sections: {
-            hoses: "Inspect hoses running from the front of the cart to the front tank.",
             tubes: "Inspect stainless steel tubes running from the front of the cart to the front tank.",
          },
       },
@@ -97,13 +114,13 @@ export const CART_TANK_STEP_LAYOUTS = {
          position: "front",
          slug: "air-cart-front-tank",
          step_title: "Front Tank Inspection",
+         summary_title: "Front Tank",
          question: "Rate each component on the front tank.",
          instructions:
             "Starting at the front of your machine, inspect the first tank on your air cart for wear, damage, or operational issues.",
          tank_label: "Front Tank",
          tank_index: 1,
          run_sections: {
-            hoses: "Inspect hoses running from the front of the cart to the front tank.",
             tubes: "Inspect stainless steel tubes running from the front of the cart to the front tank.",
          },
       },
@@ -111,11 +128,11 @@ export const CART_TANK_STEP_LAYOUTS = {
          position: "rear",
          slug: "air-cart-rear-tank",
          step_title: "Rear Tank Inspection",
+         summary_title: "Rear Tank",
          question: "Rate each component on the rear tank.",
          tank_label: "Rear Tank",
          tank_index: 2,
          run_sections: {
-            hoses: "Inspect hoses running from the front tank to the rear tank.",
             tubes: "Inspect stainless steel tubes running from the front tank to the rear tank.",
          },
       },
@@ -125,13 +142,13 @@ export const CART_TANK_STEP_LAYOUTS = {
          position: "front",
          slug: "air-cart-front-tank",
          step_title: "Front Tank Inspection",
+         summary_title: "Front Tank",
          question: "Rate each component on the front tank.",
          instructions:
             "Starting at the front of your machine, inspect the first tank on your air cart for wear, damage, or operational issues.",
          tank_label: "Front Tank",
          tank_index: 1,
          run_sections: {
-            hoses: "Inspect hoses running from the front of the cart to the front tank.",
             tubes: "Inspect stainless steel tubes running from the front of the cart to the front tank.",
          },
       },
@@ -139,11 +156,11 @@ export const CART_TANK_STEP_LAYOUTS = {
          position: "middle",
          slug: "air-cart-middle-tank",
          step_title: "Middle Tank Inspection",
+         summary_title: "Middle Tank",
          question: "Rate each component on the middle tank.",
          tank_label: "Middle Tank",
          tank_index: 2,
          run_sections: {
-            hoses: "Inspect hoses running from the front tank to the middle tank.",
             tubes: "Inspect stainless steel tubes running from the front tank to the middle tank.",
          },
       },
@@ -151,11 +168,11 @@ export const CART_TANK_STEP_LAYOUTS = {
          position: "rear",
          slug: "air-cart-rear-tank",
          step_title: "Rear Tank Inspection",
+         summary_title: "Rear Tank",
          question: "Rate each component on the rear tank.",
          tank_label: "Rear Tank",
          tank_index: 3,
          run_sections: {
-            hoses: "Inspect hoses running from the middle tank to the rear tank.",
             tubes: "Inspect stainless steel tubes running from the middle tank to the rear tank.",
          },
       },
@@ -177,7 +194,9 @@ export const CART_TANK_SIZES = [
 
 const DRILL_MODELS = {
    "John Deere": [
+      "1860 No-Till Air Drill",
       "1890 No-Till Air Drill",
+      "1990 No-Till Air Drill",
       "N500 / N500C Series",
       "N500F Series",
       "P500 Series",
@@ -211,7 +230,7 @@ const DRILL_MODELS = {
 };
 
 const CART_MODELS = {
-   "John Deere": ["1910 Commodity Cart", "C650 Air Cart", "C850 Air Cart", "C-Series", "Other"],
+   "John Deere": ["1900 Commodity Cart", "1910 Commodity Cart", "C650 Air Cart", "C850 Air Cart", "C-Series", "Other"],
    "Case IH": [
       "Precision Air 525",
       "Precision Air 535",
@@ -294,6 +313,7 @@ export function createEmptyDrillSetup() {
    return {
       manufacturer: "",
       model: "",
+      rowUnitSeries: "",
       width: "",
       rowSpacing: "",
       rowUnitCount: "",
@@ -313,6 +333,7 @@ export function createEmptyCartSetup() {
 }
 
 export const DRILL_INSPECTION_SECTIONS = new Set([
+   "main_arm",
    "openers",
    "closing_system",
    "press_wheels",
@@ -320,6 +341,7 @@ export const DRILL_INSPECTION_SECTIONS = new Set([
    "gauge_wheels",
    "seed_boots",
    "drill",
+   "seed fertilizer placement rank",
 ]);
 
 export function isDrillIncluded(setup) {
@@ -421,20 +443,17 @@ function buildCartTankInspectionSections(template, tankStep) {
 
    if (!runCopy) return [...baseSections, ...trailingSections];
 
-   return [
-      ...baseSections,
-      {
-         label: prefixTankSectionLabel(tankLabel, "Hoses"),
-         value: "hoses",
-         question: runCopy.hoses,
-      },
-      {
+   const runSections = [];
+
+   if (runCopy.tubes) {
+      runSections.push({
          label: prefixTankSectionLabel(tankLabel, "Stainless Steel Tubes"),
          value: "stainless-steel-tubes",
          question: runCopy.tubes,
-      },
-      ...trailingSections,
-   ];
+      });
+   }
+
+   return [...baseSections, ...runSections, ...trailingSections];
 }
 
 function buildCartTankStep(template, tankStep) {
@@ -442,6 +461,7 @@ function buildCartTankStep(template, tankStep) {
       ...template,
       slug: tankStep.slug,
       step_title: tankStep.step_title,
+      summary_title: tankStep.summary_title || tankStep.tank_label || tankStep.step_title,
       question: tankStep.question,
       instructions: tankStep.instructions ?? template.instructions,
       tank_position: tankStep.position,
@@ -500,12 +520,18 @@ export function hasWrapUpFinalStep(applicableSteps) {
    return lastStep?.section === "wrap_up";
 }
 
-export function isLastInspectableStepIndex(applicableSteps, currentIndex) {
-   if (hasWrapUpFinalStep(applicableSteps)) {
-      return currentIndex === applicableSteps.length - 2;
+export function getLastInspectableStepIndex(applicableSteps) {
+   for (let index = applicableSteps.length - 1; index >= 0; index -= 1) {
+      if (applicableSteps[index]?.section !== "wrap_up") {
+         return index;
+      }
    }
 
-   return currentIndex >= applicableSteps.length - 1;
+   return applicableSteps.length - 1;
+}
+
+export function isLastInspectableStepIndex(applicableSteps, currentIndex) {
+   return currentIndex === getLastInspectableStepIndex(applicableSteps);
 }
 
 export function getFirstDrillStepSlug(applicableSteps) {
@@ -557,6 +583,7 @@ export function createEmptyMachineSetup() {
       inspectionOrder: "drill_first",
       manufacturer: "",
       model: "",
+      rowUnitSeries: "",
       width: "",
       rowSpacing: "",
       rowUnitCount: "",
@@ -605,6 +632,7 @@ export function getCartSetup(setup) {
 
 function isDrillPartComplete(drill) {
    if (!drill?.manufacturer || !drill?.model) return false;
+   if (requiresRowUnitSeries(drill.model) && !drill.rowUnitSeries) return false;
    if (!drill.width || !drill.rowSpacing) return false;
    if (!drill.rowUnitCount || !drill.workingRanks) return false;
    if (drill.model === "Other" && !drill.otherDetails?.trim()) return false;
@@ -652,8 +680,8 @@ export function getMachineSetupPath(setup) {
    return null;
 }
 
-const CURRENT_MACHINE_IDENTITY_FIELDS = ["equipmentType", "component", "manufacturer", "model", "otherDetails"];
-const DRILL_IDENTITY_FIELDS = ["manufacturer", "model", "otherDetails"];
+const CURRENT_MACHINE_IDENTITY_FIELDS = ["equipmentType", "component", "manufacturer", "model", "rowUnitSeries", "otherDetails"];
+const DRILL_IDENTITY_FIELDS = ["manufacturer", "model", "rowUnitSeries", "otherDetails"];
 const CART_IDENTITY_FIELDS = ["manufacturer", "model", "otherDetails"];
 
 export function getCurrentMachineIdentity(setup) {
@@ -854,6 +882,7 @@ export function isMachineSetupComplete(value) {
    }
 
    if (setup.equipmentType === "planter" || setup.component === "drill") {
+      if (requiresRowUnitSeries(setup.model) && !setup.rowUnitSeries) return false;
       if (!setup.width || !setup.rowSpacing) return false;
    }
 
@@ -885,7 +914,9 @@ export function formatMachineSetupSummary(value) {
       const cart = setup.cart || createEmptyCartSetup();
 
       if (includeDrill) {
-         const drillParts = [drill.manufacturer, drill.model, drill.width, drill.rowSpacing];
+         const drillParts = [drill.manufacturer, drill.model];
+         if (drill.rowUnitSeries) drillParts.push(getRowUnitSeriesLabel(drill.rowUnitSeries));
+         drillParts.push(drill.width, drill.rowSpacing);
          if (drill.rowUnitCount) drillParts.push(`${drill.rowUnitCount} row-units`);
          if (drill.workingRanks) {
             const rankCount = Number(drill.workingRanks);
@@ -926,6 +957,7 @@ export function formatMachineSetupSummary(value) {
 
    parts.push(setup.manufacturer, setup.model);
 
+   if (setup.rowUnitSeries) parts.push(getRowUnitSeriesLabel(setup.rowUnitSeries));
    if (setup.width) parts.push(setup.width);
    if (setup.rowSpacing) parts.push(setup.rowSpacing);
    if (setup.rowUnitCount) parts.push(`${setup.rowUnitCount} row-units`);

@@ -47,6 +47,7 @@ function AnswerGroup({
    tertiaryQuestion,
    tertiaryChoices = [],
    tertiaryShowForSecondaryValues = [],
+   followUpQuestions = [],
    notesQuestion,
    notesShowForValues = [],
    notesPlaceholder = "Optional notes…",
@@ -111,6 +112,7 @@ function AnswerGroup({
             secondaryChoices={secondaryChoices}
             secondaryHideForValues={secondaryHideForValues}
             secondaryShowForValues={secondaryShowForValues}
+            followUpQuestions={followUpQuestions}
          />
       );
    }
@@ -203,6 +205,9 @@ function AnswerGroup({
                   tertiaryQuestion={tertiaryQuestion}
                   tertiaryChoices={tertiaryChoices}
                   tertiaryShowForSecondaryValues={tertiaryShowForSecondaryValues}
+                  primaryChoiceLabel={
+                     choices.find((choice) => getChoiceValue(choice) === selectionValue)?.label || ""
+                  }
                   value={selectedAnswer && typeof selectedAnswer === "object" ? selectedAnswer : { value: selectionValue }}
                   onChange={onAnswer}
                />

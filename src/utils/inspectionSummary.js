@@ -1,5 +1,6 @@
 import { normalizeMachineSetup, getDrillSetup, getEffectiveTankCount } from "../data/machineCatalog";
 import {
+   getChoiceCostRange,
    getChoiceUnitCost,
    getChoiceValue,
    getSecondaryChoice,
@@ -13,6 +14,10 @@ import {
    isSkipChoiceValue,
    getMultiSelectionAnswer,
    getMultiSelectionCostMultiplier,
+   getMultiSelectionCosts,
+   getReplacementTallyCosts,
+   getRowUnitDistributionCosts,
+   getSectionSelectionCosts,
    normalizeRowUnitDistribution,
    normalizeSectionSelections,
    normalizeWorkingRankSelections,
@@ -122,7 +127,8 @@ export function calculateInspectionSummary(steps, answers, rowUnitCountOverride,
 
             interestItems.push({
                slug: step.slug,
-               stepTitle: step.step_title,
+               section: step.section,
+               stepTitle: step.summary_title || step.step_title,
                label: choice?.recommended_action || "Interested in follow-up",
             });
          }
@@ -140,8 +146,7 @@ export function calculateInspectionSummary(steps, answers, rowUnitCountOverride,
          const rating = choice.rating || "bad";
          ratingCounts[rating] = (ratingCounts[rating] || 0) + count;
 
-         const itemLow = (choice.estimated_low_cost || 0) * count;
-         const itemHigh = (choice.estimated_high_cost || 0) * count;
+         const { estimatedLowCost: itemLow, estimatedHighCost: itemHigh } = getReplacementTallyCosts(step, answer);
 
          estimatedLow += itemLow;
          estimatedHigh += itemHigh;
@@ -149,7 +154,8 @@ export function calculateInspectionSummary(steps, answers, rowUnitCountOverride,
          if (itemLow > 0 || itemHigh > 0) {
             lineItems.push({
                slug: step.slug,
-               stepTitle: step.step_title,
+               section: step.section,
+               stepTitle: step.summary_title || step.step_title,
                label: choice.label,
                rating,
                quantity: count,
@@ -166,6 +172,13 @@ export function calculateInspectionSummary(steps, answers, rowUnitCountOverride,
          const choices = getStepChoices(step);
          const counts = normalizeRowUnitCounts(answer, choices);
          const secondaryChoice = getSecondaryChoice(step, answer);
+         const { estimatedLowCost: distributionLow, estimatedHighCost: distributionHigh } = getRowUnitDistributionCosts(
+            step,
+            answer,
+         );
+
+         estimatedLow += distributionLow;
+         estimatedHigh += distributionHigh;
 
          choices.forEach((choice) => {
             const key = getChoiceValue(choice);
@@ -175,30 +188,18 @@ export function calculateInspectionSummary(steps, answers, rowUnitCountOverride,
             const rating = choice.rating || "unknown";
             ratingCounts[rating] = (ratingCounts[rating] || 0) + count;
 
-            let itemLow = 0;
-            let itemHigh = 0;
-            let itemLabel = choice.label;
-
-            if (usesSecondaryCostForRating(step, rating) && secondaryChoice) {
-               const materialCost = getChoiceUnitCost(secondaryChoice);
-               const laborLow = choice.estimated_low_cost || 0;
-               const laborHigh = choice.estimated_high_cost || laborLow;
-
-               itemLow = (materialCost + laborLow) * count;
-               itemHigh = (materialCost + laborHigh) * count;
-               itemLabel = `${secondaryChoice.label} (replacement)`;
-            } else {
-               itemLow = (choice.estimated_low_cost || 0) * count;
-               itemHigh = (choice.estimated_high_cost || 0) * count;
-            }
-
-            estimatedLow += itemLow;
-            estimatedHigh += itemHigh;
+            const materialCost =
+               usesSecondaryCostForRating(step, rating) && secondaryChoice ? getChoiceUnitCost(secondaryChoice) : 0;
+            const range = getChoiceCostRange(choice, { materialCost });
+            const itemLow = range.low * count;
+            const itemHigh = range.high * count;
+            const itemLabel = materialCost > 0 && secondaryChoice ? `${secondaryChoice.label} (replacement)` : choice.label;
 
             if (itemLow > 0 || itemHigh > 0) {
                lineItems.push({
                   slug: step.slug,
-                  stepTitle: step.step_title,
+                  section: step.section,
+                  stepTitle: step.summary_title || step.step_title,
                   label: itemLabel,
                   rating,
                   quantity: count,
@@ -231,21 +232,25 @@ export function calculateInspectionSummary(steps, answers, rowUnitCountOverride,
             const rating = choice.rating || "unknown";
             ratingCounts[rating] = (ratingCounts[rating] || 0) + quantity;
 
-            const { estimatedLowCost: itemLow, estimatedHighCost: itemHigh, lineItemLabel } =
-               getWorkingRankChoiceCost(step, choice, secondaryChoice, quantity);
+            const {
+               estimatedLowCost: itemLow,
+               estimatedHighCost: itemHigh,
+               lineItemLabel,
+            } = getWorkingRankChoiceCost(step, choice, secondaryChoice, quantity);
 
             estimatedLow += itemLow;
             estimatedHigh += itemHigh;
 
             if (itemLow > 0 || itemHigh > 0) {
+               const multipliesByRowUnits = Boolean(step.cost_multiplies_by_row_units);
                lineItems.push({
                   slug: step.slug,
-                  stepTitle: step.step_title,
-                  label:
-                     workingRanks > 1 ? `Working rank ${rankKey}: ${lineItemLabel}` : lineItemLabel,
+                  section: step.section,
+                  stepTitle: step.summary_title || step.step_title,
+                  label: workingRanks > 1 ? `Working rank ${rankKey}: ${lineItemLabel}` : lineItemLabel,
                   rating,
                   quantity,
-                  quantityLabel: step.quantity_label || "row-units",
+                  quantityLabel: multipliesByRowUnits ? step.quantity_label || "row-units" : "item",
                   estimatedLowCost: itemLow,
                   estimatedHighCost: itemHigh,
                });
@@ -259,6 +264,10 @@ export function calculateInspectionSummary(steps, answers, rowUnitCountOverride,
          const choices = getStepChoices(step);
          const sections = getStepInspectionSections(step);
          const selections = normalizeSectionSelections(answer, sections);
+         const { estimatedLowCost: sectionLow, estimatedHighCost: sectionHigh } = getSectionSelectionCosts(step, answer);
+
+         estimatedLow += sectionLow;
+         estimatedHigh += sectionHigh;
 
          sections.forEach((section) => {
             const key = section.value ?? section.label;
@@ -272,16 +281,15 @@ export function calculateInspectionSummary(steps, answers, rowUnitCountOverride,
             const rating = choice.rating || "unknown";
             ratingCounts[rating] = (ratingCounts[rating] || 0) + 1;
 
-            const itemLow = choice.estimated_low_cost || 0;
-            const itemHigh = choice.estimated_high_cost || 0;
-
-            estimatedLow += itemLow;
-            estimatedHigh += itemHigh;
+            const range = getChoiceCostRange(choice);
+            const itemLow = range.low;
+            const itemHigh = range.high;
 
             if (itemLow > 0 || itemHigh > 0) {
                lineItems.push({
                   slug: step.slug,
-                  stepTitle: step.step_title,
+                  section: step.section,
+                  stepTitle: step.summary_title || step.step_title,
                   label: `${section.label}: ${choice.label}`,
                   rating,
                   quantity: 1,
@@ -299,7 +307,8 @@ export function calculateInspectionSummary(steps, answers, rowUnitCountOverride,
          const choice = getSelectedChoice(step, answer);
          if (!choice) return;
 
-         const rating = choice.rating || "unknown";
+         const secondaryChoice = getSecondaryChoice(step, answer);
+         const rating = secondaryChoice?.rating || choice.rating || "unknown";
          ratingCounts[rating] = (ratingCounts[rating] || 0) + 1;
 
          const { estimatedLowCost, estimatedHighCost, lineItemLabel } = getSelectionCosts(step, answer, rowUnitCount);
@@ -311,7 +320,8 @@ export function calculateInspectionSummary(steps, answers, rowUnitCountOverride,
          if (estimatedLowCost > 0 || estimatedHighCost > 0) {
             lineItems.push({
                slug: step.slug,
-               stepTitle: step.step_title,
+               section: step.section,
+               stepTitle: step.summary_title || step.step_title,
                label: lineItemLabel || choice.label,
                rating,
                quantity: multiplier > 1 ? multiplier : 1,
@@ -328,6 +338,14 @@ export function calculateInspectionSummary(steps, answers, rowUnitCountOverride,
          const choices = getStepChoices(step);
          const selectedValues = getMultiSelectionAnswer(answer);
          const multiplier = getMultiSelectionCostMultiplier(step, rowUnitCount);
+         const { estimatedLowCost: multiLow, estimatedHighCost: multiHigh } = getMultiSelectionCosts(
+            step,
+            answer,
+            rowUnitCount,
+         );
+
+         estimatedLow += multiLow;
+         estimatedHigh += multiHigh;
 
          choices.forEach((choice) => {
             const key = getChoiceValue(choice);
@@ -336,17 +354,17 @@ export function calculateInspectionSummary(steps, answers, rowUnitCountOverride,
             const rating = choice.rating || "bad";
             ratingCounts[rating] = (ratingCounts[rating] || 0) + multiplier;
 
-            const itemLow = (choice.estimated_low_cost || 0) * multiplier;
-            const itemHigh = (choice.estimated_high_cost || choice.estimated_low_cost || 0) * multiplier;
-
-            estimatedLow += itemLow;
-            estimatedHigh += itemHigh;
+            const range = getChoiceCostRange(choice);
+            const itemLow = range.low * multiplier;
+            const itemHigh = range.high * multiplier;
 
             if (itemLow > 0 || itemHigh > 0) {
                lineItems.push({
                   slug: step.slug,
-                  stepTitle: step.step_title,
-                  label: choice.label,
+                  section: step.section,
+                  stepTitle: choice.label,
+                  label: "",
+                  choiceValue: key,
                   rating,
                   quantity: multiplier,
                   quantityLabel: step.quantity_label || "row-units",
@@ -364,13 +382,19 @@ export function calculateInspectionSummary(steps, answers, rowUnitCountOverride,
          ratingCounts[rating] = (ratingCounts[rating] || 0) + 1;
 
          if (answer === "Yes") {
-            const costs = addCost(0, 0, step.estimated_low_cost, step.estimated_high_cost);
+            const costs = addCost(
+               0,
+               0,
+               (Number(step.estimated_low_cost) || 0) + (Number(step.labor_cost) || 0),
+               (Number(step.estimated_high_cost) || 0) + (Number(step.labor_cost) || 0),
+            );
             estimatedLow += costs.low;
             estimatedHigh += costs.high;
 
             lineItems.push({
                slug: step.slug,
-               stepTitle: step.step_title,
+               section: step.section,
+               stepTitle: step.summary_title || step.step_title,
                label: answer,
                rating,
                quantity: 1,
@@ -402,6 +426,52 @@ export function formatCostRange(low, high) {
    if (low <= 0 && high <= 0) return null;
    if (low === high) return formatCurrency(low);
    return `${formatCurrency(low)} – ${formatCurrency(high)}`;
+}
+
+const SECTION_LABELS = {
+   machine_setup: "Machine Setup",
+   main_arm: "Main Arm",
+   openers: "Openers",
+   closing_system: "Closing System",
+   press_wheels: "Press Wheels",
+   depth_control: "Depth Control",
+   gauge_wheels: "Gauge Wheels",
+   seed_boots: "Seed Boots",
+   drill: "Drill",
+   "seed fertilizer placement rank": "Seed Fertilizer Placement Rank",
+   air_cart: "Air Cart",
+   wrap_up: "Wrap Up",
+};
+
+export function formatSectionLabel(section) {
+   if (!section) return "Other";
+   if (SECTION_LABELS[section]) return SECTION_LABELS[section];
+   return String(section)
+      .split("_")
+      .filter(Boolean)
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ");
+}
+
+/** Groups line items by step section, preserving first-seen order. */
+export function groupItemsBySection(items = []) {
+   const groups = [];
+   const indexBySection = new Map();
+
+   items.forEach((item) => {
+      const key = item.section || "other";
+      if (!indexBySection.has(key)) {
+         indexBySection.set(key, groups.length);
+         groups.push({
+            section: key,
+            label: formatSectionLabel(key),
+            items: [],
+         });
+      }
+      groups[indexBySection.get(key)].items.push(item);
+   });
+
+   return groups;
 }
 
 export function isRowUnitDistributionComplete(answer, choices, rowUnitCount) {

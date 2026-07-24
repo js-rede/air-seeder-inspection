@@ -3,7 +3,9 @@ import {
    CART_TANK_SIZES,
    DRILL_WIDTHS,
    ROW_SPACINGS,
+   ROW_UNIT_SERIES_OPTIONS,
    WORKING_RANKS,
+   requiresRowUnitSeries,
 } from "../data/machineCatalog";
 import { selectClass, selectStyle } from "../utils/selectClass";
 
@@ -79,8 +81,35 @@ export function DrillDetailFields({
 }) {
    if (!revealAll && !values.model) return null;
 
+   const showRowUnitSeries = requiresRowUnitSeries(values.model);
+
    return (
       <>
+         {showRowUnitSeries && (
+            <div>
+               <p className="mb-2 text-sm font-medium text-slate-700">Do you have 60-90 or ProSeries row units?</p>
+               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  {ROW_UNIT_SERIES_OPTIONS.map((option) => {
+                     const isSelected = values.rowUnitSeries === option.value;
+
+                     return (
+                        <button
+                           key={option.value}
+                           type="button"
+                           onClick={() => onFieldChange("rowUnitSeries", option.value)}
+                           className={`cursor-pointer rounded-xl border p-4 text-left text-base font-semibold transition ${
+                              isSelected
+                                 ? "border-[#1347e2] bg-blue-50 text-slate-900"
+                                 : "border-slate-300 bg-white hover:border-slate-400 hover:bg-slate-50"
+                           }`}>
+                           {option.label}
+                        </button>
+                     );
+                  })}
+               </div>
+            </div>
+         )}
+
          <div className="grid gap-4 sm:grid-cols-2">
             <div>
                <label htmlFor={`${idPrefix}-width`} className="mb-2 block text-sm font-medium text-slate-700">
@@ -124,6 +153,25 @@ export function DrillDetailFields({
          {(revealAll || (values.width && values.rowSpacing)) && (
             <div className="grid gap-4 sm:grid-cols-2">
                <div>
+                  <label htmlFor={`${idPrefix}-working-ranks`} className="mb-2 block text-sm font-medium text-slate-700">
+                     Number of working ranks
+                  </label>
+                  <select
+                     id={`${idPrefix}-working-ranks`}
+                     value={values.workingRanks}
+                     onChange={(e) => onFieldChange("workingRanks", e.target.value)}
+                     className={selectClass}
+                     style={selectStyle}>
+                     <option value="">Select ranks…</option>
+                     {WORKING_RANKS.map((option) => (
+                        <option key={option.value} value={option.value}>
+                           {option.label}
+                        </option>
+                     ))}
+                  </select>
+               </div>
+
+               <div>
                   <label htmlFor={`${idPrefix}-row-units`} className="mb-2 block text-sm font-medium text-slate-700">
                      Number of row-units
                   </label>
@@ -143,25 +191,6 @@ export function DrillDetailFields({
                   {predictedRowUnitCount > 0 && (
                      <p className="mt-2 text-xs text-slate-500">Estimated from width & row spacing. Adjust if needed.</p>
                   )}
-               </div>
-
-               <div>
-                  <label htmlFor={`${idPrefix}-working-ranks`} className="mb-2 block text-sm font-medium text-slate-700">
-                     Number of working ranks
-                  </label>
-                  <select
-                     id={`${idPrefix}-working-ranks`}
-                     value={values.workingRanks}
-                     onChange={(e) => onFieldChange("workingRanks", e.target.value)}
-                     className={selectClass}
-                     style={selectStyle}>
-                     <option value="">Select ranks…</option>
-                     {WORKING_RANKS.map((option) => (
-                        <option key={option.value} value={option.value}>
-                           {option.label}
-                        </option>
-                     ))}
-                  </select>
                </div>
             </div>
          )}

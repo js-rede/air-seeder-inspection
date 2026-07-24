@@ -52,6 +52,7 @@ function ComponentSetupModalContent({ type, setup, onSave }) {
 
          if (field === "manufacturer") {
             nextDrill.model = "";
+            nextDrill.rowUnitSeries = "";
             nextDrill.width = "";
             nextDrill.rowSpacing = "";
             nextDrill.rowUnitCount = "";
@@ -59,6 +60,7 @@ function ComponentSetupModalContent({ type, setup, onSave }) {
          }
 
          if (field === "model") {
+            nextDrill.rowUnitSeries = "";
             nextDrill.width = "";
             nextDrill.rowSpacing = "";
             nextDrill.rowUnitCount = "";

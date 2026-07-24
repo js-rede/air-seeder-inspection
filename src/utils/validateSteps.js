@@ -75,6 +75,36 @@ export function validateSteps(steps) {
             }
          });
       }
+
+      if (step.follow_up_questions) {
+         if (!Array.isArray(step.follow_up_questions) || step.follow_up_questions.length === 0) {
+            throw new Error(`Step "${stepLabel}" follow_up_questions must be a non-empty array when provided.`);
+         }
+
+         step.follow_up_questions.forEach((question, questionIndex) => {
+            if (!question?.key && !question?.slug) {
+               throw new Error(`Step "${stepLabel}" follow-up question ${questionIndex + 1} is missing a key.`);
+            }
+
+            if (!question?.question) {
+               throw new Error(`Step "${stepLabel}" follow-up question ${questionIndex + 1} is missing question text.`);
+            }
+
+            if (!Array.isArray(question.choices) || question.choices.length === 0) {
+               throw new Error(
+                  `Step "${stepLabel}" follow-up question ${questionIndex + 1} must include a non-empty choices array.`,
+               );
+            }
+
+            question.choices.forEach((choice, choiceIndex) => {
+               if (!choice?.label) {
+                  throw new Error(
+                     `Step "${stepLabel}" follow-up question ${questionIndex + 1} choice ${choiceIndex + 1} is missing a label.`,
+                  );
+               }
+            });
+         });
+      }
    });
 
    return steps;

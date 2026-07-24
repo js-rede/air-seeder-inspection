@@ -1,6 +1,22 @@
 import { isMachineSetupComplete } from "../data/machineCatalog";
 import { getAnswerType } from "../data/discDiameterOptions";
-import { getSelectionAnswerValue, getStepChoices, getStepInspectionSections, getSecondaryAnswer, isSecondaryAnswerComplete, isSectionSelectionComplete, isTertiaryAnswerComplete, isWorkingRankSelectionComplete, shouldShowSecondaryForWorkingRankAnswer, shouldShowSecondaryQuestion, shouldShowTertiaryQuestion, isSkipChoiceValue } from "./choices";
+import {
+   getSelectionAnswerValue,
+   getStepChoices,
+   getStepInspectionSections,
+   getSecondaryAnswer,
+   getFollowUpQuestions,
+   isFollowUpQuestionsComplete,
+   isSecondaryAnswerComplete,
+   isSectionSelectionComplete,
+   isTertiaryAnswerComplete,
+   isWorkingRankSelectionComplete,
+   shouldShowFollowUpQuestionsForWorkingRankAnswer,
+   shouldShowSecondaryForWorkingRankAnswer,
+   shouldShowSecondaryQuestion,
+   shouldShowTertiaryQuestion,
+   isSkipChoiceValue,
+} from "./choices";
 import { getEffectiveRowUnitCount, getEffectiveWorkingRanks, isRowUnitDistributionComplete } from "./inspectionSummary";
 
 export function isAnswerComplete(step, answer, answers = {}, rowUnitCountOverride, workingRanksOverride) {
@@ -49,6 +65,17 @@ export function isAnswerComplete(step, answer, answers = {}, rowUnitCountOverrid
    if (answerType === "working_rank_selection") {
       const workingRanks = getEffectiveWorkingRanks(answers["machine-setup"], workingRanksOverride);
       const ranksComplete = isWorkingRankSelectionComplete(answer, workingRanks);
+      const followUpQuestions = getFollowUpQuestions(step);
+
+      if (followUpQuestions.length) {
+         const needsFollowUps = shouldShowFollowUpQuestionsForWorkingRankAnswer(step, answer, workingRanks);
+
+         if (needsFollowUps) {
+            return ranksComplete && isFollowUpQuestionsComplete(answer, followUpQuestions);
+         }
+
+         return ranksComplete;
+      }
 
       if (step.secondary_question) {
          const needsSecondary = shouldShowSecondaryForWorkingRankAnswer(step, answer, workingRanks);

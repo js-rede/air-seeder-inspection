@@ -27,7 +27,6 @@ import {
    canOfferOptionalDrillInspection,
    enableCartInspection,
    enableDrillInspection,
-   isLastInspectableStepIndex,
    isCartPartConfigurationComplete,
    isDrillPartConfigurationComplete,
 } from "./data/machineCatalog";
@@ -175,10 +174,9 @@ function App() {
    }, [currentStep, applicableSteps]);
 
    const isLastStep = currentIndex >= applicableSteps.length - 1;
-   const showOptionalCartInspection =
-      isLastInspectableStepIndex(applicableSteps, currentIndex) && canOfferOptionalCartInspection(machineSetup);
-   const showOptionalDrillInspection =
-      isLastInspectableStepIndex(applicableSteps, currentIndex) && canOfferOptionalDrillInspection(machineSetup);
+   // Offer the skipped component next to Finish Inspection (final wrap-up step).
+   const showOptionalCartInspection = isLastStep && canOfferOptionalCartInspection(machineSetup);
+   const showOptionalDrillInspection = isLastStep && canOfferOptionalDrillInspection(machineSetup);
    const isMachineSetupStep = currentStep?.answer_type === "machine_setup";
    const hasRunningEstimate = summary.estimatedLow > 0 || summary.estimatedHigh > 0;
    const isMainArmPivotStep = currentStep?.slug === "main-arm-pivot";
@@ -474,7 +472,7 @@ function App() {
 
                {hasStarted ? (
                   isFinished ? (
-                     <InspectionResults summary={summary} onRestart={restartInspection} />
+                     <InspectionResults summary={summary} machineSetup={machineSetup} onRestart={restartInspection} />
                   ) : (
                      <>
                         <InspectionCard

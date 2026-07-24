@@ -4,6 +4,7 @@ import {
    getSecondaryOtherAnswer,
    getTertiaryAnswer,
    getTertiaryOtherAnswer,
+   resolveQuestionTemplate,
    shouldShowTertiaryQuestion,
 } from "../utils/choices";
 
@@ -13,6 +14,7 @@ function SecondaryQuestionFields({
    tertiaryQuestion,
    tertiaryChoices = [],
    tertiaryShowForSecondaryValues = [],
+   primaryChoiceLabel = "",
    value,
    onChange,
 }) {
@@ -29,6 +31,7 @@ function SecondaryQuestionFields({
       tertiary_show_for_secondary_values: tertiaryShowForSecondaryValues,
    };
    const showTertiaryQuestion = shouldShowTertiaryQuestion(tertiaryStep, secondaryAnswer);
+   const resolvedSecondaryQuestion = resolveQuestionTemplate(secondaryQuestion, primaryChoiceLabel);
 
    function updateSecondary(nextSecondary, nextSecondaryOther = secondaryOther) {
       const nextValue = {
@@ -73,7 +76,7 @@ function SecondaryQuestionFields({
 
    return (
       <div className="mt-10 border-t border-slate-200 pt-8">
-         <div className="text-xl font-semibold text-slate-900">{secondaryQuestion}</div>
+         <div className="text-xl font-semibold text-slate-900">{resolvedSecondaryQuestion}</div>
 
          <div className="mt-4 space-y-3">
             {secondaryChoices.map((choice) => {

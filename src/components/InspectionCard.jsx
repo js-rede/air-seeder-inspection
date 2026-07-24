@@ -172,6 +172,7 @@ function InspectionCard({
             tertiaryQuestion={step.tertiary_question}
             tertiaryChoices={step.tertiary_choices}
             tertiaryShowForSecondaryValues={step.tertiary_show_for_secondary_values}
+            followUpQuestions={step.follow_up_questions}
             notesQuestion={step.notes_question}
             notesShowForValues={step.notes_show_for_values}
             notesPlaceholder={step.notes_placeholder}

@@ -120,6 +120,7 @@ function MachineSetupForm({ value, onChange }) {
 
       if (field === "manufacturer") {
          next.model = "";
+         next.rowUnitSeries = "";
          next.width = "";
          next.rowSpacing = "";
          next.rowUnitCount = "";
@@ -129,6 +130,7 @@ function MachineSetupForm({ value, onChange }) {
       }
 
       if (field === "model") {
+         next.rowUnitSeries = "";
          next.width = "";
          next.rowSpacing = "";
          next.rowUnitCount = "";
@@ -155,6 +157,7 @@ function MachineSetupForm({ value, onChange }) {
 
       if (field === "manufacturer") {
          nextDrill.model = "";
+         nextDrill.rowUnitSeries = "";
          nextDrill.width = "";
          nextDrill.rowSpacing = "";
          nextDrill.rowUnitCount = "";
@@ -162,6 +165,7 @@ function MachineSetupForm({ value, onChange }) {
       }
 
       if (field === "model") {
+         nextDrill.rowUnitSeries = "";
          nextDrill.width = "";
          nextDrill.rowSpacing = "";
          nextDrill.rowUnitCount = "";
