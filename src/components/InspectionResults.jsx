@@ -208,10 +208,14 @@ function InspectionResults({ summary, machineSetup, onRestart }) {
    const interestGroups = groupItemsBySection(summary.interestItems);
    const equipment = useMemo(() => buildEquipmentDetails(machineSetup, summary), [machineSetup, summary]);
    const hasCustomExclusions = excludedIds.size > 0;
+   const onlyMarginalExcluded =
+      excludeMarginal &&
+      excludedIds.size === marginalItemIds.length &&
+      marginalItemIds.every((id) => excludedIds.has(id));
 
    return (
       <>
-         <section className="mt-5 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+         <section className="-mx-4 mt-5 rounded-none border border-slate-200 border-x-0 bg-white p-4 shadow-sm sm:mx-0 sm:rounded-2xl sm:border-x sm:p-8">
             <h2 className="text-3xl font-bold text-slate-900">Inspection Summary</h2>
             <p className="mt-3 text-sm text-slate-600 italic">
                Based on your answers, here is a rough estimate of recommended service and rebuild costs.
@@ -361,7 +365,7 @@ function InspectionResults({ summary, machineSetup, onRestart }) {
                   <p className="mt-1 text-3xl font-bold text-slate-900">{costRange || "$0"}</p>
                   {hasCustomExclusions && (
                      <p className="mt-1 mb-4 text-sm italic text-slate-500">
-                        {excludeMarginal
+                        {onlyMarginalExcluded
                            ? "only includes items marked as needing replacement."
                            : "includes the items you selected above."}
                      </p>
