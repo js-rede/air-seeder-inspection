@@ -71,27 +71,6 @@ export const MAX_CART_TANK_COUNT = 3;
 
 export const CART_TANK_TEMPLATE_SLUG = "air-cart";
 
-const CART_LID_LADDER_CHOICES = [
-   {
-      label: "Good condition",
-      value: "good",
-      rating: "good",
-      recommended_action: "Component is in good condition.",
-      estimated_low_cost: 0,
-      estimated_high_cost: 0,
-      labor_cost: 0,
-   },
-   {
-      label: "Needs replacing",
-      value: "needs-replacing",
-      rating: "bad",
-      recommended_action: "Plan to replace this component before operating.",
-      estimated_low_cost: 250,
-      estimated_high_cost: 2500,
-      labor_cost: 0,
-   },
-];
-
 export const CART_TANK_STEP_LAYOUTS = {
    1: [
       {
@@ -417,19 +396,11 @@ function prefixTankSectionLabel(tankLabel, label) {
    return `${tankLabel} ${label}`;
 }
 
-function buildCartTankTrailingSections(tankLabel) {
-   return [
-      {
-         label: prefixTankSectionLabel(tankLabel, "Tank Lid with Hardware"),
-         value: "tank-lid-and-hardware",
-         choices: CART_LID_LADDER_CHOICES,
-      },
-      {
-         label: prefixTankSectionLabel(tankLabel, "Ladder"),
-         value: "ladder",
-         choices: CART_LID_LADDER_CHOICES,
-      },
-   ];
+function buildCartTankTrailingSections(template, tankLabel) {
+   return (template.trailing_inspection_sections ?? []).map((section) => ({
+      ...section,
+      label: prefixTankSectionLabel(tankLabel, section.label),
+   }));
 }
 
 function buildCartTankInspectionSections(template, tankStep) {
@@ -439,7 +410,7 @@ function buildCartTankInspectionSections(template, tankStep) {
       label: prefixTankSectionLabel(tankLabel, section.label),
    }));
    const runCopy = tankStep.run_sections;
-   const trailingSections = buildCartTankTrailingSections(tankLabel);
+   const trailingSections = buildCartTankTrailingSections(template, tankLabel);
 
    if (!runCopy) return [...baseSections, ...trailingSections];
 
@@ -680,7 +651,14 @@ export function getMachineSetupPath(setup) {
    return null;
 }
 
-const CURRENT_MACHINE_IDENTITY_FIELDS = ["equipmentType", "component", "manufacturer", "model", "rowUnitSeries", "otherDetails"];
+const CURRENT_MACHINE_IDENTITY_FIELDS = [
+   "equipmentType",
+   "component",
+   "manufacturer",
+   "model",
+   "rowUnitSeries",
+   "otherDetails",
+];
 const DRILL_IDENTITY_FIELDS = ["manufacturer", "model", "rowUnitSeries", "otherDetails"];
 const CART_IDENTITY_FIELDS = ["manufacturer", "model", "otherDetails"];
 

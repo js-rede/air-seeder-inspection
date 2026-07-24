@@ -1418,6 +1418,56 @@
             ]
          }
       ],
+      "trailing_inspection_sections": [
+         {
+            "label": "Tank Lid with Hardware",
+            "value": "tank-lid-and-hardware",
+            "choices": [
+               {
+                  "label": "Good condition",
+                  "value": "good",
+                  "rating": "good",
+                  "recommended_action": "Component is in good condition.",
+                  "estimated_low_cost": 0,
+                  "estimated_high_cost": 0,
+                  "labor_cost": 0
+               },
+               {
+                  "label": "Needs replacing",
+                  "value": "needs-replacing",
+                  "rating": "bad",
+                  "recommended_action": "Plan to replace this component before operating.",
+                  "estimated_low_cost": 1050,
+                  "estimated_high_cost": 1200,
+                  "labor_cost": 100
+               }
+            ]
+         },
+         {
+            "label": "Ladder",
+            "value": "ladder",
+            "choices": [
+               {
+                  "label": "Good condition",
+                  "value": "good",
+                  "rating": "good",
+                  "recommended_action": "Component is in good condition.",
+                  "estimated_low_cost": 0,
+                  "estimated_high_cost": 0,
+                  "labor_cost": 0
+               },
+               {
+                  "label": "Needs replacing",
+                  "value": "needs-replacing",
+                  "rating": "bad",
+                  "recommended_action": "Plan to replace this component before operating.",
+                  "estimated_low_cost": 700,
+                  "estimated_high_cost": 1200,
+                  "labor_cost": 100
+               }
+            ]
+         }
+      ],
       "choices": [
          {
             "label": "Good shape, minimal rust and swelling",
@@ -1433,7 +1483,7 @@
             "value": "starting-to-rust-or-swell-but-no-air-leaks",
             "rating": "maybe",
             "recommended_action": "Component is starting to rust or swell. Plan service before seeding season.",
-            "estimated_low_cost": 500,
+            "estimated_low_cost": 700,
             "estimated_high_cost": 2500,
             "labor_cost": 0
          },

@@ -209,9 +209,7 @@ function InspectionResults({ summary, machineSetup, onRestart }) {
    const equipment = useMemo(() => buildEquipmentDetails(machineSetup, summary), [machineSetup, summary]);
    const hasCustomExclusions = excludedIds.size > 0;
    const onlyMarginalExcluded =
-      excludeMarginal &&
-      excludedIds.size === marginalItemIds.length &&
-      marginalItemIds.every((id) => excludedIds.has(id));
+      excludeMarginal && excludedIds.size === marginalItemIds.length && marginalItemIds.every((id) => excludedIds.has(id));
 
    return (
       <>
