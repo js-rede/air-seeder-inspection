@@ -84,7 +84,7 @@
       "slug": "cutting-discs",
       "step_number": 3,
       "section": "openers",
-      "step_title": "Disc Inspection",
+      "step_title": "Cutting Disc Inspection",
       "summary_title": "Cutting Discs",
       "instructions": "Inspect several row-units to determine overall disc conditions. Measure cutting disc diameter, then rate the overall disc condition across the entire machine. Discs should be replaced at or before 17 inches to ensure working condition.",
       "instructions_multi_rank": "Evaluate disc conditions by working rank. <br/>Inspect several row-units in each rank, measure cutting disc diameter, then rate disc condition for each rank. Discs should be replaced at or before 17 inches to ensure working condition.",
@@ -135,8 +135,8 @@
       "slug": "disc-hubs",
       "step_number": 4,
       "section": "openers",
-      "step_title": "CuttingDisc Hub Inspection",
-      "summary_title": "Cutting Disc Hubs",
+      "step_title": "Disc Hub Inspection",
+      "summary_title": "Disc Hubs",
       "instructions": "Inspect disc hubs on several row-units in each rank. Check for bearing play, seal condition, wobble, and heat discoloration.",
       "question": "What is the overall disc hub condition?",
       "answer_type": "working_rank_selection",
@@ -481,15 +481,52 @@
       "image_caption": ""
    },
    {
-      "slug": "press-wheel-spring-arm",
+      "slug": "press-wheel-arm",
       "step_number": 11,
       "section": "press_wheels",
-      "step_title": "Press Wheel Spring & Arm Inspection",
-      "summary_title": "Press Wheel Springs & Arms",
-      "instructions": "If the spring is sloppy or broken it won't properly press the seeds into the furrow. Inspect press wheel springs and arms on several row-units. Look for sloppy or broken springs, plastic deformation, and whether springs are on the top adjustment setting.",
-      "instructions_multi_rank": "Evaluate press wheel spring and arm condition by working rank. <br/>If the spring is sloppy or broken it won't properly press the seeds into the furrow. Inspect several row-units in each rank and rate spring and arm condition for each rank.",
-      "question": "What is the overall press wheel spring and arm condition?",
-      "question_multi_rank": "Rate the press wheel spring and arm condition for each working rank:",
+      "step_title": "Press Wheel Arm Inspection",
+      "summary_title": "Press Wheel Arms",
+      "instructions": "Inspect press wheel arms on several row-units. Look for ?.",
+      "instructions_multi_rank": "Evaluate press wheel arm condition by working rank. <br/>Inspect several row-units in each rank and rate arm condition for each rank. Look for broken plastic, plastic deformation, and loose hardware.",
+      "question": "What is the overall press wheel arm condition?",
+      "question_multi_rank": "Rate the press-wheel-arm condition for each working rank:",
+      "answer_type": "working_rank_selection",
+      "cost_multiplies_by_row_units": true,
+      "choices": [
+         {
+            "label": "Good working order ?",
+            "value": "good-working-order",
+            "rating": "good",
+            "recommended_action": "Press wheel arms are in good working order. No immediate replacement is needed.",
+            "estimated_low_cost": 0,
+            "estimated_high_cost": 0,
+            "labor_cost": 0
+         },
+         {
+            "label": "Broken or plastic deformation ?",
+            "value": "broken-or-plastic-deformation",
+            "rating": "bad",
+            "recommended_action": "Replace press wheel arms showing plastic deformation or damage to restore proper seed press into the furrow.",
+            "estimated_low_cost": 15,
+            "estimated_high_cost": 25,
+            "labor_cost": 25
+         }
+      ],
+      "video_url": "",
+      "video_caption": "",
+      "image_url": "https://rede-ag.com/wp-content/uploads/2026/07/press-wheel-arm.webp",
+      "image_caption": ""
+   },
+   {
+      "slug": "press-wheel-spring",
+      "step_number": 12,
+      "section": "press_wheels",
+      "step_title": "Press Wheel Spring Inspection",
+      "summary_title": "Press Wheel Springs",
+      "instructions": "? If the spring is sloppy or broken it won't properly press the seeds into the furrow. Inspect press wheel springs on several row-units. Look for sloppy or broken springs, plastic deformation, and whether springs are on the top adjustment setting.",
+      "instructions_multi_rank": "Evaluate press wheel spring condition by working rank. <br/>If the spring is sloppy or broken it won't properly press the seeds into the furrow. Inspect several row-units in each rank and rate spring condition for each rank.",
+      "question": "What is the overall press wheel spring condition?",
+      "question_multi_rank": "Rate the press wheel spring condition for each working rank:",
       "answer_type": "working_rank_selection",
       "cost_multiplies_by_row_units": true,
       "choices": [
@@ -497,7 +534,7 @@
             "label": "Good working order",
             "value": "good-working-order",
             "rating": "good",
-            "recommended_action": "Press wheel springs and arms are in good working order. No immediate replacement is needed.",
+            "recommended_action": "Press wheel springs are in good working order. No immediate replacement is needed.",
             "estimated_low_cost": 0,
             "estimated_high_cost": 0,
             "labor_cost": 0
@@ -512,10 +549,10 @@
             "labor_cost": 25
          },
          {
-            "label": "Broken or plastic deformation (can we do better?)",
-            "value": "broken-or-plastic-deformation",
+            "label": "Broken or worn out",
+            "value": "broken-or-worn-out",
             "rating": "bad",
-            "recommended_action": "Replace broken springs or arms showing plastic deformation to restore proper seed press into the furrow.",
+            "recommended_action": "Replace broken or worn press wheel springs to restore proper seed press into the furrow.",
             "estimated_low_cost": 15,
             "estimated_high_cost": 25,
             "labor_cost": 25
@@ -534,12 +571,12 @@
       ],
       "video_url": "",
       "video_caption": "",
-      "image_url": "https://rede-ag.com/wp-content/uploads/2026/06/press-wheel-spring-and-arm.webp",
+      "image_url": "https://rede-ag.com/wp-content/uploads/2026/07/press-wheel-spring.webp",
       "image_caption": ""
    },
    {
       "slug": "press-wheel",
-      "step_number": 12,
+      "step_number": 13,
       "section": "press_wheels",
       "step_title": "Press Wheel Inspection",
       "summary_title": "Press Wheels",
@@ -585,7 +622,7 @@
    },
    {
       "slug": "depth-adjustment-pivot",
-      "step_number": 13,
+      "step_number": 14,
       "section": "depth_control",
       "step_title": "Depth Adjustment Pivot Inspection",
       "summary_title": "Depth Adjustment Pivots",
@@ -654,7 +691,7 @@
    },
    {
       "slug": "depth-arm",
-      "step_number": 14,
+      "step_number": 15,
       "section": "depth_control",
       "step_title": "Depth Arm Inspection",
       "summary_title": "Depth Arms",
@@ -686,12 +723,12 @@
       ],
       "video_url": "",
       "video_caption": "",
-      "image_url": "https://rede-ag.com/wp-content/uploads/2026/07/depth-arm-cover-and-handle.webp",
+      "image_url": "https://rede-ag.com/wp-content/uploads/2026/07/depth-arm.webp",
       "image_caption": ""
    },
    {
       "slug": "depth-cover-handle",
-      "step_number": 15,
+      "step_number": 16,
       "section": "depth_control",
       "step_title": "Depth Cover & Handle Inspection",
       "summary_title": "Depth Covers & Handles",
@@ -732,12 +769,12 @@
       ],
       "video_url": "",
       "video_caption": "",
-      "image_url": "https://rede-ag.com/wp-content/uploads/2026/07/depth-arm-cover-and-handle.webp",
+      "image_url": "https://rede-ag.com/wp-content/uploads/2026/07/depth-arm-cover-and-handle-1.webp",
       "image_caption": ""
    },
    {
       "slug": "gauge-wheel",
-      "step_number": 16,
+      "step_number": 17,
       "section": "gauge_wheels",
       "step_title": "Gauge Wheel Inspection",
       "summary_title": "Gauge Wheels",
@@ -849,7 +886,7 @@
    },
    {
       "slug": "seed-boot-pivot",
-      "step_number": 17,
+      "step_number": 18,
       "section": "seed_boots",
       "step_title": "Seed Boot Pivot Inspection",
       "summary_title": "Seed Boot Pivots",
@@ -918,7 +955,7 @@
    },
    {
       "slug": "seed-boot",
-      "step_number": 18,
+      "step_number": 19,
       "section": "seed_boots",
       "step_title": "Seed Boot Inspection",
       "summary_title": "Seed Boots",
@@ -987,7 +1024,7 @@
    },
    {
       "slug": "seed-boot-springs",
-      "step_number": 19,
+      "step_number": 20,
       "section": "seed_boots",
       "step_title": "Seed Boot Spring Inspection",
       "summary_title": "Seed Boot Springs",
@@ -1033,7 +1070,7 @@
    },
    {
       "slug": "seed-tabs",
-      "step_number": 20,
+      "step_number": 21,
       "section": "seed_boots",
       "step_title": "Seed Tab Inspection",
       "summary_title": "Seed Tabs",
@@ -1079,7 +1116,7 @@
    },
    {
       "slug": "hoses",
-      "step_number": 21,
+      "step_number": 22,
       "section": "drill",
       "step_title": "Hose Inspection",
       "summary_title": "Drill Hose",
@@ -1126,7 +1163,7 @@
    },
    {
       "slug": "towers",
-      "step_number": 22,
+      "step_number": 23,
       "section": "drill",
       "step_title": "Drill Tower Inspection",
       "summary_title": "Drill Towers",
@@ -1154,7 +1191,7 @@
    },
    {
       "slug": "blockage-system",
-      "step_number": 23,
+      "step_number": 24,
       "section": "drill",
       "step_title": "Blockage System Inspection",
       "summary_title": "Blockage System",
@@ -1241,7 +1278,7 @@
    },
    {
       "slug": "other-sfp-row-unit-parts",
-      "step_number": 24,
+      "step_number": 25,
       "section": "seed fertilizer placement rank",
       "step_title": "SFP Row Unit Parts",
       "summary_title": "SFP Row-Unit Parts",
@@ -1314,7 +1351,7 @@
    },
    {
       "slug": "drill-notes",
-      "step_number": 25,
+      "step_number": 26,
       "section": "drill",
       "step_title": "Drill Notes",
       "summary_title": "Drill Notes",
@@ -1324,7 +1361,7 @@
    },
    {
       "slug": "air-cart",
-      "step_number": 26,
+      "step_number": 27,
       "section": "air_cart",
       "is_cart_tank_template": true,
       "step_title": "Air Cart Tank Inspection",
@@ -1504,7 +1541,7 @@
    },
    {
       "slug": "air-cart-couplers",
-      "step_number": 27,
+      "step_number": 28,
       "section": "air_cart",
       "step_title": "Cart Coupler Inspection",
       "summary_title": "Cart Couplers",
@@ -1547,7 +1584,7 @@
    },
    {
       "slug": "air-cart-hoses",
-      "step_number": 28,
+      "step_number": 29,
       "section": "air_cart",
       "step_title": "Cart Hose Inspection",
       "summary_title": "Cart Hoses",
@@ -1590,7 +1627,7 @@
    },
    {
       "slug": "air-cart-auger-conveyor",
-      "step_number": 29,
+      "step_number": 30,
       "section": "air_cart",
       "allow_skip": false,
       "step_title": "Auger / Conveyor Inspection",
@@ -1657,7 +1694,7 @@
    },
    {
       "slug": "cart-notes",
-      "step_number": 30,
+      "step_number": 31,
       "section": "air_cart",
       "step_title": "Cart Notes",
       "summary_title": "Cart Notes",
@@ -1671,7 +1708,7 @@
    },
    {
       "slug": "romafa-section-control",
-      "step_number": 31,
+      "step_number": 32,
       "section": "wrap_up",
       "informational_only": true,
       "allow_skip": false,
@@ -1707,7 +1744,7 @@
    },
    {
       "slug": "camera-kit",
-      "step_number": 32,
+      "step_number": 33,
       "section": "wrap_up",
       "informational_only": true,
       "allow_skip": false,
@@ -1743,7 +1780,7 @@
    },
    {
       "slug": "hydraulic-drive-conversion",
-      "step_number": 33,
+      "step_number": 34,
       "section": "wrap_up",
       "informational_only": true,
       "allow_skip": false,

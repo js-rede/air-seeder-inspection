@@ -10,9 +10,10 @@ import { createEmptyContact, normalizeContact } from "./utils/contactInfo";
 import ComponentSetupModal from "./components/ComponentSetupModal";
 import { getSavedDraft, saveDraft } from "./utils/storage";
 import { isAnswerComplete } from "./utils/answers";
+import { getSelectionAnswerValue, getWorkingRankSelections, isSkipChoiceValue } from "./utils/choices";
 import Loading from "./components/Loading";
 import { validateSteps } from "./utils/validateSteps";
-import { calculateInspectionSummary, calculateRowUnitCount } from "./utils/inspectionSummary";
+import { calculateInspectionSummary, calculateRowUnitCount, getEffectiveWorkingRanks } from "./utils/inspectionSummary";
 import {
    getApplicableSteps,
    getFirstCartStepSlug,
@@ -33,6 +34,24 @@ import {
    isDrillPartConfigurationComplete,
 } from "./data/machineCatalog";
 import { STEPS_URL } from "./config";
+
+function isWholeQuestionSkip(step, answer, machineSetupAnswer, workingRanksOverride) {
+   if (!step || step.allow_skip === false) return false;
+
+   if (step.answer_type === "selection") {
+      return isSkipChoiceValue(getSelectionAnswerValue(answer));
+   }
+
+   if (step.answer_type === "working_rank_selection") {
+      const rankCount = getEffectiveWorkingRanks(machineSetupAnswer, workingRanksOverride);
+      if (rankCount > 1) return false;
+
+      const selections = getWorkingRankSelections(answer);
+      return isSkipChoiceValue(selections["1"] || selections[1]);
+   }
+
+   return false;
+}
 
 function App() {
    const savedDraft = getSavedDraft();
@@ -278,10 +297,19 @@ function App() {
          }
       }
 
+      const previousAnswer = answers[currentStep.slug];
+      const skippedQuestion =
+         isWholeQuestionSkip(currentStep, value, answers["machine-setup"], workingRanksOverride) &&
+         !isWholeQuestionSkip(currentStep, previousAnswer, answers["machine-setup"], workingRanksOverride);
+
       setAnswers((prev) => ({
          ...prev,
          [currentStep.slug]: value,
       }));
+
+      if (skippedQuestion) {
+         goNext();
+      }
    }
 
    function goNext() {

@@ -29,7 +29,6 @@ function buildEquipmentDetails(machineSetup, summary) {
    if (isDrillIncluded(setup)) {
       const drill = getDrillSetup(setup);
       const nameParts = [drill.manufacturer, drill.model].filter(Boolean);
-      if (drill.rowUnitSeries) nameParts.push(getRowUnitSeriesLabel(drill.rowUnitSeries));
       const details = [];
 
       if (setup.component === "both") {
@@ -42,11 +41,17 @@ function buildEquipmentDetails(machineSetup, summary) {
       }
 
       if (drill.width) details.push({ label: "Width", value: drill.width });
-      if (drill.rowSpacing) details.push({ label: "Row spacing", value: drill.rowSpacing });
+      if (drill.rowSpacing) details.push({ label: "Spacing", value: drill.rowSpacing });
       if (summary.rowUnitCount > 0) {
+         const seriesLabel = drill.rowUnitSeries ? getRowUnitSeriesLabel(drill.rowUnitSeries) : "";
          details.push({
             label: "Row-units",
-            value: String(summary.rowUnitCount),
+            value: seriesLabel ? `${summary.rowUnitCount} (${seriesLabel} style)` : String(summary.rowUnitCount),
+         });
+      } else if (drill.rowUnitSeries) {
+         details.push({
+            label: "Row-units",
+            value: `${getRowUnitSeriesLabel(drill.rowUnitSeries)} style`,
          });
       }
       if (summary.workingRanks > 0) {
@@ -77,12 +82,14 @@ function buildEquipmentDetails(machineSetup, summary) {
       }
 
       if (summary.tankCount > 0) {
+         const tankLabel = summary.tankCount === 1 ? "1 tank" : `${summary.tankCount} tanks`;
+         const tankSize = cart?.tankSize ? String(cart.tankSize).replace(/\s*bu\b/i, " bushels") : "";
          details.push({
-            label: "Tanks",
-            value: String(summary.tankCount),
+            value: tankSize ? `${tankLabel}, ${tankSize}` : tankLabel,
          });
+      } else if (cart?.tankSize) {
+         details.push({ value: String(cart.tankSize).replace(/\s*bu\b/i, " bushels") });
       }
-      if (cart?.tankSize) details.push({ label: "Tank size", value: cart.tankSize });
       if (cart?.otherDetails?.trim()) {
          details.push({ label: "Cart notes", value: cart.otherDetails.trim() });
       }
@@ -227,23 +234,6 @@ function InspectionResults({ summary, machineSetup, onRestart }) {
                Based on your answers, here is a rough estimate of recommended service and rebuild costs.
             </p>
 
-            {equipment.length > 0 && (
-               <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-5">
-                  <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">Equipment</p>
-                  <div className="mt-3 space-y-4 text-sm text-slate-600">
-                     {equipment.map((group) => (
-                        <ul key={group.key} className="space-y-1">
-                           {group.details.map((detail) => (
-                              <li key={`${group.key}-${detail.label}-${detail.value}`}>
-                                 {detail.label}: {detail.value}
-                              </li>
-                           ))}
-                        </ul>
-                     ))}
-                  </div>
-               </div>
-            )}
-
             <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-5">
                <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">Estimated service range</p>
                <p className="mt-2 text-4xl font-bold text-slate-900">{costRange || "$0"}</p>
@@ -280,7 +270,7 @@ function InspectionResults({ summary, machineSetup, onRestart }) {
             {summary.lineItems.length > 0 && (
                <div className="mt-8">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                     <h3 className="text-xl font-semibold text-slate-900"></h3>
+                     <h3 className="text-xl font-semibold text-slate-900">Items Affecting Estimate</h3>
                      <div className="flex flex-wrap items-center gap-3 sm:justify-end">
                         <div
                            className={`overflow-hidden transition-all duration-200 ease-out max-w-[12rem] ${
@@ -298,13 +288,13 @@ function InspectionResults({ summary, machineSetup, onRestart }) {
                         {hasMarginalItems && (
                            <div className="flex items-center gap-2">
                               <p className="text-xs font-medium uppercase italic tracking-wide text-slate-500 opacity-70">
-                                 Turn off all marginal items
+                                 Turn off marginal items
                               </p>
                               <button
                                  type="button"
                                  role="switch"
                                  aria-checked={excludeMarginal}
-                                 aria-label="Turn off all marginal items"
+                                 aria-label="Turn off marginal items"
                                  onClick={handleExcludeMarginalToggle}
                                  className={`relative h-6 w-11 shrink-0 cursor-pointer rounded-full transition-colors ${
                                     excludeMarginal ? "bg-[#e21313]" : "bg-slate-300"
@@ -320,7 +310,7 @@ function InspectionResults({ summary, machineSetup, onRestart }) {
                      </div>
                   </div>
 
-                  <hr className="mt-7 border-slate-200 -mb-2" />
+                  <hr className="mt-7 border-slate-200" />
 
                   {lineItemGroups.length > 0 && (
                      <div className="mt-4">
@@ -403,6 +393,34 @@ function InspectionResults({ summary, machineSetup, onRestart }) {
                      <p className="mt-4 text-sm text-slate-600 italic">
                         A Red E representative can follow up with more information.
                      </p>
+                  </div>
+               </div>
+            )}
+
+            {equipment.length > 0 && (
+               <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-5">
+                  <div className="space-y-4 text-sm text-slate-600">
+                     {equipment.map((group) => {
+                        const [heading, ...attributes] = group.details;
+                        return (
+                           <div key={group.key}>
+                              {heading && (
+                                 <p className="font-semibold text-slate-900 capitalize">
+                                    {heading.label}: {heading.value}
+                                 </p>
+                              )}
+                              {attributes.length > 0 && (
+                                 <div className="flex flex-wrap gap-x-3">
+                                    {attributes.map((detail) => (
+                                       <span key={`${group.key}-${detail.label || "value"}-${detail.value}`}>
+                                          {detail.label ? `${detail.label}: ${detail.value}` : detail.value}
+                                       </span>
+                                    ))}
+                                 </div>
+                              )}
+                           </div>
+                        );
+                     })}
                   </div>
                </div>
             )}
