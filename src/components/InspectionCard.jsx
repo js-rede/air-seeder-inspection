@@ -47,12 +47,7 @@ function StepTitleNav({ onBack, onNext, canGoBack, canGoNext, isLastStep }) {
 
    return (
       <div className="flex shrink-0 items-center gap-1.5">
-         <button
-            type="button"
-            onClick={onBack}
-            disabled={!canGoBack}
-            aria-label="Previous step"
-            className={navButtonClass}>
+         <button type="button" onClick={onBack} disabled={!canGoBack} aria-label="Previous step" className={navButtonClass}>
             ←
          </button>
          <button
@@ -79,6 +74,7 @@ function InspectionCard({
    canGoBack = false,
    canGoNext = false,
    isLastStep = false,
+   showMachineSetupValidation = false,
 }) {
    const answerType = step.answer_type || getAnswerType(step);
    const choices = getStepChoices(step);
@@ -122,8 +118,7 @@ function InspectionCard({
          {step.image_url && (
             <div className="mb-6">
                {step.image_caption && <p className="mb-3 text-sm text-slate-500 italic">{step.image_caption}</p>}
-               <div
-                  className={`w-full overflow-hidden rounded-xl border border-slate-200 ${step.image_padding ?? "p-2"}`}>
+               <div className={`w-full overflow-hidden rounded-xl border border-slate-200 ${step.image_padding ?? "p-2"}`}>
                   <img
                      src={step.image_url}
                      alt={step.step_title}
@@ -133,8 +128,7 @@ function InspectionCard({
             </div>
          )}
          {/* Instructions */}
-         <div
-            className={`mb-8 ${step.image_2_url ? "flex flex-col gap-5 sm:flex-row sm:items-start sm:gap-6" : ""}`}>
+         <div className={`mb-8 ${step.image_2_url ? "flex flex-col gap-5 sm:flex-row sm:items-start sm:gap-6" : ""}`}>
             <div className="min-w-0 flex-1 text-lg leading-relaxed text-slate-600">
                <InstructionText text={instructions} />
                {step.link_text && step.link_url && (
@@ -181,6 +175,7 @@ function InspectionCard({
             quantityLabel={step.quantity_label}
             maxCount={step.max_count ?? null}
             allowSkip={step.allow_skip !== false}
+            showMachineSetupValidation={showMachineSetupValidation}
          />
 
          {/* Recommendation */}
@@ -201,7 +196,9 @@ function InspectionCard({
                {recommendation.lines?.length > 0 && (
                   <ul className="mt-4 list-disc space-y-1 pl-5 text-slate-900">
                      {recommendation.lines.map((line) => (
-                        <li key={line}>{line}</li>
+                        <li className="text-base" key={line}>
+                           {line}
+                        </li>
                      ))}
                   </ul>
                )}

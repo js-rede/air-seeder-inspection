@@ -24,6 +24,8 @@ import {
    isSameCurrentMachine,
    getDrillSetup,
    getCartSetup,
+   getMissingMachineSetupFields,
+   isMachineSetupComplete,
    normalizeMachineSetup,
    persistMachineSetupDraft,
    canOfferOptionalCartInspection,
@@ -33,7 +35,7 @@ import {
    isCartPartConfigurationComplete,
    isDrillPartConfigurationComplete,
 } from "./data/machineCatalog";
-import { STEPS_URL } from "./config";
+import { getStepsUrl } from "./config";
 
 function isWholeQuestionSkip(step, answer, machineSetupAnswer, workingRanksOverride) {
    if (!step || step.allow_skip === false) return false;
@@ -72,6 +74,7 @@ function App() {
    const [tankCountOverride, setTankCountOverride] = useState(savedDraft.tankCountOverride ?? null);
    const [currentMachine, setCurrentMachine] = useState(savedDraft.currentMachine ?? null);
    const [componentSetupModal, setComponentSetupModal] = useState(null);
+   const [showMachineSetupErrors, setShowMachineSetupErrors] = useState(false);
    const navigationTargetSlug = useRef(null);
    const skipInitialScroll = useRef(true);
 
@@ -93,8 +96,13 @@ function App() {
    }, [currentIndex, isFinished, hasStarted, hasSubmittedContact]);
 
    useEffect(() => {
-      fetch(STEPS_URL)
-         .then((res) => res.json())
+      fetch(getStepsUrl())
+         .then((res) => {
+            if (!res.ok) {
+               throw new Error(`Failed to fetch steps (${res.status}) from ${res.url}`);
+            }
+            return res.json();
+         })
          .then((data) => {
             const validSteps = validateSteps(data);
 
@@ -188,6 +196,8 @@ function App() {
    const isMainArmPivotStep = currentStep?.slug === "main-arm-pivot";
    const showScorecard = hasStarted && !isFinished && hasInspectionStarted && !(isMachineSetupStep && !hasRunningEstimate);
    const showCompactMachineCounts = hasStarted && !isFinished && isMainArmPivotStep && !showScorecard;
+   const canAttemptNext = isMachineSetupStep || canGoNext;
+   const showMachineSetupValidation = isMachineSetupStep && showMachineSetupErrors;
 
    function syncMachineCountOverrides() {
       setRowUnitCountOverride(null);
@@ -314,6 +324,28 @@ function App() {
 
    function goNext() {
       if (isMachineSetupStep) {
+         if (!isMachineSetupComplete(answers["machine-setup"])) {
+            setShowMachineSetupErrors(true);
+            // Wait for revealAll fields to paint, then scroll to the first missing control.
+            requestAnimationFrame(() => {
+               requestAnimationFrame(() => {
+                  const missing = getMissingMachineSetupFields(answers["machine-setup"]);
+                  const el = missing[0] ? document.getElementById(missing[0]) : null;
+                  el?.scrollIntoView({ behavior: "smooth", block: "center" });
+                  if (el && typeof el.focus === "function") {
+                     try {
+                        el.focus({ preventScroll: true });
+                     } catch {
+                        /* ignore non-focusable targets */
+                     }
+                  }
+               });
+            });
+            return;
+         }
+
+         setShowMachineSetupErrors(false);
+
          const nextMachine = getCurrentMachineIdentity(answers["machine-setup"]);
 
          if (currentMachine && !isSameCurrentMachine(currentMachine, nextMachine)) {
@@ -336,6 +368,8 @@ function App() {
    }
 
    function goBack() {
+      setShowMachineSetupErrors(false);
+
       if (isFinished && hasSubmittedContact) {
          setHasSubmittedContact(false);
          return;
@@ -468,7 +502,9 @@ function App() {
    }
 
    return (
-      <div id="air-seeder-inspection-app" className="relative min-h-[600px] bg-slate-50 px-4 py-10 sm:px-10 flex items-start">
+      <div
+         id="air-seeder-inspection-app"
+         className="relative min-h-[600px] bg-slate-50 px-4 py-10 sm:px-10 flex items-start pb-20">
          <Loading isLoaded={steps.length > 0} />
 
          {!!steps.length && (
@@ -528,15 +564,16 @@ function App() {
                            onBack={goBack}
                            onNext={goNext}
                            canGoBack={currentIndex > 0}
-                           canGoNext={canGoNext}
+                           canGoNext={canAttemptNext}
                            isLastStep={currentIndex >= applicableSteps.length - 1}
+                           showMachineSetupValidation={showMachineSetupValidation}
                         />
                         <InspectionNav
                            currentIndex={currentIndex}
                            totalSteps={applicableSteps.length}
                            onBack={goBack}
                            onNext={goNext}
-                           canGoNext={canGoNext}
+                           canGoNext={canAttemptNext}
                            showOptionalCartInspection={showOptionalCartInspection}
                            onStartCartInspection={startCartInspection}
                            showOptionalDrillInspection={showOptionalDrillInspection}

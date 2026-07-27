@@ -136,7 +136,7 @@ function LineItemRow({ item, included, onToggleIncluded }) {
                      )}
                   </span>
                   <div className="min-w-0">
-                     <p className="font-semibold text-slate-900">
+                     <p className="font-semibold text-slate-900 text-base">
                         {item.stepTitle}
                         {(isMaybe || isBad) && (
                            <span className={`relative ml-2 text-xs uppercase tracking-wide opacity-80 ${ratingClass}`}>
@@ -238,11 +238,11 @@ function InspectionResults({ summary, machineSetup, onRestart }) {
                <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">Estimated service range</p>
                <p className="mt-2 text-4xl font-bold text-slate-900">{costRange || "$0"}</p>
                <ul className="mt-3 space-y-1 text-sm">
-                  <li className="flex items-center gap-2 text-slate-600">
+                  <li className="flex items-center gap-2 text-slate-600 text-sm">
                      <RatingBadge rating="maybe" />
                      <span>{summary.ratingCounts.maybe || 0} items are marginal</span>
                   </li>
-                  <li className="flex items-center gap-2 text-slate-600">
+                  <li className="flex items-center gap-2 text-slate-600 text-sm">
                      <RatingBadge rating="bad" />
                      <span>{summary.ratingCounts.bad || 0} items need replacement</span>
                   </li>
@@ -250,13 +250,13 @@ function InspectionResults({ summary, machineSetup, onRestart }) {
 
                <div className="pt-4">
                   <ul className="space-y-1 text-sm text-slate-600">
-                     <li>
+                     <li className="text-sm">
                         Your estimate of <span className="font-semibold text-slate-900">{rangeWithMarginal || "$0"}</span>{" "}
                         includes all items rated as <span className="font-semibold text-amber-500 italic">marginal</span> or{" "}
                         <span className="font-semibold text-red-700 italic">need replacement</span>.
                      </li>
                      {hasMarginalItems && (
-                        <li>
+                        <li className="text-sm">
                            Note: If only items rated as{" "}
                            <span className="font-semibold text-red-700 italic">need replacement</span> are included in the
                            estimate, the total drops to{" "}
@@ -273,7 +273,7 @@ function InspectionResults({ summary, machineSetup, onRestart }) {
                      <h3 className="text-xl font-semibold text-slate-900">Items Affecting Estimate</h3>
                      <div className="flex flex-wrap items-center gap-3 sm:justify-end">
                         <div
-                           className={`overflow-hidden transition-all duration-200 ease-out max-w-[12rem] ${
+                           className={`overflow-hidden transition-all duration-200 ease-out max-w-[150px] ${
                               hasCustomExclusions ? " opacity-100" : "pointer-events-none max-w-0 opacity-0"
                            }`}>
                            <button
@@ -296,7 +296,7 @@ function InspectionResults({ summary, machineSetup, onRestart }) {
                                  aria-checked={excludeMarginal}
                                  aria-label="Turn off marginal items"
                                  onClick={handleExcludeMarginalToggle}
-                                 className={`relative h-6 w-11 shrink-0 cursor-pointer rounded-full transition-colors ${
+                                 className={`border-0 border-none relative h-6 w-11 shrink-0 cursor-pointer rounded-full transition-colors ${
                                     excludeMarginal ? "bg-[#e21313]" : "bg-slate-300"
                                  }`}>
                                  <span
@@ -405,7 +405,7 @@ function InspectionResults({ summary, machineSetup, onRestart }) {
                         return (
                            <div key={group.key}>
                               {heading && (
-                                 <p className="font-semibold text-slate-900 capitalize">
+                                 <p className="font-semibold text-slate-900 capitalize text-base">
                                     {heading.label}: {heading.value}
                                  </p>
                               )}

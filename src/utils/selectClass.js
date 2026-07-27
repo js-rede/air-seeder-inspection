@@ -7,6 +7,16 @@ export const selectClass = [
    "focus:border-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-200",
 ].join(" ");
 
+export const selectErrorClass = [
+   "w-full appearance-none rounded-xl border border-red-500 bg-red-50 py-2.5 pl-4 pr-12 text-lg",
+   "bg-[length:1.25rem] bg-[position:right_0.625rem_center] bg-no-repeat",
+   "focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-200",
+].join(" ");
+
 export const selectStyle = {
    backgroundImage: selectChevron,
 };
+
+export function getSelectClass(hasError = false) {
+   return hasError ? selectErrorClass : selectClass;
+}

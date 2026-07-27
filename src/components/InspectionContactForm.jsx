@@ -6,57 +6,68 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const fieldClass =
    "w-full rounded-xl border border-slate-300 bg-gray-100 px-4 py-2.5 text-lg focus:border-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-200";
 
+const fieldErrorClass =
+   "w-full rounded-xl border border-red-500 bg-red-50 px-4 py-2.5 text-lg focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-200";
+
+function getFieldClass(hasError) {
+   return hasError ? fieldErrorClass : fieldClass;
+}
+
 function validateContact(contact) {
    const errors = {};
    const firstName = contact.firstName.trim();
    const lastName = contact.lastName.trim();
    const email = contact.email.trim();
 
-   if (!firstName) errors.firstName = "Enter your first name.";
-   if (!lastName) errors.lastName = "Enter your last name.";
-   if (!email) errors.email = "Enter your email.";
-   else if (!EMAIL_PATTERN.test(email)) errors.email = "Enter a valid email address.";
+   if (!firstName) errors.firstName = true;
+   if (!lastName) errors.lastName = true;
+   if (!email || !EMAIL_PATTERN.test(email)) errors.email = true;
    if (contact.followUp !== "yes" && contact.followUp !== "no") {
-      errors.followUp = "Please choose yes or no.";
+      errors.followUp = true;
    }
 
    return errors;
 }
 
+const FIELD_IDS = {
+   firstName: "inspection-contact-first-name",
+   lastName: "inspection-contact-last-name",
+   email: "inspection-contact-email",
+   followUp: "inspection-contact-follow-up",
+};
+
 function InspectionContactForm({ initialContact, onSubmit, onSkip, onBack }) {
    const [contact, setContact] = useState(() => normalizeContact(initialContact));
-   const [errors, setErrors] = useState({});
-   const [touched, setTouched] = useState({});
+   const [showErrors, setShowErrors] = useState(false);
+
+   const errors = showErrors ? validateContact(contact) : {};
 
    function updateField(field, value) {
       setContact((prev) => ({ ...prev, [field]: value }));
-      if (touched[field] || errors[field]) {
-         setErrors((prev) => {
-            const next = { ...prev };
-            delete next[field];
-            return next;
-         });
-      }
-   }
-
-   function handleBlur(field) {
-      setTouched((prev) => ({ ...prev, [field]: true }));
-      const nextErrors = validateContact({ ...contact });
-      setErrors((prev) => {
-         const merged = { ...prev };
-         if (nextErrors[field]) merged[field] = nextErrors[field];
-         else delete merged[field];
-         return merged;
-      });
    }
 
    function handleSubmit(event) {
       event.preventDefault();
       const nextErrors = validateContact(contact);
-      setErrors(nextErrors);
-      setTouched({ firstName: true, lastName: true, email: true, phone: true, followUp: true });
-      if (Object.keys(nextErrors).length > 0) return;
 
+      if (Object.keys(nextErrors).length > 0) {
+         setShowErrors(true);
+         requestAnimationFrame(() => {
+            const firstKey = ["firstName", "lastName", "email", "followUp"].find((key) => nextErrors[key]);
+            const el = firstKey ? document.getElementById(FIELD_IDS[firstKey]) : null;
+            el?.scrollIntoView({ behavior: "smooth", block: "center" });
+            if (el && typeof el.focus === "function") {
+               try {
+                  el.focus({ preventScroll: true });
+               } catch {
+                  /* ignore */
+               }
+            }
+         });
+         return;
+      }
+
+      setShowErrors(false);
       onSubmit({
          firstName: contact.firstName.trim(),
          lastName: contact.lastName.trim(),
@@ -77,75 +88,50 @@ function InspectionContactForm({ initialContact, onSubmit, onSkip, onBack }) {
             <div className="mt-6 space-y-4">
                <div className="grid gap-4 md:grid-cols-2">
                   <div>
-                     <label
-                        htmlFor="inspection-contact-first-name"
-                        className="mb-1.5 block text-sm font-semibold text-slate-700">
+                     <label htmlFor={FIELD_IDS.firstName} className="mb-1.5 block text-sm font-semibold text-slate-700">
                         First Name <span className="text-[#e21313]">*</span>
                      </label>
                      <input
-                        id="inspection-contact-first-name"
+                        id={FIELD_IDS.firstName}
                         type="text"
                         autoComplete="given-name"
                         value={contact.firstName}
                         onChange={(e) => updateField("firstName", e.target.value)}
-                        onBlur={() => handleBlur("firstName")}
-                        className={fieldClass}
+                        className={getFieldClass(Boolean(errors.firstName))}
                         aria-invalid={Boolean(errors.firstName)}
-                        aria-describedby={errors.firstName ? "inspection-contact-first-name-error" : undefined}
                      />
-                     {errors.firstName && (
-                        <p id="inspection-contact-first-name-error" className="mt-1 text-sm text-red-700">
-                           {errors.firstName}
-                        </p>
-                     )}
                   </div>
 
                   <div>
-                     <label
-                        htmlFor="inspection-contact-last-name"
-                        className="mb-1.5 block text-sm font-semibold text-slate-700">
+                     <label htmlFor={FIELD_IDS.lastName} className="mb-1.5 block text-sm font-semibold text-slate-700">
                         Last Name <span className="text-[#e21313]">*</span>
                      </label>
                      <input
-                        id="inspection-contact-last-name"
+                        id={FIELD_IDS.lastName}
                         type="text"
                         autoComplete="family-name"
                         value={contact.lastName}
                         onChange={(e) => updateField("lastName", e.target.value)}
-                        onBlur={() => handleBlur("lastName")}
-                        className={fieldClass}
+                        className={getFieldClass(Boolean(errors.lastName))}
                         aria-invalid={Boolean(errors.lastName)}
-                        aria-describedby={errors.lastName ? "inspection-contact-last-name-error" : undefined}
                      />
-                     {errors.lastName && (
-                        <p id="inspection-contact-last-name-error" className="mt-1 text-sm text-red-700">
-                           {errors.lastName}
-                        </p>
-                     )}
                   </div>
                </div>
 
                <div className="grid gap-4 md:grid-cols-2">
                   <div>
-                     <label htmlFor="inspection-contact-email" className="mb-1.5 block text-sm font-semibold text-slate-700">
+                     <label htmlFor={FIELD_IDS.email} className="mb-1.5 block text-sm font-semibold text-slate-700">
                         Email <span className="text-[#e21313]">*</span>
                      </label>
                      <input
-                        id="inspection-contact-email"
+                        id={FIELD_IDS.email}
                         type="email"
                         autoComplete="email"
                         value={contact.email}
                         onChange={(e) => updateField("email", e.target.value)}
-                        onBlur={() => handleBlur("email")}
-                        className={fieldClass}
+                        className={getFieldClass(Boolean(errors.email))}
                         aria-invalid={Boolean(errors.email)}
-                        aria-describedby={errors.email ? "inspection-contact-email-error" : undefined}
                      />
-                     {errors.email && (
-                        <p id="inspection-contact-email-error" className="mt-1 text-sm text-red-700">
-                           {errors.email}
-                        </p>
-                     )}
                   </div>
 
                   <div>
@@ -164,10 +150,10 @@ function InspectionContactForm({ initialContact, onSubmit, onSkip, onBack }) {
                </div>
 
                <fieldset className="mt-5">
-                  <legend className="mb-1.5 block text-sm font-semibold text-slate-700">
+                  <legend className="mb-1.5 block border-0 border-none text-sm font-semibold text-slate-700">
                      Do you want us to contact you about your inspection? <span className="text-[#e21313]">*</span>
                   </legend>
-                  <div className="flex gap-3">
+                  <div id={FIELD_IDS.followUp} className="flex gap-3">
                      {[
                         { value: "yes", label: "Yes" },
                         { value: "no", label: "No" },
@@ -181,19 +167,16 @@ function InspectionContactForm({ initialContact, onSubmit, onSkip, onBack }) {
                               onClick={() => updateField("followUp", option.value)}
                               className={`w-[80px] cursor-pointer rounded-xl border p-3 text-center font-medium transition ${
                                  selected
-                                    ? "border-slate-500 bg-slate-100 text-slate-900"
-                                    : "border-slate-300 bg-white text-slate-900 hover:border-slate-400 hover:bg-slate-50"
+                                    ? "border-slate-400 bg-slate-300 text-slate-900"
+                                    : errors.followUp
+                                      ? "border-red-400 bg-red-50 text-slate-900 hover:border-red-500"
+                                      : "border-slate-300 bg-white text-slate-900 hover:border-slate-400 hover:bg-slate-50"
                               }`}>
                               {option.label}
                            </button>
                         );
                      })}
                   </div>
-                  {errors.followUp && (
-                     <p className="mt-1 text-sm text-red-700" role="alert">
-                        {errors.followUp}
-                     </p>
-                  )}
                </fieldset>
             </div>
          </section>
@@ -214,7 +197,7 @@ function InspectionContactForm({ initialContact, onSubmit, onSkip, onBack }) {
                <button
                   type="button"
                   onClick={onSkip}
-                  className="mt-1.5 cursor-pointer self-end text-xs font-medium uppercase italic tracking-wide text-slate-600 opacity-70 transition hover:opacity-100">
+                  className="mt-1.5 cursor-pointer self-end border-none bg-transparent p-0 text-xs font-medium uppercase italic tracking-wide text-slate-600 opacity-70 transition hover:opacity-100">
                   Skip for now →
                </button>
             </div>

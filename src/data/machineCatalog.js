@@ -879,6 +879,73 @@ export function isMachineSetupComplete(value) {
    return true;
 }
 
+/** Ordered field element ids for incomplete machine-setup answers (matches form input ids). */
+export function getMissingMachineSetupFields(value) {
+   const setup = normalizeMachineSetup(value);
+   const missing = [];
+
+   function addDrillFields(values, idPrefix) {
+      if (!values?.manufacturer) missing.push(`${idPrefix}-manufacturer`);
+      if (!values?.model) missing.push(`${idPrefix}-model`);
+      if (values?.model === "Other" && !values?.otherDetails?.trim()) {
+         missing.push(`${idPrefix}-other-details`);
+      }
+      if (requiresRowUnitSeries(values?.model) && !values?.rowUnitSeries) {
+         missing.push(`${idPrefix}-row-unit-series`);
+      }
+      if (!values?.width) missing.push(`${idPrefix}-width`);
+      if (!values?.rowSpacing) missing.push(`${idPrefix}-spacing`);
+      if (!values?.workingRanks) missing.push(`${idPrefix}-working-ranks`);
+      if (!values?.rowUnitCount) missing.push(`${idPrefix}-row-units`);
+   }
+
+   function addCartFields(values, idPrefix) {
+      if (!values?.manufacturer) missing.push(`${idPrefix}-manufacturer`);
+      if (!values?.model) missing.push(`${idPrefix}-model`);
+      if (values?.model === "Other" && !values?.otherDetails?.trim()) {
+         missing.push(`${idPrefix}-other-details`);
+      }
+      if (!values?.tankCount) missing.push(`${idPrefix}-tank-count`);
+      if (!values?.tankSize) missing.push(`${idPrefix}-tank-size`);
+   }
+
+   if (!setup.equipmentType || (setup.equipmentType === "air_seeder" && !setup.component)) {
+      missing.push("machine-setup-choice");
+      return missing;
+   }
+
+   if (setup.component === "both") {
+      if (setup.includeDrill !== false) addDrillFields(setup.drill, "machine-drill");
+      if (setup.includeCart !== false) addCartFields(setup.cart, "machine-cart");
+      return missing;
+   }
+
+   if (setup.equipmentType === "planter") {
+      if (!setup.manufacturer) missing.push("machine-manufacturer");
+      if (!setup.model) missing.push("machine-model");
+      if (setup.model === "Other" && !setup.otherDetails?.trim()) {
+         missing.push("machine-other-details");
+      }
+      if (requiresRowUnitSeries(setup.model) && !setup.rowUnitSeries) {
+         missing.push("machine-row-unit-series");
+      }
+      if (!setup.width) missing.push("machine-width");
+      if (!setup.rowSpacing) missing.push("machine-spacing");
+      return missing;
+   }
+
+   if (setup.component === "drill") {
+      addDrillFields(setup, "machine");
+      return missing;
+   }
+
+   if (setup.component === "cart") {
+      addCartFields(setup, "machine");
+   }
+
+   return missing;
+}
+
 export function formatMachineSetupSummary(value) {
    const setup = normalizeMachineSetup(value);
    const parts = [];

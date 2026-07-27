@@ -4,6 +4,7 @@ import {
    getMachineChoice,
    getMachineChoiceTarget,
    getManufacturers,
+   getMissingMachineSetupFields,
    getModels,
    normalizeMachineSetup,
    persistMachineSetupDraft,
@@ -60,7 +61,7 @@ function SetupCard({ title, included = true, onIncludedChange, canDisable = true
    );
 }
 
-function MachineSetupForm({ value, onChange }) {
+function MachineSetupForm({ value, onChange, showValidation = false }) {
    const setup = normalizeMachineSetup(value);
    const machineChoice = getMachineChoice(setup);
    const isAirSeederBoth = setup.component === "both";
@@ -78,6 +79,9 @@ function MachineSetupForm({ value, onChange }) {
    const singleModels = getModels(setup.equipmentType, setup.component, setup.manufacturer);
    const predictedRowUnitCount = calculateRowUnitCount(isAirSeederBoth ? { component: "both", drill: setup.drill } : setup);
    const rowUnitCountOptions = getRowUnitCountOptions(predictedRowUnitCount, drillValues.rowUnitCount);
+   const invalidFields = showValidation ? new Set(getMissingMachineSetupFields(setup)) : null;
+   const revealAll = showValidation;
+   const choiceError = invalidFields?.has("machine-setup-choice");
 
    useEffect(() => {
       if (!showSingleDrillFields && !isAirSeederBoth) return;
@@ -231,7 +235,7 @@ function MachineSetupForm({ value, onChange }) {
 
    return (
       <div className="mt-6 space-y-5" id="machine-setup">
-         <div>
+         <div id="machine-setup-choice">
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                {MACHINE_CHOICES.map((option) => {
                   const isSelected = machineChoice === option.value;
@@ -244,7 +248,9 @@ function MachineSetupForm({ value, onChange }) {
                         className={`flex h-full cursor-pointer flex-col items-start justify-start rounded-xl border p-4 text-left transition ${
                            isSelected
                               ? "border-[#1347e2] bg-blue-50 text-slate-900"
-                              : "border-slate-300 bg-white hover:border-slate-400 hover:bg-slate-50"
+                              : choiceError
+                                ? "border-red-400 bg-red-50 hover:border-red-500"
+                                : "border-slate-300 bg-white hover:border-slate-400 hover:bg-slate-50"
                         }`}>
                         <span className="block text-lg font-semibold">{option.label}</span>
                         {option.description && option.description.length > 0 ? (
@@ -269,6 +275,8 @@ function MachineSetupForm({ value, onChange }) {
                      manufacturers={drillManufacturers}
                      models={drillModels}
                      onFieldChange={updateDrillField}
+                     revealAll={revealAll}
+                     invalidFields={invalidFields}
                   />
                   <DrillDetailFields
                      idPrefix="machine-drill"
@@ -276,6 +284,8 @@ function MachineSetupForm({ value, onChange }) {
                      onFieldChange={updateDrillField}
                      predictedRowUnitCount={predictedRowUnitCount}
                      rowUnitCountOptions={rowUnitCountOptions}
+                     revealAll={revealAll}
+                     invalidFields={invalidFields}
                   />
                </SetupCard>
 
@@ -290,8 +300,16 @@ function MachineSetupForm({ value, onChange }) {
                      manufacturers={cartManufacturers}
                      models={cartModels}
                      onFieldChange={updateCartField}
+                     revealAll={revealAll}
+                     invalidFields={invalidFields}
                   />
-                  <CartDetailFields idPrefix="machine-cart" values={cartValues} onFieldChange={updateCartField} />
+                  <CartDetailFields
+                     idPrefix="machine-cart"
+                     values={cartValues}
+                     onFieldChange={updateCartField}
+                     revealAll={revealAll}
+                     invalidFields={invalidFields}
+                  />
                </SetupCard>
             </div>
          )}
@@ -304,6 +322,8 @@ function MachineSetupForm({ value, onChange }) {
                   manufacturers={singleManufacturers}
                   models={singleModels}
                   onFieldChange={updateField}
+                  revealAll={revealAll}
+                  invalidFields={invalidFields}
                />
                <DrillDetailFields
                   idPrefix="machine"
@@ -311,6 +331,8 @@ function MachineSetupForm({ value, onChange }) {
                   onFieldChange={updateField}
                   predictedRowUnitCount={predictedRowUnitCount}
                   rowUnitCountOptions={rowUnitCountOptions}
+                  revealAll={revealAll}
+                  invalidFields={invalidFields}
                />
             </SetupCard>
          )}
@@ -323,6 +345,8 @@ function MachineSetupForm({ value, onChange }) {
                   manufacturers={singleManufacturers}
                   models={singleModels}
                   onFieldChange={updateField}
+                  revealAll={revealAll}
+                  invalidFields={invalidFields}
                />
 
                {showSingleDrillFields && (
@@ -332,10 +356,20 @@ function MachineSetupForm({ value, onChange }) {
                      onFieldChange={updateField}
                      predictedRowUnitCount={predictedRowUnitCount}
                      rowUnitCountOptions={rowUnitCountOptions}
+                     revealAll={revealAll}
+                     invalidFields={invalidFields}
                   />
                )}
 
-               {showSingleCartFields && <CartDetailFields idPrefix="machine" values={setup} onFieldChange={updateField} />}
+               {showSingleCartFields && (
+                  <CartDetailFields
+                     idPrefix="machine"
+                     values={setup}
+                     onFieldChange={updateField}
+                     revealAll={revealAll}
+                     invalidFields={invalidFields}
+                  />
+               )}
             </div>
          )}
       </div>

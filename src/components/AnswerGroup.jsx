@@ -56,6 +56,7 @@ function AnswerGroup({
    quantityLabel = "row-units",
    maxCount = null,
    allowSkip = true,
+   showMachineSetupValidation = false,
 }) {
    const buttonBase = "w-full rounded-xl border p-4 text-left transition cursor-pointer";
    const input =
@@ -295,7 +296,9 @@ function AnswerGroup({
    }
 
    if (answerType === "machine_setup") {
-      return <MachineSetupForm value={selectedAnswer} onChange={onAnswer} />;
+      return (
+         <MachineSetupForm value={selectedAnswer} onChange={onAnswer} showValidation={showMachineSetupValidation} />
+      );
    }
 
    if (answerType === "notes") {

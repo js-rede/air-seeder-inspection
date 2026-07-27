@@ -41,11 +41,25 @@ Machine catalog and disc diameter options are in `src/data/` and require a code 
 ## WordPress deployment
 
 1. Run `npm run build`
-2. Deploy the `dist/` folder with the WordPress plugin
-3. Ensure `dist/data/inspection-steps.json` is served alongside `dist/assets/app.js`
+2. Copy the built `dist/` folder into the plugin directory so it sits next to the PHP file:
+
+```text
+wp-content/plugins/air-seeder-inspection/
+  air-seeder-inspection.php
+  dist/
+    assets/app.js
+    assets/index.css
+    data/inspection-steps.json
+```
+
+3. Activate **Air Seeder Inspection** in WordPress
 4. Use shortcode `[air_seeder_inspection]` on the target page
 
-The plugin mounts the app on `#air-seeder-inspection-root`.
+A recoverable copy of the plugin PHP lives in this repo at:
+
+`wordpress-plugin/air-seeder-inspection/air-seeder-inspection.php`
+
+The plugin mounts the app on `#air-seeder-inspection-root` and sets `data-steps-url` to the plugin’s JSON path.
 
 ## Project structure
 
