@@ -217,7 +217,7 @@ function sumLineItemCosts(items) {
 function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
    const [excludedIds, setExcludedIds] = useState(() => new Set());
    const [emailModalOpen, setEmailModalOpen] = useState(false);
-   const [emailStatus, setEmailStatus] = useState("idle"); // idle | sending | sent | error
+   const [emailStatus, setEmailStatus] = useState("idle"); // idle | sending | error
 
    const hasMarginalItems =
       (summary.ratingCounts.maybe || 0) > 0 || summary.lineItems.some((item) => item.rating === "maybe");
@@ -314,7 +314,8 @@ function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
          if (!response.ok || data?.ok === false) {
             throw new Error(data?.message || `Request failed (${response.status})`);
          }
-         setEmailStatus("sent");
+         setEmailModalOpen(false);
+         setEmailStatus("idle");
       } catch (error) {
          console.error("Failed to email report:", error);
          setEmailStatus("error");

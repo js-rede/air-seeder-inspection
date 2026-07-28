@@ -55,7 +55,14 @@ function EmailReportModalContent({ initialEmail = "", onClose, onSend, status = 
          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4"
          role="dialog"
          aria-modal="true">
-         <div className="w-full max-w-md -translate-y-12 rounded-2xl border border-slate-200 bg-white p-6 shadow-xl">
+         <div className="relative w-full max-w-[450px] -translate-y-12 rounded-2xl border border-slate-200 bg-white p-6 shadow-xl">
+            {isSending && (
+               <div className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-2xl bg-white/90">
+                  <div className="h-10 w-10 animate-spin rounded-full border-4 border-slate-200 border-t-[#e21313]" />
+                  <p className="mt-4 font-rede-geom text-sm uppercase tracking-wider text-slate-500">Sending Report</p>
+               </div>
+            )}
+
             <div className="flex items-start justify-between gap-4">
                <div>
                   <h2 className="text-2xl font-bold text-slate-900">Email Inspection Report</h2>
@@ -94,6 +101,7 @@ function EmailReportModalContent({ initialEmail = "", onClose, onSend, status = 
                               placeholder="name@example.com"
                               className={hasError ? fieldErrorClass : fieldClass}
                               aria-invalid={hasError}
+                              disabled={isSending}
                            />
                         </div>
                         {emails.length > 1 && (
@@ -151,7 +159,6 @@ function EmailReportModalContent({ initialEmail = "", onClose, onSend, status = 
                </fieldset>
 
                {status === "error" && <p className="text-sm text-red-600">Couldn’t send the email. Please try again.</p>}
-               {status === "sent" && <p className="text-sm text-green-700">Report sent.</p>}
 
                <div className="flex justify-end gap-2 pt-2">
                   <button
@@ -165,7 +172,7 @@ function EmailReportModalContent({ initialEmail = "", onClose, onSend, status = 
                      type="submit"
                      disabled={isSending}
                      className="cursor-pointer rounded-xl bg-[#e21313] px-5 py-2.5 font-rede-geom text-sm font-semibold uppercase italic tracking-wider text-white shadow-sm transition hover:bg-[#ce1b1b] disabled:cursor-default disabled:opacity-60">
-                     {isSending ? "Sending…" : "Send"}
+                     Send
                   </button>
                </div>
             </form>
