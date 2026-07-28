@@ -225,46 +225,65 @@ export function CartDetailFields({ idPrefix, values, onFieldChange, revealAll = 
    if (!revealAll && !values.model) return null;
 
    return (
-      <div className="grid gap-4 sm:grid-cols-2">
-         <div>
-            <label htmlFor={`${idPrefix}-tank-count`} className="mb-2 block text-sm font-medium text-slate-700">
-               Number of tanks
-            </label>
-            <select
-               id={`${idPrefix}-tank-count`}
-               value={values.tankCount}
-               onChange={(e) => onFieldChange("tankCount", e.target.value)}
-               className={getSelectClass(hasFieldError(invalidFields, `${idPrefix}-tank-count`))}
-               style={selectStyle}
-               aria-invalid={hasFieldError(invalidFields, `${idPrefix}-tank-count`)}>
-               <option value="">Select tanks…</option>
-               {CART_TANK_COUNTS.map((option) => (
-                  <option key={option.value} value={option.value}>
-                     {option.label}
-                  </option>
-               ))}
-            </select>
+      <div className="space-y-4">
+         <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+               <label htmlFor={`${idPrefix}-tank-count`} className="mb-2 block text-sm font-medium text-slate-700">
+                  Number of tanks
+               </label>
+               <select
+                  id={`${idPrefix}-tank-count`}
+                  value={values.tankCount}
+                  onChange={(e) => onFieldChange("tankCount", e.target.value)}
+                  className={getSelectClass(hasFieldError(invalidFields, `${idPrefix}-tank-count`))}
+                  style={selectStyle}
+                  aria-invalid={hasFieldError(invalidFields, `${idPrefix}-tank-count`)}>
+                  <option value="">Select tanks…</option>
+                  {CART_TANK_COUNTS.map((option) => (
+                     <option key={option.value} value={option.value}>
+                        {option.label}
+                     </option>
+                  ))}
+               </select>
+            </div>
+
+            <div>
+               <label htmlFor={`${idPrefix}-tank-size`} className="mb-2 block text-sm font-medium text-slate-700">
+                  Tank size
+               </label>
+               <select
+                  id={`${idPrefix}-tank-size`}
+                  value={values.tankSize}
+                  onChange={(e) => onFieldChange("tankSize", e.target.value)}
+                  className={getSelectClass(hasFieldError(invalidFields, `${idPrefix}-tank-size`))}
+                  style={selectStyle}
+                  aria-invalid={hasFieldError(invalidFields, `${idPrefix}-tank-size`)}>
+                  <option value="">Select tank size…</option>
+                  {CART_TANK_SIZES.map((size) => (
+                     <option key={size} value={size}>
+                        {size}
+                     </option>
+                  ))}
+               </select>
+            </div>
          </div>
 
-         <div>
-            <label htmlFor={`${idPrefix}-tank-size`} className="mb-2 block text-sm font-medium text-slate-700">
-               Tank size
-            </label>
-            <select
-               id={`${idPrefix}-tank-size`}
-               value={values.tankSize}
-               onChange={(e) => onFieldChange("tankSize", e.target.value)}
-               className={getSelectClass(hasFieldError(invalidFields, `${idPrefix}-tank-size`))}
-               style={selectStyle}
-               aria-invalid={hasFieldError(invalidFields, `${idPrefix}-tank-size`)}>
-               <option value="">Select tank size…</option>
-               {CART_TANK_SIZES.map((size) => (
-                  <option key={size} value={size}>
-                     {size}
-                  </option>
-               ))}
-            </select>
-         </div>
+         {values.tankSize === "Other" && (
+            <div>
+               <label htmlFor={`${idPrefix}-tank-size-other`} className="mb-2 block text-sm font-medium text-slate-700">
+                  Tank size details
+               </label>
+               <input
+                  id={`${idPrefix}-tank-size-other`}
+                  type="text"
+                  value={values.tankSizeOther || ""}
+                  onChange={(e) => onFieldChange("tankSizeOther", e.target.value)}
+                  placeholder="Enter tank size"
+                  className={getSelectClass(hasFieldError(invalidFields, `${idPrefix}-tank-size-other`))}
+                  aria-invalid={hasFieldError(invalidFields, `${idPrefix}-tank-size-other`)}
+               />
+            </div>
+         )}
       </div>
    );
 }

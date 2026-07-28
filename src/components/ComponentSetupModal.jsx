@@ -89,14 +89,20 @@ function ComponentSetupModalContent({ type, setup, onSave }) {
             nextCart.model = "";
             nextCart.tankCount = "";
             nextCart.tankSize = "";
+            nextCart.tankSizeOther = "";
          }
 
          if (field === "model") {
             nextCart.tankCount = "";
             nextCart.tankSize = "";
+            nextCart.tankSizeOther = "";
             if (nextValue !== "Other") {
                nextCart.otherDetails = "";
             }
+         }
+
+         if (field === "tankSize" && nextValue !== "Other") {
+            nextCart.tankSizeOther = "";
          }
 
          return persistMachineSetupDraft({ ...current, cart: nextCart });

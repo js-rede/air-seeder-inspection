@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import {
    getCartSetup,
+   getCartTankSizeLabel,
    getDrillSetup,
    getRowUnitSeriesLabel,
    isCartIncluded,
@@ -132,12 +133,16 @@ function buildEquipmentDetails(machineSetup, summary) {
 
       if (summary.tankCount > 0) {
          const tankLabel = summary.tankCount === 1 ? "1 tank" : `${summary.tankCount} tanks`;
-         const tankSize = cart?.tankSize ? String(cart.tankSize).replace(/\s*bu\b/i, " bushels") : "";
+         const tankSize = getCartTankSizeLabel(cart);
+         const tankSizeDisplay = tankSize ? String(tankSize).replace(/\s*bu\b/i, " bushels") : "";
          details.push({
-            value: tankSize ? `${tankLabel}, ${tankSize}` : tankLabel,
+            value: tankSizeDisplay ? `${tankLabel}, ${tankSizeDisplay}` : tankLabel,
          });
-      } else if (cart?.tankSize) {
-         details.push({ value: String(cart.tankSize).replace(/\s*bu\b/i, " bushels") });
+      } else {
+         const tankSize = getCartTankSizeLabel(cart);
+         if (tankSize) {
+            details.push({ value: String(tankSize).replace(/\s*bu\b/i, " bushels") });
+         }
       }
       if (cart?.otherDetails?.trim()) {
          details.push({ label: "Cart notes", value: cart.otherDetails.trim() });
@@ -234,8 +239,6 @@ function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
 
    const emailButtonClass =
       "cursor-pointer rounded-xl bg-[#e21313] px-6 py-3 font-rede-geom text-sm font-semibold uppercase italic tracking-wider text-white shadow-sm transition hover:bg-[#ce1b1b] disabled:cursor-default disabled:opacity-60 min-w-[185px] text-center h-[44px]";
-   const followUpButtonClass =
-      "cursor-pointer rounded-xl border border-slate-300 bg-white px-6 py-3 font-rede-geom text-sm font-semibold uppercase italic tracking-wider text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:cursor-default disabled:opacity-60 min-w-[185px] text-center h-[44px]";
 
    function openEmailModal() {
       setEmailStatus("idle");
@@ -264,15 +267,11 @@ function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
 
    function renderActionButtons({ align = "start" } = {}) {
       return (
-         <div className={`mt-5 flex flex-wrap gap-3 ${align === "end" ? "justify-end" : ""}`}>
-            <button
-               type="button"
-               onClick={openFollowUpModal}
-               disabled={followUpRequested}
-               className={emailButtonClass}>
+         <div className={`mt-3 mb-2 flex flex-wrap gap-3 ${align === "end" ? "justify-end" : ""}`}>
+            <button type="button" onClick={openFollowUpModal} disabled={followUpRequested} className={emailButtonClass}>
                {followUpRequested ? "Follow-up requested" : "Request a follow-up"}
             </button>
-            <button type="button" onClick={openEmailModal} className={followUpButtonClass}>
+            <button type="button" onClick={openEmailModal} className={emailButtonClass}>
                Email my report
             </button>
          </div>
@@ -389,7 +388,7 @@ function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
                      </li>
                      {hasMarginalItems && (
                         <li className="text-sm">
-                           Note: If items rated as <span className="font-semibold text-amber-500 italic">marginal</span> are{" "}
+                           If items rated as <span className="font-semibold text-amber-500 italic">marginal</span> are{" "}
                            <span className="font-bold">not</span> included in the estimate, the total drops to{" "}
                            <span className="font-semibold text-slate-900">{rangeWithoutMarginal || "$0"}</span>.
                         </li>

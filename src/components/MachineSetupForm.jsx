@@ -131,6 +131,7 @@ function MachineSetupForm({ value, onChange, showValidation = false }) {
          next.workingRanks = "";
          next.tankCount = "";
          next.tankSize = "";
+         next.tankSizeOther = "";
       }
 
       if (field === "model") {
@@ -141,9 +142,14 @@ function MachineSetupForm({ value, onChange, showValidation = false }) {
          next.workingRanks = "";
          next.tankCount = "";
          next.tankSize = "";
+         next.tankSizeOther = "";
          if (nextValue !== "Other") {
             next.otherDetails = "";
          }
+      }
+
+      if (field === "tankSize" && nextValue !== "Other") {
+         next.tankSizeOther = "";
       }
 
       if ((field === "width" || field === "rowSpacing") && showSingleDrillFields) {
@@ -196,14 +202,20 @@ function MachineSetupForm({ value, onChange, showValidation = false }) {
          nextCart.model = "";
          nextCart.tankCount = "";
          nextCart.tankSize = "";
+         nextCart.tankSizeOther = "";
       }
 
       if (field === "model") {
          nextCart.tankCount = "";
          nextCart.tankSize = "";
+         nextCart.tankSizeOther = "";
          if (nextValue !== "Other") {
             nextCart.otherDetails = "";
          }
+      }
+
+      if (field === "tankSize" && nextValue !== "Other") {
+         nextCart.tankSizeOther = "";
       }
 
       onChange(persistMachineSetupDraft({ ...setup, cart: nextCart }));

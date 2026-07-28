@@ -60,8 +60,13 @@ function ContactFollowUpModalContent({ initialContact, onClose, onConfirm }) {
          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4"
          role="dialog"
          aria-modal="true"
-         aria-labelledby="contact-follow-up-title">
-         <div className="relative w-full max-w-[450px] -translate-y-12 rounded-2xl border border-slate-200 bg-white p-6 shadow-xl">
+         aria-labelledby="contact-follow-up-title"
+         onClick={() => {
+            if (!isSubmitting) onClose();
+         }}>
+         <div
+            className="relative w-full max-w-[450px] -translate-y-12 rounded-2xl border border-slate-200 bg-white p-6 shadow-xl"
+            onClick={(event) => event.stopPropagation()}>
             {isSubmitting && (
                <div className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-2xl bg-white/90">
                   <div className="h-10 w-10 animate-spin rounded-full border-4 border-slate-200 border-t-[#e21313]" />

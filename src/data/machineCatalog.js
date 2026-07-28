@@ -54,6 +54,15 @@ export function getRowUnitSeriesLabel(value) {
    return ROW_UNIT_SERIES_OPTIONS.find((option) => option.value === value)?.label ?? value;
 }
 
+/** Display label for cart tank size (uses custom text when size is Other). */
+export function getCartTankSizeLabel(cartOrSetup) {
+   if (!cartOrSetup?.tankSize) return "";
+   if (cartOrSetup.tankSize === "Other") {
+      return cartOrSetup.tankSizeOther?.trim() || "Other";
+   }
+   return cartOrSetup.tankSize;
+}
+
 export const WORKING_RANKS = [
    { value: "1", label: "1 rank" },
    { value: "2", label: "2 ranks" },
@@ -169,6 +178,7 @@ export const CART_TANK_SIZES = [
    "750 bu",
    "850 bu",
    "1050 bu",
+   "Other",
 ];
 
 const DRILL_MODELS = {
@@ -178,9 +188,6 @@ const DRILL_MODELS = {
       "1990 No-Till Air Drill",
       "N500 / N500C Series",
       "N500F Series",
-      "P500 Series",
-      "P600 Series",
-      "H500 / H500F Series",
       "1830 / 1835 SFP",
       "730 Air Disk Drill",
       "Other",
@@ -209,7 +216,7 @@ const DRILL_MODELS = {
 };
 
 const CART_MODELS = {
-   "John Deere": ["1900 Commodity Cart", "1910 Commodity Cart", "C650 Air Cart", "C850 Air Cart", "C-Series", "Other"],
+   "John Deere": ["1900", "1910", "C-Series", "Other"],
    "Case IH": [
       "Precision Air 525",
       "Precision Air 535",
@@ -307,6 +314,7 @@ export function createEmptyCartSetup() {
       model: "",
       tankCount: "",
       tankSize: "",
+      tankSizeOther: "",
       otherDetails: "",
    };
 }
@@ -561,6 +569,7 @@ export function createEmptyMachineSetup() {
       workingRanks: "",
       tankCount: "",
       tankSize: "",
+      tankSizeOther: "",
       otherDetails: "",
       drill: createEmptyDrillSetup(),
       cart: createEmptyCartSetup(),
@@ -613,6 +622,7 @@ function isDrillPartComplete(drill) {
 function isCartPartComplete(cart) {
    if (!cart?.manufacturer || !cart?.model) return false;
    if (!cart.tankCount || !cart.tankSize) return false;
+   if (cart.tankSize === "Other" && !cart.tankSizeOther?.trim()) return false;
    if (cart.model === "Other" && !cart.otherDetails?.trim()) return false;
    return true;
 }
@@ -872,6 +882,10 @@ export function isMachineSetupComplete(value) {
       return false;
    }
 
+   if (setup.component === "cart" && setup.tankSize === "Other" && !setup.tankSizeOther?.trim()) {
+      return false;
+   }
+
    if (setup.model === "Other" && !setup.otherDetails?.trim()) {
       return false;
    }
@@ -907,6 +921,9 @@ export function getMissingMachineSetupFields(value) {
       }
       if (!values?.tankCount) missing.push(`${idPrefix}-tank-count`);
       if (!values?.tankSize) missing.push(`${idPrefix}-tank-size`);
+      if (values?.tankSize === "Other" && !values?.tankSizeOther?.trim()) {
+         missing.push(`${idPrefix}-tank-size-other`);
+      }
    }
 
    if (!setup.equipmentType || (setup.equipmentType === "air_seeder" && !setup.component)) {
@@ -981,7 +998,8 @@ export function formatMachineSetupSummary(value) {
             const tankCount = Number(cart.tankCount);
             cartParts.push(`${tankCount} tank${tankCount === 1 ? "" : "s"}`);
          }
-         if (cart.tankSize) cartParts.push(cart.tankSize);
+         const tankSizeLabel = getCartTankSizeLabel(cart);
+         if (tankSizeLabel) cartParts.push(tankSizeLabel);
          if (cart.otherDetails) cartParts.push(cart.otherDetails);
 
          const cartSummary = cartParts.filter(Boolean).join(" · ");
@@ -1014,7 +1032,8 @@ export function formatMachineSetupSummary(value) {
       const tankCount = Number(setup.tankCount);
       parts.push(`${tankCount} tank${tankCount === 1 ? "" : "s"}`);
    }
-   if (setup.tankSize) parts.push(setup.tankSize);
+   const tankSizeLabel = getCartTankSizeLabel(setup);
+   if (tankSizeLabel) parts.push(tankSizeLabel);
    if (setup.otherDetails) parts.push(setup.otherDetails);
 
    return parts.filter(Boolean).join(" · ");
