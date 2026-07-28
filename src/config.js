@@ -19,5 +19,15 @@ export function getStepsUrl() {
    return "/data/inspection-steps.json";
 }
 
+export function getSendReportUrl() {
+   const fromWindow = typeof window !== "undefined" ? window.ASI_SEND_REPORT_URL : "";
+   if (fromWindow) return fromWindow;
+
+   const fromDataset = getRootEl()?.dataset?.sendReportUrl;
+   if (fromDataset) return fromDataset;
+
+   return "/wp-json/air-seeder-inspection/v1/send-report";
+}
+
 /** @deprecated Prefer getStepsUrl() — kept for any leftover imports. */
 export const STEPS_URL = "/data/inspection-steps.json";

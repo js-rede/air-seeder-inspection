@@ -7,9 +7,11 @@ import {
    isDrillIncluded,
    normalizeMachineSetup,
 } from "../data/machineCatalog";
+import { getSendReportUrl } from "../config";
 import { formatCostRange, groupItemsBySection } from "../utils/inspectionSummary";
 import { getRatingLabel } from "../utils/ratingStyles";
 import RatingBadge from "./RatingBadge";
+import EmailReportModal from "./EmailReportModal";
 
 /** Hide "1 row-units" / "1 item" for whole-machine costs; keep real counts (towers, row-units, etc.). */
 function shouldShowQuantity(item) {
@@ -20,6 +22,52 @@ function shouldShowQuantity(item) {
 
 function getLineItemId(item) {
    return [item.slug, item.choiceValue || "", item.label || "", item.stepTitle || "", item.rating || ""].join("::");
+}
+
+function formatEquipmentLine(detail) {
+   if (detail.label) return `${detail.label}: ${detail.value}`;
+   return String(detail.value || "");
+}
+
+function buildEmailReport({
+   equipment,
+   includedLineItems,
+   interestItems,
+   costRange,
+   estimatedLow,
+   estimatedHigh,
+   ratingCounts,
+}) {
+   return {
+      estimate: {
+         low: estimatedLow,
+         high: estimatedHigh,
+         label: costRange || "$0",
+      },
+      ratingCounts: {
+         maybe: ratingCounts?.maybe || 0,
+         bad: ratingCounts?.bad || 0,
+      },
+      equipment: equipment.map((group) => ({
+         key: group.key,
+         lines: group.details.map(formatEquipmentLine).filter(Boolean),
+      })),
+      lineItems: includedLineItems.map((item) => {
+         const detailParts = [item.label, shouldShowQuantity(item) ? `${item.quantity} ${item.quantityLabel}` : ""].filter(
+            Boolean,
+         );
+         return {
+            title: item.stepTitle || "",
+            detail: detailParts.join(" · "),
+            rating: item.rating || "",
+            ratingLabel: getRatingLabel(item.rating) || "",
+            costLabel: formatCostRange(item.estimatedLowCost, item.estimatedHighCost) || "",
+            costLow: item.estimatedLowCost,
+            costHigh: item.estimatedHighCost,
+         };
+      }),
+      interestItems: (interestItems || []).map((item) => item.stepTitle || item.label || item.title || "").filter(Boolean),
+   };
 }
 
 function buildEquipmentDetails(machineSetup, summary) {
@@ -166,8 +214,10 @@ function sumLineItemCosts(items) {
    );
 }
 
-function InspectionResults({ summary, machineSetup, onRestart }) {
+function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
    const [excludedIds, setExcludedIds] = useState(() => new Set());
+   const [emailModalOpen, setEmailModalOpen] = useState(false);
+   const [emailStatus, setEmailStatus] = useState("idle"); // idle | sending | sent | error
 
    const hasMarginalItems =
       (summary.ratingCounts.maybe || 0) > 0 || summary.lineItems.some((item) => item.rating === "maybe");
@@ -178,6 +228,20 @@ function InspectionResults({ summary, machineSetup, onRestart }) {
    );
 
    const excludeMarginal = marginalItemIds.length > 0 && marginalItemIds.every((id) => excludedIds.has(id));
+
+   const emailButtonClass =
+      "cursor-pointer rounded-xl bg-[#e21313] px-6 py-3 font-rede-geom text-sm font-semibold uppercase italic tracking-wider text-white shadow-sm transition hover:bg-[#ce1b1b] disabled:cursor-default disabled:opacity-60 w-[185px] text-center h-[44px]";
+
+   function openEmailModal() {
+      setEmailStatus("idle");
+      setEmailModalOpen(true);
+   }
+
+   function closeEmailModal() {
+      if (emailStatus === "sending") return;
+      setEmailModalOpen(false);
+      setEmailStatus("idle");
+   }
 
    function toggleItemExcluded(itemId) {
       setExcludedIds((previous) => {
@@ -226,6 +290,37 @@ function InspectionResults({ summary, machineSetup, onRestart }) {
    const onlyMarginalExcluded =
       excludeMarginal && excludedIds.size === marginalItemIds.length && marginalItemIds.every((id) => excludedIds.has(id));
 
+   async function handleSendReport(emails) {
+      const name = [contactInfo?.firstName, contactInfo?.lastName].filter(Boolean).join(" ").trim() || "there";
+      const url = getSendReportUrl();
+      const report = buildEmailReport({
+         equipment,
+         includedLineItems,
+         interestItems: summary.interestItems,
+         costRange,
+         estimatedLow,
+         estimatedHigh,
+         ratingCounts: summary.ratingCounts,
+      });
+
+      setEmailStatus("sending");
+      try {
+         const response = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, emails, report }),
+         });
+         const data = await response.json().catch(() => ({}));
+         if (!response.ok || data?.ok === false) {
+            throw new Error(data?.message || `Request failed (${response.status})`);
+         }
+         setEmailStatus("sent");
+      } catch (error) {
+         console.error("Failed to email report:", error);
+         setEmailStatus("error");
+      }
+   }
+
    return (
       <>
          <section className="-mx-4 mt-5 rounded-none border border-slate-200 border-x-0 bg-white p-4 shadow-sm sm:mx-0 sm:rounded-2xl sm:border-x sm:p-8">
@@ -257,13 +352,18 @@ function InspectionResults({ summary, machineSetup, onRestart }) {
                      </li>
                      {hasMarginalItems && (
                         <li className="text-sm">
-                           Note: If only items rated as{" "}
-                           <span className="font-semibold text-red-700 italic">need replacement</span> are included in the
-                           estimate, the total drops to{" "}
+                           Note: If items rated as <span className="font-semibold text-amber-500 italic">marginal</span> are{" "}
+                           <span className="font-bold">not</span> included in the estimate, the total drops to{" "}
                            <span className="font-semibold text-slate-900">{rangeWithoutMarginal || "$0"}</span>.
                         </li>
                      )}
                   </ul>
+               </div>
+
+               <div className="mt-5">
+                  <button type="button" onClick={openEmailModal} className={emailButtonClass}>
+                     Email Report
+                  </button>
                </div>
             </div>
 
@@ -370,6 +470,11 @@ function InspectionResults({ summary, machineSetup, onRestart }) {
                            : "includes the items you selected above."}
                      </p>
                   )}
+                  <div className="mt-4 mb-2">
+                     <button type="button" onClick={openEmailModal} className={emailButtonClass}>
+                        Email Report
+                     </button>
+                  </div>
                </div>
             </div>
 
@@ -433,6 +538,14 @@ function InspectionResults({ summary, machineSetup, onRestart }) {
                Start Over
             </button>
          </footer>
+
+         <EmailReportModal
+            isOpen={emailModalOpen}
+            initialEmail={contactInfo?.email || ""}
+            onClose={closeEmailModal}
+            onSend={handleSendReport}
+            status={emailStatus}
+         />
       </>
    );
 }

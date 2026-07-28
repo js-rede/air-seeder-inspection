@@ -14,6 +14,8 @@ define('ASI_PLUGIN_FILE', __FILE__);
 define('ASI_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('ASI_PLUGIN_URL', plugin_dir_url(__FILE__));
 
+require_once ASI_PLUGIN_DIR . 'api/rest-send-report.php';
+
 /**
  * Register shortcode and enqueue assets when the shortcode is rendered.
  */
@@ -34,10 +36,19 @@ function asi_render_shortcode() {
    asi_enqueue_assets();
 
    $steps_url = esc_url(ASI_PLUGIN_URL . 'data/inspection-steps.json');
+   $send_url  = esc_url(rest_url('air-seeder-inspection/v1/send-report'));
 
-   return sprintf(
-      '<div id="air-seeder-inspection-root" data-steps-url="%s"></div>',
-      $steps_url
+   // Set globals here (not only via wp_add_inline_script) so they work even with type="module" scripts.
+   $boot_script = sprintf(
+      '<script>window.ASI_STEPS_URL=%s;window.ASI_SEND_REPORT_URL=%s;</script>',
+      wp_json_encode($steps_url),
+      wp_json_encode($send_url)
+   );
+
+   return $boot_script . sprintf(
+      '<div id="air-seeder-inspection-root" data-steps-url="%s" data-send-report-url="%s"></div>',
+      $steps_url,
+      $send_url
    );
 }
 
@@ -80,9 +91,11 @@ function asi_enqueue_assets() {
       wp_script_add_data('air-seeder-inspection', 'type', 'module');
 
       $steps_url = ASI_PLUGIN_URL . 'data/inspection-steps.json';
+      $send_url  = rest_url('air-seeder-inspection/v1/send-report');
       wp_add_inline_script(
          'air-seeder-inspection',
-         'window.ASI_STEPS_URL = ' . wp_json_encode($steps_url) . ';',
+         'window.ASI_STEPS_URL = ' . wp_json_encode($steps_url) . ';' .
+         'window.ASI_SEND_REPORT_URL = ' . wp_json_encode($send_url) . ';',
          'before'
       );
    }

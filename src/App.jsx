@@ -543,7 +543,12 @@ function App() {
                {hasStarted ? (
                   isFinished ? (
                      hasSubmittedContact ? (
-                        <InspectionResults summary={summary} machineSetup={machineSetup} onRestart={restartInspection} />
+                        <InspectionResults
+                           summary={summary}
+                           machineSetup={machineSetup}
+                           contactInfo={contactInfo}
+                           onRestart={restartInspection}
+                        />
                      ) : (
                         <InspectionContactForm
                            initialContact={contactInfo}
