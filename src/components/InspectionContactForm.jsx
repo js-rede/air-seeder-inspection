@@ -22,9 +22,6 @@ function validateContact(contact) {
    if (!firstName) errors.firstName = true;
    if (!lastName) errors.lastName = true;
    if (!email || !EMAIL_PATTERN.test(email)) errors.email = true;
-   if (contact.followUp !== "yes" && contact.followUp !== "no") {
-      errors.followUp = true;
-   }
 
    return errors;
 }
@@ -33,7 +30,6 @@ const FIELD_IDS = {
    firstName: "inspection-contact-first-name",
    lastName: "inspection-contact-last-name",
    email: "inspection-contact-email",
-   followUp: "inspection-contact-follow-up",
 };
 
 function InspectionContactForm({ initialContact, onSubmit, onSkip, onBack }) {
@@ -53,7 +49,7 @@ function InspectionContactForm({ initialContact, onSubmit, onSkip, onBack }) {
       if (Object.keys(nextErrors).length > 0) {
          setShowErrors(true);
          requestAnimationFrame(() => {
-            const firstKey = ["firstName", "lastName", "email", "followUp"].find((key) => nextErrors[key]);
+            const firstKey = ["firstName", "lastName", "email"].find((key) => nextErrors[key]);
             const el = firstKey ? document.getElementById(FIELD_IDS[firstKey]) : null;
             el?.scrollIntoView({ behavior: "smooth", block: "center" });
             if (el && typeof el.focus === "function") {
@@ -73,7 +69,6 @@ function InspectionContactForm({ initialContact, onSubmit, onSkip, onBack }) {
          lastName: contact.lastName.trim(),
          email: contact.email.trim(),
          phone: contact.phone.trim(),
-         followUp: contact.followUp,
       });
    }
 
@@ -148,36 +143,6 @@ function InspectionContactForm({ initialContact, onSubmit, onSkip, onBack }) {
                      />
                   </div>
                </div>
-
-               <fieldset className="mt-5">
-                  <legend className="mb-1.5 block border-0 border-none text-sm font-semibold text-slate-700">
-                     Do you want us to contact you about your inspection? <span className="text-[#e21313]">*</span>
-                  </legend>
-                  <div id={FIELD_IDS.followUp} className="flex gap-3">
-                     {[
-                        { value: "yes", label: "Yes" },
-                        { value: "no", label: "No" },
-                     ].map((option) => {
-                        const selected = contact.followUp === option.value;
-                        return (
-                           <button
-                              key={option.value}
-                              type="button"
-                              aria-pressed={selected}
-                              onClick={() => updateField("followUp", option.value)}
-                              className={`w-[80px] cursor-pointer rounded-xl border p-3 text-center font-medium transition ${
-                                 selected
-                                    ? "border-slate-400 bg-slate-300 text-slate-900"
-                                    : errors.followUp
-                                      ? "border-red-400 bg-red-50 text-slate-900 hover:border-red-500"
-                                      : "border-slate-300 bg-white text-slate-900 hover:border-slate-400 hover:bg-slate-50"
-                              }`}>
-                              {option.label}
-                           </button>
-                        );
-                     })}
-                  </div>
-               </fieldset>
             </div>
          </section>
 

@@ -12,6 +12,7 @@ import { formatCostRange, groupItemsBySection } from "../utils/inspectionSummary
 import { getRatingLabel } from "../utils/ratingStyles";
 import RatingBadge from "./RatingBadge";
 import EmailReportModal from "./EmailReportModal";
+import ContactFollowUpModal from "./ContactFollowUpModal";
 
 /** Hide "1 row-units" / "1 item" for whole-machine costs; keep real counts (towers, row-units, etc.). */
 function shouldShowQuantity(item) {
@@ -218,6 +219,8 @@ function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
    const [excludedIds, setExcludedIds] = useState(() => new Set());
    const [emailModalOpen, setEmailModalOpen] = useState(false);
    const [emailStatus, setEmailStatus] = useState("idle"); // idle | sending | error
+   const [followUpModalOpen, setFollowUpModalOpen] = useState(false);
+   const [followUpRequested, setFollowUpRequested] = useState(false);
 
    const hasMarginalItems =
       (summary.ratingCounts.maybe || 0) > 0 || summary.lineItems.some((item) => item.rating === "maybe");
@@ -230,7 +233,9 @@ function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
    const excludeMarginal = marginalItemIds.length > 0 && marginalItemIds.every((id) => excludedIds.has(id));
 
    const emailButtonClass =
-      "cursor-pointer rounded-xl bg-[#e21313] px-6 py-3 font-rede-geom text-sm font-semibold uppercase italic tracking-wider text-white shadow-sm transition hover:bg-[#ce1b1b] disabled:cursor-default disabled:opacity-60 w-[185px] text-center h-[44px]";
+      "cursor-pointer rounded-xl bg-[#e21313] px-6 py-3 font-rede-geom text-sm font-semibold uppercase italic tracking-wider text-white shadow-sm transition hover:bg-[#ce1b1b] disabled:cursor-default disabled:opacity-60 min-w-[185px] text-center h-[44px]";
+   const followUpButtonClass =
+      "cursor-pointer rounded-xl border border-slate-300 bg-white px-6 py-3 font-rede-geom text-sm font-semibold uppercase italic tracking-wider text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:cursor-default disabled:opacity-60 min-w-[185px] text-center h-[44px]";
 
    function openEmailModal() {
       setEmailStatus("idle");
@@ -241,6 +246,37 @@ function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
       if (emailStatus === "sending") return;
       setEmailModalOpen(false);
       setEmailStatus("idle");
+   }
+
+   function openFollowUpModal() {
+      setFollowUpModalOpen(true);
+   }
+
+   function closeFollowUpModal() {
+      setFollowUpModalOpen(false);
+   }
+
+   async function handleFollowUpConfirm() {
+      // HubSpot ticket creation will plug in here later.
+      setFollowUpRequested(true);
+      setFollowUpModalOpen(false);
+   }
+
+   function renderActionButtons({ align = "start" } = {}) {
+      return (
+         <div className={`mt-5 flex flex-wrap gap-3 ${align === "end" ? "justify-end" : ""}`}>
+            <button
+               type="button"
+               onClick={openFollowUpModal}
+               disabled={followUpRequested}
+               className={emailButtonClass}>
+               {followUpRequested ? "Follow-up requested" : "Request a follow-up"}
+            </button>
+            <button type="button" onClick={openEmailModal} className={followUpButtonClass}>
+               Email my report
+            </button>
+         </div>
+      );
    }
 
    function toggleItemExcluded(itemId) {
@@ -361,11 +397,7 @@ function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
                   </ul>
                </div>
 
-               <div className="mt-5">
-                  <button type="button" onClick={openEmailModal} className={emailButtonClass}>
-                     Email Report
-                  </button>
-               </div>
+               {renderActionButtons()}
             </div>
 
             {summary.lineItems.length > 0 && (
@@ -471,11 +503,7 @@ function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
                            : "includes the items you selected above."}
                      </p>
                   )}
-                  <div className="mt-4 mb-2">
-                     <button type="button" onClick={openEmailModal} className={emailButtonClass}>
-                        Email Report
-                     </button>
-                  </div>
+                  {renderActionButtons({ align: "end" })}
                </div>
             </div>
 
@@ -546,6 +574,14 @@ function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
             onClose={closeEmailModal}
             onSend={handleSendReport}
             status={emailStatus}
+            followUpAlreadyRequested={followUpRequested}
+         />
+
+         <ContactFollowUpModal
+            isOpen={followUpModalOpen}
+            initialContact={contactInfo}
+            onClose={closeFollowUpModal}
+            onConfirm={handleFollowUpConfirm}
          />
       </>
    );

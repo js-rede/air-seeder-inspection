@@ -8,7 +8,13 @@ const fieldClass =
 const fieldErrorClass =
    "w-full rounded-xl border border-red-500 bg-red-50 px-4 py-2.5 text-lg focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-200";
 
-function EmailReportModalContent({ initialEmail = "", onClose, onSend, status = "idle" }) {
+function EmailReportModalContent({
+   initialEmail = "",
+   onClose,
+   onSend,
+   status = "idle",
+   followUpAlreadyRequested = false,
+}) {
    const [emails, setEmails] = useState(() => [initialEmail.trim() || ""]);
    const [followUp, setFollowUp] = useState("");
    const [showErrors, setShowErrors] = useState(false);
@@ -19,7 +25,8 @@ function EmailReportModalContent({ initialEmail = "", onClose, onSend, status = 
       return !EMAIL_PATTERN.test(value);
    });
    const hasNoValidEmail = !emails.some((email) => EMAIL_PATTERN.test(email.trim()));
-   const followUpError = showErrors && followUp !== "yes" && followUp !== "no";
+   const askFollowUp = !followUpAlreadyRequested;
+   const followUpError = askFollowUp && showErrors && followUp !== "yes" && followUp !== "no";
 
    function updateEmail(index, value) {
       setEmails((prev) => prev.map((item, i) => (i === index ? value : item)));
@@ -38,7 +45,7 @@ function EmailReportModalContent({ initialEmail = "", onClose, onSend, status = 
       event.preventDefault();
       const trimmed = emails.map((email) => email.trim()).filter(Boolean);
       const allValid = trimmed.length > 0 && trimmed.every((email) => EMAIL_PATTERN.test(email));
-      const hasFollowUp = followUp === "yes" || followUp === "no";
+      const hasFollowUp = !askFollowUp || followUp === "yes" || followUp === "no";
 
       if (!allValid || !hasFollowUp) {
          setShowErrors(true);
@@ -127,36 +134,38 @@ function EmailReportModalContent({ initialEmail = "", onClose, onSend, status = 
                   Add another email
                </button>
 
-               <fieldset className="mt-6 mb-8">
-                  <legend className="mt-12 mb-1.5 block border-0 border-none text-sm font-semibold text-slate-700">
-                     Do you want us to contact you about your inspection? <span className="text-[#e21313]">*</span>
-                  </legend>
-                  <div id="email-report-follow-up" className="flex gap-3">
-                     {[
-                        { value: "yes", label: "Yes" },
-                        { value: "no", label: "No" },
-                     ].map((option) => {
-                        const selected = followUp === option.value;
-                        return (
-                           <button
-                              key={option.value}
-                              type="button"
-                              aria-pressed={selected}
-                              disabled={isSending}
-                              onClick={() => setFollowUp(option.value)}
-                              className={`w-[80px] cursor-pointer rounded-xl border p-3 text-center font-medium transition disabled:cursor-default disabled:opacity-50 ${
-                                 selected
-                                    ? "border-slate-400 bg-slate-300 text-slate-900"
-                                    : followUpError
-                                      ? "border-red-400 bg-red-50 text-slate-900 hover:border-red-500"
-                                      : "border-slate-300 bg-white text-slate-900 hover:border-slate-400 hover:bg-slate-50"
-                              }`}>
-                              {option.label}
-                           </button>
-                        );
-                     })}
-                  </div>
-               </fieldset>
+               {askFollowUp && (
+                  <fieldset className="mt-6 mb-8">
+                     <legend className="mt-12 mb-1.5 block border-0 border-none text-sm font-semibold text-slate-700">
+                        Do you want us to contact you about your inspection? <span className="text-[#e21313]">*</span>
+                     </legend>
+                     <div id="email-report-follow-up" className="flex gap-3">
+                        {[
+                           { value: "yes", label: "Yes" },
+                           { value: "no", label: "No" },
+                        ].map((option) => {
+                           const selected = followUp === option.value;
+                           return (
+                              <button
+                                 key={option.value}
+                                 type="button"
+                                 aria-pressed={selected}
+                                 disabled={isSending}
+                                 onClick={() => setFollowUp(option.value)}
+                                 className={`w-[80px] cursor-pointer rounded-xl border p-3 text-center font-medium transition disabled:cursor-default disabled:opacity-50 ${
+                                    selected
+                                       ? "border-slate-400 bg-slate-300 text-slate-900"
+                                       : followUpError
+                                         ? "border-red-400 bg-red-50 text-slate-900 hover:border-red-500"
+                                         : "border-slate-300 bg-white text-slate-900 hover:border-slate-400 hover:bg-slate-50"
+                                 }`}>
+                                 {option.label}
+                              </button>
+                           );
+                        })}
+                     </div>
+                  </fieldset>
+               )}
 
                {status === "error" && <p className="text-sm text-red-600">Couldn’t send the email. Please try again.</p>}
 
@@ -181,16 +190,24 @@ function EmailReportModalContent({ initialEmail = "", onClose, onSend, status = 
    );
 }
 
-function EmailReportModal({ isOpen, initialEmail = "", onClose, onSend, status = "idle" }) {
+function EmailReportModal({
+   isOpen,
+   initialEmail = "",
+   onClose,
+   onSend,
+   status = "idle",
+   followUpAlreadyRequested = false,
+}) {
    if (!isOpen) return null;
 
    return (
       <EmailReportModalContent
-         key={`${isOpen}-${initialEmail}`}
+         key={`${isOpen}-${initialEmail}-${followUpAlreadyRequested}`}
          initialEmail={initialEmail}
          onClose={onClose}
          onSend={onSend}
          status={status}
+         followUpAlreadyRequested={followUpAlreadyRequested}
       />
    );
 }
