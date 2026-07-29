@@ -1,62 +1,84 @@
 <?php
+/**
+ * Admin-only smoke test for Asi_Pdf_Generator.
+ * Leave this as a thin wrapper — real layout lives in class-pdf-generator.php.
+ */
 
 require_once dirname(__FILE__, 4) . '/wp-load.php';
-require_once __DIR__ . '/lib/fpdf/fpdf.php';
+require_once __DIR__ . '/class-pdf-generator.php';
 
 if (!current_user_can('manage_options')) {
-    wp_die('You do not have permission to access this page.');
+   wp_die('You do not have permission to access this page.');
 }
 
-$pdf = new FPDF('P', 'mm', 'Letter');
-$pdf->SetMargins(15, 15, 15);
-$pdf->SetAutoPageBreak(true, 15);
-$pdf->AddPage();
-
-$pdf->SetFont('Arial', 'B', 20);
-$pdf->Cell(0, 10, 'Red E Inspection Estimate', 0, 1);
-
-$pdf->SetFont('Arial', '', 11);
-$pdf->Cell(0, 8, 'Basic PDF generation test', 0, 1);
-$pdf->Ln(5);
-
-$pdf->SetFont('Arial', 'B', 11);
-$pdf->Cell(35, 8, 'Customer:');
-
-$pdf->SetFont('Arial', '', 11);
-$pdf->Cell(0, 8, 'Test Customer', 0, 1);
-
-$pdf->SetFont('Arial', 'B', 11);
-$pdf->Cell(35, 8, 'Machine:');
-
-$pdf->SetFont('Arial', '', 11);
-$pdf->Cell(0, 8, 'John Deere Air Seeder', 0, 1);
-
-$pdf->SetFont('Arial', 'B', 11);
-$pdf->Cell(35, 8, 'Date:');
-
-$pdf->SetFont('Arial', '', 11);
-$pdf->Cell(0, 8, wp_date('F j, Y'), 0, 1);
-
-$pdf->Ln(8);
-
-$pdf->SetFont('Arial', 'B', 11);
-$pdf->SetFillColor(235, 235, 235);
-$pdf->Cell(70, 10, 'Inspection Item', 1, 0, 'L', true);
-$pdf->Cell(110, 10, 'Recommendation', 1, 1, 'L', true);
-
-$pdf->SetFont('Arial', '', 10);
-$pdf->Cell(70, 10, 'Main Arm Pivot', 1);
-$pdf->Cell(110, 10, 'Inspect for excessive movement', 1, 1);
-
-$pdf->Cell(70, 10, 'Disc Opener', 1);
-$pdf->Cell(110, 10, 'Measure remaining diameter', 1, 1);
-
-$pdf->Ln(12);
-$pdf->MultiCell(
-    0,
-    7,
-    'A Red E representative will contact you.'
+$customer = array(
+   'name'  => 'Test Customer',
+   'email' => 'test@example.com',
+   'phone' => '555-0100',
 );
 
-$pdf->Output('D', 'red-e-inspection-test.pdf');
+$report = array(
+   'estimate' => array(
+      'low'   => 4200,
+      'high'  => 7800,
+      'label' => '$4,200 – $7,800',
+   ),
+   'ratingCounts' => array(
+      'maybe' => 2,
+      'bad'   => 3,
+   ),
+   'equipment' => array(
+      array(
+         'key'   => 'drill',
+         'lines' => array(
+            'Drill: John Deere 1890 No-Till Air Drill',
+            'Width: 60 ft',
+            'Spacing: 7.5 in',
+            'Row-units: 96 (60-90 style)',
+         ),
+      ),
+      array(
+         'key'   => 'cart',
+         'lines' => array(
+            'Air cart: John Deere 1910',
+            '2 tanks, 430 bushels',
+         ),
+      ),
+   ),
+   'lineItems' => array(
+      array(
+         'title'       => 'Main Arm Pivot',
+         'detail'      => 'Excessive movement',
+         'rating'      => 'bad',
+         'ratingLabel' => 'Needs Replacement',
+         'costLabel'   => '$800 – $1,200',
+      ),
+      array(
+         'title'       => 'Disc Opener',
+         'detail'      => '96 row-units',
+         'rating'      => 'maybe',
+         'ratingLabel' => 'Marginal',
+         'costLabel'   => '$1,500 – $2,400',
+      ),
+      array(
+         'title'       => 'Press Wheel Spring',
+         'detail'      => '',
+         'rating'      => 'bad',
+         'ratingLabel' => 'Needs Replacement',
+         'costLabel'   => '$900 – $1,400',
+      ),
+   ),
+   'interestItems' => array(
+      'Closing system upgrade',
+      'Seed boot rebuild kit',
+   ),
+);
+
+try {
+   $generator = new Asi_Pdf_Generator();
+   $generator->download($customer, $report, 'red-e-inspection-test.pdf');
+} catch (Exception $e) {
+   wp_die(esc_html('PDF generation failed: ' . $e->getMessage()));
+}
+
 exit;

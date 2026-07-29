@@ -393,6 +393,9 @@ function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
                            <span className="font-semibold text-slate-900">{rangeWithoutMarginal || "$0"}</span>.
                         </li>
                      )}
+                     <li className="text-sm">
+                        You can toggle items on and off with the checkboxes (on the left) to customize your estimate.
+                     </li>
                   </ul>
                </div>
 
