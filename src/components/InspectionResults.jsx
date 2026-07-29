@@ -343,7 +343,15 @@ function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
          const response = await fetch(url, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, emails, report }),
+            body: JSON.stringify({
+               name,
+               firstName: contactInfo?.firstName || "",
+               lastName: contactInfo?.lastName || "",
+               emails,
+               email: contactInfo?.email || "",
+               phone: contactInfo?.phone || "",
+               report,
+            }),
          });
          const data = await response.json().catch(() => ({}));
          if (!response.ok || data?.ok === false) {

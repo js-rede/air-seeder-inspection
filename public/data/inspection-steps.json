@@ -707,9 +707,9 @@
             "value": "arms-are-tight-and-good-working-order",
             "rating": "good",
             "recommended_action": "Depth arms are tight and in good working order. No immediate repair is needed.",
-            "estimated_low_cost": 40,
-            "estimated_high_cost": 60,
-            "labor_cost": 30
+            "estimated_low_cost": 0,
+            "estimated_high_cost": 0,
+            "labor_cost": 0
          },
          {
             "label": "Arms are loose on shaft, and need replacement",

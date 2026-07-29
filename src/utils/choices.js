@@ -121,6 +121,8 @@ export function getChoicePartsCostRange(choice) {
  */
 export function getChoiceCostRange(choice, extras = {}) {
    if (!choice) return { low: 0, high: 0 };
+   // Good condition never contributes to the estimate, even if costs were left on the choice
+   if (choice.rating === "good") return { low: 0, high: 0 };
 
    const parts = getChoicePartsCostRange(choice);
    const labor = getChoiceLaborCost(choice);

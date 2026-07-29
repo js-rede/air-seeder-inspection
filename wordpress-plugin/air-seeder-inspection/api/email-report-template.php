@@ -70,7 +70,7 @@ function asi_build_report_email_html($name, $report) {
 <body style="margin:0;padding:0;background:#f8fafc;font-family:Arial,Helvetica,sans-serif;color:#0f172a;">
   <div style="max-width:640px;margin:0 auto;padding:24px;">
     <div style="background-color:#ffffff;background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:24px;">
-      <img src="https://rede-ag.com/wp-content/uploads/2026/07/RedE_Horizontal_NoTagline_RedBlack_small.png" alt="Red E" width="140" style="display:block;border:0;margin:0 0 16px;width:140px;height:auto;" />
+      <img src="cid:asi-rede-logo" alt="Red E" width="140" style="display:block;border:0;margin:0 0 16px;width:140px;height:auto;" />
       <h1 style="margin:0 0 16px;font-size:24px;color:#0f172a;">Air Seeder Inspection Summary</h1>
       <p style="margin:0 0 20px;font-size:15px;color:#475569;line-height:1.5;">Greetings, ' . esc_html($name) . '. Here is your inspection estimate.</p>
 
