@@ -176,6 +176,7 @@ function InspectionCard({
             maxCount={step.max_count ?? null}
             allowSkip={step.allow_skip !== false}
             showMachineSetupValidation={showMachineSetupValidation}
+            multiSelectionHint={step.multi_selection_hint}
          />
 
          {/* Recommendation */}

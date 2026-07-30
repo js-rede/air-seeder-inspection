@@ -90,7 +90,12 @@ function EmailReportModalContent({
                </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="mt-5 space-y-3" noValidate>
+            <form
+               id="air-seeder-inspection-email-report"
+               name="Air Seeder Inspection Email Report"
+               onSubmit={handleSubmit}
+               className="mt-5 space-y-3"
+               noValidate>
                {emails.map((email, index) => {
                   const hasError =
                      showErrors && ((hasNoValidEmail && index === 0) || (email.trim() && invalidIndexes[index]));

@@ -57,6 +57,7 @@ function AnswerGroup({
    maxCount = null,
    allowSkip = true,
    showMachineSetupValidation = false,
+   multiSelectionHint,
 }) {
    const buttonBase = "w-full rounded-xl border p-4 text-left transition cursor-pointer";
    const input =
@@ -119,7 +120,14 @@ function AnswerGroup({
    }
 
    if (answerType === "multi_selection") {
-      return <MultiSelectionForm choices={choices} value={selectedAnswer} onChange={onAnswer} />;
+      return (
+         <MultiSelectionForm
+            choices={choices}
+            value={selectedAnswer}
+            onChange={onAnswer}
+            hint={multiSelectionHint}
+         />
+      );
    }
 
    if (answerType === "selection") {

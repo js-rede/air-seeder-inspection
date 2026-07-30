@@ -29,5 +29,15 @@ export function getSendReportUrl() {
    return "/wp-json/air-seeder-inspection/v1/send-report";
 }
 
+export function getRequestFollowUpUrl() {
+   const fromWindow = typeof window !== "undefined" ? window.ASI_REQUEST_FOLLOW_UP_URL : "";
+   if (fromWindow) return fromWindow;
+
+   const fromDataset = getRootEl()?.dataset?.requestFollowUpUrl;
+   if (fromDataset) return fromDataset;
+
+   return "/wp-json/air-seeder-inspection/v1/request-follow-up";
+}
+
 /** @deprecated Prefer getStepsUrl() — kept for any leftover imports. */
 export const STEPS_URL = "/data/inspection-steps.json";

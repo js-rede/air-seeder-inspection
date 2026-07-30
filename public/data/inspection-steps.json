@@ -60,21 +60,6 @@
             "labor_cost": 25
          }
       ],
-      "secondary_question": "Current main arm pivot setup",
-      "secondary_choices": [
-         {
-            "label": "Original pivots",
-            "value": "original-pivots"
-         },
-         {
-            "label": "Red E pivots",
-            "value": "red-e-pivots"
-         },
-         {
-            "label": "Other",
-            "value": "other"
-         }
-      ],
       "video_url": "",
       "video_caption": "",
       "image_url": "https://rede-ag.com/wp-content/uploads/2026/06/shorter-main-arm-pivot-inspection-step.webp",
@@ -208,29 +193,6 @@
             "estimated_low_cost": 65,
             "estimated_high_cost": 75,
             "labor_cost": 30
-         }
-      ],
-      "secondary_question": "Current closing wheel pivot setup",
-      "secondary_choices": [
-         {
-            "label": "OEM Pivots",
-            "value": "oem-pivots"
-         },
-         {
-            "label": "Needham",
-            "value": "needham"
-         },
-         {
-            "label": "Red E Greaseable",
-            "value": "red-e-hd"
-         },
-         {
-            "label": "Red E Bearings",
-            "value": "red-e-bearings"
-         },
-         {
-            "label": "Other",
-            "value": "other"
          }
       ],
       "video_url": "",
@@ -1707,20 +1669,21 @@
       "image_caption": ""
    },
    {
-      "slug": "romafa-section-control",
+      "slug": "upgrade-interest",
       "step_number": 32,
       "section": "wrap_up",
       "informational_only": true,
-      "allow_skip": false,
-      "step_title": "Romafa Section Control",
-      "summary_title": "Romafa Section Control",
+      "allow_skip": true,
+      "step_title": "Upgrade Interest",
+      "summary_title": "Upgrade Interest",
       "instructions": "",
-      "question": "Are you interested in Romafa Section Control?",
-      "answer_type": "selection",
+      "question": "Are you interested in any of the following upgrades?",
+      "answer_type": "multi_selection",
+      "multi_selection_hint": "Check all that apply.",
       "choices": [
          {
-            "label": "Yes",
-            "value": "yes",
+            "label": "Romafa section control",
+            "value": "romafa-section-control",
             "rating": "unknown",
             "recommended_action": "A Red E representative can follow up with more information.",
             "estimated_low_cost": 0,
@@ -1728,35 +1691,8 @@
             "labor_cost": 0
          },
          {
-            "label": "No",
-            "value": "no",
-            "rating": "unknown",
-            "recommended_action": "No follow-up needed.",
-            "estimated_low_cost": 0,
-            "estimated_high_cost": 0,
-            "labor_cost": 0
-         }
-      ],
-      "video_url": "",
-      "video_caption": "",
-      "image_url": "",
-      "image_caption": ""
-   },
-   {
-      "slug": "camera-kit",
-      "step_number": 33,
-      "section": "wrap_up",
-      "informational_only": true,
-      "allow_skip": false,
-      "step_title": "Camera Kit",
-      "summary_title": "Camera Kit",
-      "instructions": "",
-      "question": "Are you interested in a camera kit?",
-      "answer_type": "selection",
-      "choices": [
-         {
-            "label": "Yes",
-            "value": "yes",
+            "label": "Camera kit",
+            "value": "camera-kit",
             "rating": "unknown",
             "recommended_action": "A Red E representative can follow up with more information.",
             "estimated_low_cost": 0,
@@ -1764,46 +1700,10 @@
             "labor_cost": 0
          },
          {
-            "label": "No",
-            "value": "no",
-            "rating": "unknown",
-            "recommended_action": "No follow-up needed.",
-            "estimated_low_cost": 0,
-            "estimated_high_cost": 0,
-            "labor_cost": 0
-         }
-      ],
-      "video_url": "",
-      "video_caption": "",
-      "image_url": "",
-      "image_caption": ""
-   },
-   {
-      "slug": "hydraulic-drive-conversion",
-      "step_number": 34,
-      "section": "wrap_up",
-      "informational_only": true,
-      "allow_skip": false,
-      "step_title": "Hydraulic Drive Conversion",
-      "summary_title": "Hydraulic Drive Conversion",
-      "instructions": "",
-      "question": "Are you interested in a hydraulic drive conversion?",
-      "answer_type": "selection",
-      "choices": [
-         {
-            "label": "Yes",
-            "value": "yes",
+            "label": "Hydraulic drive conversion",
+            "value": "hydraulic-drive-conversion",
             "rating": "unknown",
             "recommended_action": "A Red E representative can follow up with more information.",
-            "estimated_low_cost": 0,
-            "estimated_high_cost": 0,
-            "labor_cost": 0
-         },
-         {
-            "label": "No",
-            "value": "no",
-            "rating": "unknown",
-            "recommended_action": "No follow-up needed.",
             "estimated_low_cost": 0,
             "estimated_high_cost": 0,
             "labor_cost": 0

@@ -8,7 +8,7 @@ import {
    isDrillIncluded,
    normalizeMachineSetup,
 } from "../data/machineCatalog";
-import { getSendReportUrl } from "../config";
+import { getSendReportUrl, getRequestFollowUpUrl } from "../config";
 import { formatCostRange, groupItemsBySection } from "../utils/inspectionSummary";
 import { getRatingLabel } from "../utils/ratingStyles";
 import RatingBadge from "./RatingBadge";
@@ -259,8 +259,35 @@ function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
       setFollowUpModalOpen(false);
    }
 
-   async function handleFollowUpConfirm() {
-      // HubSpot ticket creation will plug in here later.
+   async function handleFollowUpConfirm(nextContact) {
+      const name = [nextContact?.firstName, nextContact?.lastName].filter(Boolean).join(" ").trim() || "there";
+      const report = buildEmailReport({
+         equipment,
+         includedLineItems,
+         interestItems: summary.interestItems,
+         costRange,
+         estimatedLow,
+         estimatedHigh,
+         ratingCounts: summary.ratingCounts,
+      });
+
+      const response = await fetch(getRequestFollowUpUrl(), {
+         method: "POST",
+         headers: { "Content-Type": "application/json" },
+         body: JSON.stringify({
+            firstName: nextContact?.firstName || "",
+            lastName: nextContact?.lastName || "",
+            email: nextContact?.email || "",
+            phone: nextContact?.phone || "",
+            name,
+            report,
+         }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || data?.ok === false) {
+         throw new Error(data?.message || `Request failed (${response.status})`);
+      }
+
       setFollowUpRequested(true);
       setFollowUpModalOpen(false);
    }

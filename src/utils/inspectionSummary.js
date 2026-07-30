@@ -133,6 +133,24 @@ export function calculateInspectionSummary(steps, answers, rowUnitCountOverride,
             });
          }
 
+         if (step.answer_type === "multi_selection") {
+            const selectedValues = getMultiSelectionAnswer(answer);
+            const choices = getStepChoices(step);
+
+            selectedValues.forEach((value) => {
+               const choice = choices.find((item) => getChoiceValue(item) === value);
+               if (!choice) return;
+
+               interestItems.push({
+                  slug: step.slug,
+                  section: step.section,
+                  stepTitle: choice.label,
+                  choiceValue: value,
+                  label: choice.recommended_action || "Interested in follow-up",
+               });
+            });
+         }
+
          return;
       }
 

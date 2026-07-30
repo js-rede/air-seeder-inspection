@@ -16,7 +16,8 @@ if (!defined('ABSPATH')) {
 }
 
 require_once __DIR__ . '/email-report-template.php';
-require_once dirname(__DIR__) . '/class-pdf-generator.php';
+// PDF generator is loaded inside asi_handle_send_report() so a PDF/FPDF issue
+// cannot take down the whole site on every request.
 
 add_action('rest_api_init', 'asi_register_send_report_route');
 
@@ -142,6 +143,12 @@ function asi_handle_send_report($request) {
    $subject = 'Your Red E Air Seeder Inspection Estimate';
    $body = asi_build_report_email_html($name, $report);
    $headers = array('Content-Type: text/html; charset=UTF-8');
+
+   $pdf_class = dirname(__DIR__) . '/class-pdf-generator.php';
+   if (!is_readable($pdf_class)) {
+      return new WP_Error('missing_dependency', 'PDF generator is missing on the server.', array('status' => 500));
+   }
+   require_once $pdf_class;
 
    $pdf_path = null;
    try {

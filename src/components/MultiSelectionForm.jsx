@@ -1,6 +1,11 @@
 import { getChoiceValue } from "../utils/choices";
 
-function MultiSelectionForm({ choices, value, onChange }) {
+function MultiSelectionForm({
+   choices,
+   value,
+   onChange,
+   hint = "Select all that need replacement. Leave blank if none apply.",
+}) {
    const selected = Array.isArray(value) ? value : [];
    const buttonBase = "w-full cursor-pointer rounded-xl border p-4 text-left transition";
 
@@ -15,7 +20,7 @@ function MultiSelectionForm({ choices, value, onChange }) {
 
    return (
       <div className="mt-6 space-y-3">
-         <p className="text-sm text-slate-500">Select all that need replacement. Leave blank if none apply.</p>
+         {hint ? <p className="text-sm text-slate-500">{hint}</p> : null}
 
          {choices.map((choice) => {
             const choiceValue = getChoiceValue(choice);

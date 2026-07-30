@@ -73,7 +73,7 @@ function InspectionContactForm({ initialContact, onSubmit, onSkip, onBack }) {
    }
 
    return (
-      <form onSubmit={handleSubmit} noValidate>
+      <form id="air-seeder-inspection-contact" name="Air Seeder Inspection Contact" onSubmit={handleSubmit} noValidate>
          <section className="-mx-4 mt-5 rounded-none border border-slate-200 border-x-0 bg-white p-4 shadow-sm md:mx-0 md:rounded-2xl md:border-x md:p-8">
             <h2 className="text-3xl font-bold text-slate-900">Almost done</h2>
             <p className="mt-3 text-sm text-slate-600 italic">
@@ -88,6 +88,7 @@ function InspectionContactForm({ initialContact, onSubmit, onSkip, onBack }) {
                      </label>
                      <input
                         id={FIELD_IDS.firstName}
+                        name="firstname"
                         type="text"
                         autoComplete="given-name"
                         value={contact.firstName}
@@ -103,6 +104,7 @@ function InspectionContactForm({ initialContact, onSubmit, onSkip, onBack }) {
                      </label>
                      <input
                         id={FIELD_IDS.lastName}
+                        name="lastname"
                         type="text"
                         autoComplete="family-name"
                         value={contact.lastName}
@@ -120,6 +122,7 @@ function InspectionContactForm({ initialContact, onSubmit, onSkip, onBack }) {
                      </label>
                      <input
                         id={FIELD_IDS.email}
+                        name="email"
                         type="email"
                         autoComplete="email"
                         value={contact.email}
@@ -135,6 +138,7 @@ function InspectionContactForm({ initialContact, onSubmit, onSkip, onBack }) {
                      </label>
                      <input
                         id="inspection-contact-phone"
+                        name="phone"
                         type="tel"
                         autoComplete="tel"
                         value={contact.phone}

@@ -15,6 +15,7 @@ define('ASI_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('ASI_PLUGIN_URL', plugin_dir_url(__FILE__));
 
 require_once ASI_PLUGIN_DIR . 'api/rest-send-report.php';
+require_once ASI_PLUGIN_DIR . 'api/rest-request-follow-up.php';
 
 /**
  * Register shortcode and enqueue assets when the shortcode is rendered.
@@ -37,18 +38,21 @@ function asi_render_shortcode() {
 
    $steps_url = esc_url(ASI_PLUGIN_URL . 'data/inspection-steps.json');
    $send_url  = esc_url(rest_url('air-seeder-inspection/v1/send-report'));
+   $follow_up_url = esc_url(rest_url('air-seeder-inspection/v1/request-follow-up'));
 
    // Set globals here (not only via wp_add_inline_script) so they work even with type="module" scripts.
    $boot_script = sprintf(
-      '<script>window.ASI_STEPS_URL=%s;window.ASI_SEND_REPORT_URL=%s;</script>',
+      '<script>window.ASI_STEPS_URL=%s;window.ASI_SEND_REPORT_URL=%s;window.ASI_REQUEST_FOLLOW_UP_URL=%s;</script>',
       wp_json_encode($steps_url),
-      wp_json_encode($send_url)
+      wp_json_encode($send_url),
+      wp_json_encode($follow_up_url)
    );
 
    return $boot_script . sprintf(
-      '<div id="air-seeder-inspection-root" data-steps-url="%s" data-send-report-url="%s"></div>',
+      '<div id="air-seeder-inspection-root" data-steps-url="%s" data-send-report-url="%s" data-request-follow-up-url="%s"></div>',
       $steps_url,
-      $send_url
+      $send_url,
+      $follow_up_url
    );
 }
 
@@ -92,10 +96,12 @@ function asi_enqueue_assets() {
 
       $steps_url = ASI_PLUGIN_URL . 'data/inspection-steps.json';
       $send_url  = rest_url('air-seeder-inspection/v1/send-report');
+      $follow_up_url = rest_url('air-seeder-inspection/v1/request-follow-up');
       wp_add_inline_script(
          'air-seeder-inspection',
          'window.ASI_STEPS_URL = ' . wp_json_encode($steps_url) . ';' .
-         'window.ASI_SEND_REPORT_URL = ' . wp_json_encode($send_url) . ';',
+         'window.ASI_SEND_REPORT_URL = ' . wp_json_encode($send_url) . ';' .
+         'window.ASI_REQUEST_FOLLOW_UP_URL = ' . wp_json_encode($follow_up_url) . ';',
          'before'
       );
    }

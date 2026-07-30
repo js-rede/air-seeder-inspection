@@ -91,7 +91,12 @@ function ContactFollowUpModalContent({ initialContact, onClose, onConfirm }) {
                </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="mt-5 space-y-4" noValidate>
+            <form
+               id="air-seeder-inspection-follow-up"
+               name="Air Seeder Inspection Follow-Up"
+               onSubmit={handleSubmit}
+               className="mt-5 space-y-4"
+               noValidate>
                <div className="grid gap-4 sm:grid-cols-2">
                   <div>
                      <label htmlFor="follow-up-first-name" className="mb-1.5 block text-sm font-semibold text-slate-700">
@@ -99,6 +104,7 @@ function ContactFollowUpModalContent({ initialContact, onClose, onConfirm }) {
                      </label>
                      <input
                         id="follow-up-first-name"
+                        name="firstname"
                         type="text"
                         autoComplete="given-name"
                         value={contact.firstName}
@@ -114,6 +120,7 @@ function ContactFollowUpModalContent({ initialContact, onClose, onConfirm }) {
                      </label>
                      <input
                         id="follow-up-last-name"
+                        name="lastname"
                         type="text"
                         autoComplete="family-name"
                         value={contact.lastName}
@@ -131,6 +138,7 @@ function ContactFollowUpModalContent({ initialContact, onClose, onConfirm }) {
                   </label>
                   <input
                      id="follow-up-email"
+                     name="email"
                      type="email"
                      autoComplete="email"
                      value={contact.email}
@@ -147,6 +155,7 @@ function ContactFollowUpModalContent({ initialContact, onClose, onConfirm }) {
                   </label>
                   <input
                      id="follow-up-phone"
+                     name="phone"
                      type="tel"
                      autoComplete="tel"
                      value={contact.phone}
