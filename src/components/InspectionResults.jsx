@@ -223,7 +223,7 @@ function sumLineItemCosts(items) {
 function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
    const [excludedIds, setExcludedIds] = useState(() => new Set());
    const [emailModalOpen, setEmailModalOpen] = useState(false);
-   const [emailStatus, setEmailStatus] = useState("idle"); // idle | sending | error
+   const [emailStatus, setEmailStatus] = useState("idle"); // idle | sending | error | follow_up_failed
    const [followUpModalOpen, setFollowUpModalOpen] = useState(false);
    const [followUpRequested, setFollowUpRequested] = useState(false);
 
@@ -259,8 +259,31 @@ function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
       setFollowUpModalOpen(false);
    }
 
+   async function postFollowUpRequest(contact, report) {
+      const name =
+         [contact?.firstName, contact?.lastName].filter(Boolean).join(" ").trim() ||
+         [contactInfo?.firstName, contactInfo?.lastName].filter(Boolean).join(" ").trim() ||
+         "there";
+
+      const response = await fetch(getRequestFollowUpUrl(), {
+         method: "POST",
+         headers: { "Content-Type": "application/json" },
+         body: JSON.stringify({
+            firstName: contact?.firstName || contactInfo?.firstName || "",
+            lastName: contact?.lastName || contactInfo?.lastName || "",
+            email: contact?.email || contactInfo?.email || "",
+            phone: contact?.phone || contactInfo?.phone || "",
+            name,
+            report,
+         }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || data?.ok === false) {
+         throw new Error(data?.message || `Follow-up request failed (${response.status})`);
+      }
+   }
+
    async function handleFollowUpConfirm(nextContact) {
-      const name = [nextContact?.firstName, nextContact?.lastName].filter(Boolean).join(" ").trim() || "there";
       const report = buildEmailReport({
          equipment,
          includedLineItems,
@@ -271,23 +294,7 @@ function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
          ratingCounts: summary.ratingCounts,
       });
 
-      const response = await fetch(getRequestFollowUpUrl(), {
-         method: "POST",
-         headers: { "Content-Type": "application/json" },
-         body: JSON.stringify({
-            firstName: nextContact?.firstName || "",
-            lastName: nextContact?.lastName || "",
-            email: nextContact?.email || "",
-            phone: nextContact?.phone || "",
-            name,
-            report,
-         }),
-      });
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok || data?.ok === false) {
-         throw new Error(data?.message || `Request failed (${response.status})`);
-      }
-
+      await postFollowUpRequest(nextContact, report);
       setFollowUpRequested(true);
       setFollowUpModalOpen(false);
    }
@@ -352,7 +359,7 @@ function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
    const onlyMarginalExcluded =
       excludeMarginal && excludedIds.size === marginalItemIds.length && marginalItemIds.every((id) => excludedIds.has(id));
 
-   async function handleSendReport(emails) {
+   async function handleSendReport(emails, followUpChoice = null) {
       const name = [contactInfo?.firstName, contactInfo?.lastName].filter(Boolean).join(" ").trim() || "there";
       const url = getSendReportUrl();
       const report = buildEmailReport({
@@ -384,6 +391,18 @@ function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
          if (!response.ok || data?.ok === false) {
             throw new Error(data?.message || `Request failed (${response.status})`);
          }
+
+         if (followUpChoice === "yes") {
+            try {
+               await postFollowUpRequest(contactInfo, report);
+               setFollowUpRequested(true);
+            } catch (followUpError) {
+               console.error("Email sent, but follow-up request failed:", followUpError);
+               setEmailStatus("follow_up_failed");
+               return;
+            }
+         }
+
          setEmailModalOpen(false);
          setEmailStatus("idle");
       } catch (error) {
@@ -562,7 +581,20 @@ function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
                      </ul>
 
                      <p className="mt-4 text-sm text-slate-600 italic">
-                        A Red E representative can follow up with more information.
+                        {followUpRequested ? (
+                           "A Red E representative will follow up with more information."
+                        ) : (
+                           <>
+                              A Red E representative can{" "}
+                              <button
+                                 type="button"
+                                 onClick={openFollowUpModal}
+                                 className="cursor-pointer border-0 bg-transparent p-0 font-semibold italic text-[#e21313] underline decoration-[#e21313]/30 underline-offset-2 transition hover:text-[#ce1b1b] hover:decoration-[#ce1b1b]">
+                                 follow up
+                              </button>{" "}
+                              with more information.
+                           </>
+                        )}
                      </p>
                   </div>
                </div>

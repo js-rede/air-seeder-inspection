@@ -52,7 +52,7 @@ function EmailReportModalContent({
          return;
       }
 
-      onSend(trimmed);
+      onSend(trimmed, askFollowUp ? followUp : null);
    }
 
    const isSending = status === "sending";
@@ -178,6 +178,12 @@ function EmailReportModalContent({
                )}
 
                {status === "error" && <p className="text-sm text-red-600">Couldn’t send the email. Please try again.</p>}
+               {status === "follow_up_failed" && (
+                  <p className="text-sm text-red-600">
+                     Report emailed, but we couldn’t submit your follow-up request. Please try{" "}
+                     <span className="font-semibold">Request a follow-up</span>.
+                  </p>
+               )}
 
                <div className="flex justify-end gap-2 pt-2">
                   <button
