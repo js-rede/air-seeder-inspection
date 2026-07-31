@@ -188,6 +188,20 @@ export function getWorkingRankSelections(answer) {
    return {};
 }
 
+export function getWorkingRankReplacementCount(answer) {
+   if (!answer || typeof answer !== "object" || Array.isArray(answer)) return null;
+   if (answer.replacementCount === "" || answer.replacementCount == null) return null;
+   const count = Number(answer.replacementCount);
+   return Number.isFinite(count) ? Math.max(0, count) : null;
+}
+
+export function isWorkingRankUsingReplacementCount(answer) {
+   const count = getWorkingRankReplacementCount(answer);
+   if (count == null) return false;
+   const selections = getWorkingRankSelections(answer);
+   return !Object.values(selections).some(Boolean);
+}
+
 export function normalizeWorkingRankSelections(answer, workingRanks) {
    const selections = getWorkingRankSelections(answer);
    const normalized = {};
@@ -254,6 +268,21 @@ export function getWorkingRankChoiceCost(step, choice, secondaryChoice, multipli
 export function getWorkingRankSelectionCosts(step, answer, rowUnitCount = 0, workingRanks = 1) {
    const choices = getStepChoices(step);
    const rankCount = Math.max(1, Number(workingRanks) || 1);
+
+   if (step.optional_replacement_count && isWorkingRankUsingReplacementCount(answer)) {
+      const count = getWorkingRankReplacementCount(answer) || 0;
+      if (count <= 0) return { estimatedLowCost: 0, estimatedHighCost: 0 };
+
+      const badChoice = choices.find((choice) => choice.rating === "bad") || choices[0];
+      if (!badChoice) return { estimatedLowCost: 0, estimatedHighCost: 0 };
+
+      const range = getChoiceCostRange(badChoice);
+      return {
+         estimatedLowCost: range.low * count,
+         estimatedHighCost: range.high * count,
+      };
+   }
+
    const selections = normalizeWorkingRankSelections(answer, rankCount);
    const secondaryChoice = getSecondaryChoice(step, answer);
 
@@ -685,6 +714,15 @@ export function getReplacementTallyChoice(step) {
 
 export function getReplacementTallyCount(answer) {
    if (answer === "" || answer == null) return 0;
+
+   if (typeof answer === "object") {
+      if (!("left" in answer) && !("right" in answer)) return 0;
+      const left = Number(answer.left);
+      const right = Number(answer.right);
+      const total = (Number.isFinite(left) ? Math.max(0, left) : 0) + (Number.isFinite(right) ? Math.max(0, right) : 0);
+      return total > 0 ? total : 0;
+   }
+
    const count = Number(answer);
    return Number.isFinite(count) && count > 0 ? count : 0;
 }
@@ -811,6 +849,41 @@ export function getRecommendationForAnswer(step, selectedAnswer, rowUnitCount = 
 
    if (step.answer_type === "working_rank_selection") {
       const choices = getStepChoices(step);
+
+      if (step.optional_replacement_count && isWorkingRankUsingReplacementCount(selectedAnswer)) {
+         const count = getWorkingRankReplacementCount(selectedAnswer) || 0;
+         const badChoice = choices.find((item) => item.rating === "bad") || choices[0];
+         const goodChoice = choices.find((item) => item.rating === "good");
+
+         if (count <= 0) {
+            return {
+               text: goodChoice?.recommended_action || "No replacements are needed.",
+               lines: [],
+               rating: "good",
+               estimatedLowCost: 0,
+               estimatedHighCost: 0,
+            };
+         }
+
+         const { estimatedLowCost, estimatedHighCost } = getWorkingRankSelectionCosts(
+            step,
+            selectedAnswer,
+            rowUnitCount,
+            workingRanks,
+         );
+         const summaryLine = badChoice?.summary_line
+            ? badChoice.summary_line.replaceAll("{count}", String(count))
+            : `${count} ${count === 1 ? "arm" : step.quantity_label || "items"} will likely need replacing`;
+
+         return {
+            text: badChoice?.recommended_action || "",
+            lines: [summaryLine],
+            rating: badChoice?.rating || "bad",
+            estimatedLowCost,
+            estimatedHighCost,
+         };
+      }
+
       const selections = normalizeWorkingRankSelections(selectedAnswer, workingRanks);
       const unitsPerRank = distributeRowUnitsPerRank(rowUnitCount, workingRanks);
       const activeChoices = Object.entries(selections)

@@ -1,4 +1,6 @@
 import {
+   CART_RUN_COUNTS,
+   CART_SHOOT_QUANTITIES,
    CART_TANK_COUNTS,
    CART_TANK_SIZES,
    DRILL_WIDTHS,
@@ -271,19 +273,64 @@ export function CartDetailFields({ idPrefix, values, onFieldChange, revealAll = 
          {values.tankSize === "Other" && (
             <div>
                <label htmlFor={`${idPrefix}-tank-size-other`} className="mb-2 block text-sm font-medium text-slate-700">
-                  Tank size details
+                  Tank size (bushels)
                </label>
                <input
                   id={`${idPrefix}-tank-size-other`}
-                  type="text"
+                  type="number"
+                  inputMode="numeric"
+                  min="1"
+                  step="1"
                   value={values.tankSizeOther || ""}
                   onChange={(e) => onFieldChange("tankSizeOther", e.target.value)}
-                  placeholder="Enter tank size"
+                  placeholder="Enter bushels"
                   className={getSelectClass(hasFieldError(invalidFields, `${idPrefix}-tank-size-other`))}
                   aria-invalid={hasFieldError(invalidFields, `${idPrefix}-tank-size-other`)}
                />
             </div>
          )}
+
+         <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+               <label htmlFor={`${idPrefix}-shoot-quantity`} className="mb-2 block text-sm font-medium text-slate-700">
+                  Number of shoots
+               </label>
+               <select
+                  id={`${idPrefix}-shoot-quantity`}
+                  value={values.shootQuantity || ""}
+                  onChange={(e) => onFieldChange("shootQuantity", e.target.value)}
+                  className={getSelectClass(hasFieldError(invalidFields, `${idPrefix}-shoot-quantity`))}
+                  style={selectStyle}
+                  aria-invalid={hasFieldError(invalidFields, `${idPrefix}-shoot-quantity`)}>
+                  <option value="">Select shoots…</option>
+                  {CART_SHOOT_QUANTITIES.map((option) => (
+                     <option key={option.value} value={option.value}>
+                        {option.label}
+                     </option>
+                  ))}
+               </select>
+            </div>
+
+            <div>
+               <label htmlFor={`${idPrefix}-run-count`} className="mb-2 block text-sm font-medium text-slate-700">
+                  Number of runs
+               </label>
+               <select
+                  id={`${idPrefix}-run-count`}
+                  value={values.runCount || ""}
+                  onChange={(e) => onFieldChange("runCount", e.target.value)}
+                  className={getSelectClass(hasFieldError(invalidFields, `${idPrefix}-run-count`))}
+                  style={selectStyle}
+                  aria-invalid={hasFieldError(invalidFields, `${idPrefix}-run-count`)}>
+                  <option value="">Select runs…</option>
+                  {CART_RUN_COUNTS.map((option) => (
+                     <option key={option.value} value={option.value}>
+                        {option.label}
+                     </option>
+                  ))}
+               </select>
+            </div>
+         </div>
       </div>
    );
 }

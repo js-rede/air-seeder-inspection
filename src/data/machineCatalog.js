@@ -58,7 +58,11 @@ export function getRowUnitSeriesLabel(value) {
 export function getCartTankSizeLabel(cartOrSetup) {
    if (!cartOrSetup?.tankSize) return "";
    if (cartOrSetup.tankSize === "Other") {
-      return cartOrSetup.tankSizeOther?.trim() || "Other";
+      const other = String(cartOrSetup.tankSizeOther ?? "").trim();
+      if (!other) return "Other";
+      // Number input stores digits; normalize to "N bu" for display
+      if (/^\d+(\.\d+)?$/.test(other)) return `${other} bu`;
+      return other;
    }
    return cartOrSetup.tankSize;
 }
@@ -75,6 +79,34 @@ export const CART_TANK_COUNTS = [
    { value: "2", label: "2 tanks" },
    { value: "3", label: "3 tanks" },
 ];
+
+export const CART_SHOOT_QUANTITIES = [
+   { value: "single", label: "Single-shoot" },
+   { value: "double", label: "Double-shoot" },
+   { value: "triple", label: "Triple-shoot" },
+];
+
+export const CART_RUN_COUNTS = [
+   { value: "2", label: "2 runs" },
+   { value: "4", label: "4 runs" },
+   { value: "6", label: "6 runs" },
+   { value: "8", label: "8 runs" },
+   { value: "10", label: "10 runs" },
+];
+
+export function getCartShootQuantityLabel(cartOrSetup) {
+   const value = cartOrSetup?.shootQuantity;
+   if (!value) return "";
+   return CART_SHOOT_QUANTITIES.find((option) => option.value === value)?.label || value;
+}
+
+export function getCartRunCountLabel(cartOrSetup) {
+   const value = cartOrSetup?.runCount;
+   if (!value) return "";
+   const count = Number(value);
+   if (!Number.isFinite(count) || count <= 0) return String(value);
+   return `${count} run${count === 1 ? "" : "s"}`;
+}
 
 export const MAX_CART_TANK_COUNT = 3;
 
@@ -168,8 +200,9 @@ export const CART_TANK_STEP_LAYOUTS = {
 };
 
 export const CART_TANK_SIZES = [
-   "265 bu",
-   "300 bu",
+   "195 bu",
+   "250 bu",
+   "270 bu",
    "350 bu",
    "430 bu",
    "500 bu",
@@ -315,6 +348,8 @@ export function createEmptyCartSetup() {
       tankCount: "",
       tankSize: "",
       tankSizeOther: "",
+      shootQuantity: "",
+      runCount: "",
       otherDetails: "",
    };
 }
@@ -570,6 +605,8 @@ export function createEmptyMachineSetup() {
       tankCount: "",
       tankSize: "",
       tankSizeOther: "",
+      shootQuantity: "",
+      runCount: "",
       otherDetails: "",
       drill: createEmptyDrillSetup(),
       cart: createEmptyCartSetup(),
@@ -623,6 +660,7 @@ function isCartPartComplete(cart) {
    if (!cart?.manufacturer || !cart?.model) return false;
    if (!cart.tankCount || !cart.tankSize) return false;
    if (cart.tankSize === "Other" && !cart.tankSizeOther?.trim()) return false;
+   if (!cart.shootQuantity || !cart.runCount) return false;
    if (cart.model === "Other" && !cart.otherDetails?.trim()) return false;
    return true;
 }
@@ -886,6 +924,10 @@ export function isMachineSetupComplete(value) {
       return false;
    }
 
+   if (setup.component === "cart" && (!setup.shootQuantity || !setup.runCount)) {
+      return false;
+   }
+
    if (setup.model === "Other" && !setup.otherDetails?.trim()) {
       return false;
    }
@@ -924,6 +966,8 @@ export function getMissingMachineSetupFields(value) {
       if (values?.tankSize === "Other" && !values?.tankSizeOther?.trim()) {
          missing.push(`${idPrefix}-tank-size-other`);
       }
+      if (!values?.shootQuantity) missing.push(`${idPrefix}-shoot-quantity`);
+      if (!values?.runCount) missing.push(`${idPrefix}-run-count`);
    }
 
    if (!setup.equipmentType || (setup.equipmentType === "air_seeder" && !setup.component)) {
@@ -999,10 +1043,16 @@ export function formatMachineSetupSummary(value) {
             cartParts.push(`${tankCount} tank${tankCount === 1 ? "" : "s"}`);
          }
          const tankSizeLabel = getCartTankSizeLabel(cart);
-         if (tankSizeLabel) cartParts.push(tankSizeLabel);
+         if (tankSizeLabel) {
+            cartParts.push(String(tankSizeLabel).replace(/\s*bu\b/i, " bushels"));
+         }
+         const shootLabel = getCartShootQuantityLabel(cart);
+         if (shootLabel) cartParts.push(shootLabel);
+         const runLabel = getCartRunCountLabel(cart);
+         if (runLabel) cartParts.push(runLabel);
          if (cart.otherDetails) cartParts.push(cart.otherDetails);
 
-         const cartSummary = cartParts.filter(Boolean).join(" · ");
+         const cartSummary = cartParts.filter(Boolean).join(", ");
          if (cartSummary) parts.push(`Cart: ${cartSummary}`);
       } else {
          parts.push("Cart: skipped");
@@ -1033,8 +1083,12 @@ export function formatMachineSetupSummary(value) {
       parts.push(`${tankCount} tank${tankCount === 1 ? "" : "s"}`);
    }
    const tankSizeLabel = getCartTankSizeLabel(setup);
-   if (tankSizeLabel) parts.push(tankSizeLabel);
+   if (tankSizeLabel) parts.push(String(tankSizeLabel).replace(/\s*bu\b/i, " bushels"));
+   const shootLabel = getCartShootQuantityLabel(setup);
+   if (shootLabel) parts.push(shootLabel);
+   const runLabel = getCartRunCountLabel(setup);
+   if (runLabel) parts.push(runLabel);
    if (setup.otherDetails) parts.push(setup.otherDetails);
 
-   return parts.filter(Boolean).join(" · ");
+   return parts.filter(Boolean).join(", ");
 }

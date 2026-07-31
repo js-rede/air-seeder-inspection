@@ -55,6 +55,9 @@ function AnswerGroup({
    hideSectionSecondary = false,
    quantityLabel = "row-units",
    maxCount = null,
+   tallySides = false,
+   optionalReplacementCount = false,
+   optionalCountQuestion = "",
    allowSkip = true,
    showMachineSetupValidation = false,
    multiSelectionHint,
@@ -85,6 +88,7 @@ function AnswerGroup({
             value={selectedAnswer}
             onChange={onAnswer}
             requireQuantity={!hasFixedMax}
+            tallySides={tallySides}
          />
       );
    }
@@ -115,6 +119,10 @@ function AnswerGroup({
             secondaryHideForValues={secondaryHideForValues}
             secondaryShowForValues={secondaryShowForValues}
             followUpQuestions={followUpQuestions}
+            optionalReplacementCount={optionalReplacementCount}
+            optionalCountQuestion={optionalCountQuestion}
+            rowUnitCount={rowUnitCount}
+            quantityLabel={quantityLabel}
          />
       );
    }

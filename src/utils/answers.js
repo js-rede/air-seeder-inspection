@@ -6,11 +6,13 @@ import {
    getStepInspectionSections,
    getSecondaryAnswer,
    getFollowUpQuestions,
+   getWorkingRankReplacementCount,
    isFollowUpQuestionsComplete,
    isSecondaryAnswerComplete,
    isSectionSelectionComplete,
    isTertiaryAnswerComplete,
    isWorkingRankSelectionComplete,
+   isWorkingRankUsingReplacementCount,
    shouldShowFollowUpQuestionsForWorkingRankAnswer,
    shouldShowSecondaryForWorkingRankAnswer,
    shouldShowSecondaryQuestion,
@@ -41,7 +43,31 @@ export function isAnswerComplete(step, answer, answers = {}, rowUnitCountOverrid
             : getEffectiveRowUnitCount(answers["machine-setup"], rowUnitCountOverride);
       if (!quantityCount) return false;
 
-      const count = answer === "" || answer == null ? 0 : Number(answer);
+      if (step.tally_sides) {
+         if (answer === "" || answer == null) return true;
+         if (typeof answer !== "object" || Array.isArray(answer)) {
+            const count = Number(answer);
+            return Number.isFinite(count) && count >= 0 && count <= quantityCount * 2;
+         }
+         // Legacy non-sides objects (e.g. old working-rank answers) count as unanswered/0.
+         if (!("left" in answer) && !("right" in answer)) return true;
+
+         const left = Number(answer.left);
+         const right = Number(answer.right);
+         return (
+            Number.isFinite(left) &&
+            left >= 0 &&
+            left <= quantityCount &&
+            Number.isFinite(right) &&
+            right >= 0 &&
+            right <= quantityCount
+         );
+      }
+
+      // Unanswered or legacy non-numeric answers count as 0.
+      if (answer === "" || answer == null || typeof answer === "object") return true;
+
+      const count = Number(answer);
       return Number.isFinite(count) && count >= 0 && count <= quantityCount;
    }
 
@@ -66,6 +92,13 @@ export function isAnswerComplete(step, answer, answers = {}, rowUnitCountOverrid
       const workingRanks = getEffectiveWorkingRanks(answers["machine-setup"], workingRanksOverride);
       const ranksComplete = isWorkingRankSelectionComplete(answer, workingRanks);
       const followUpQuestions = getFollowUpQuestions(step);
+
+      if (step.optional_replacement_count && isWorkingRankUsingReplacementCount(answer)) {
+         const rowUnitCount = getEffectiveRowUnitCount(answers["machine-setup"], rowUnitCountOverride);
+         if (!rowUnitCount) return false;
+         const count = getWorkingRankReplacementCount(answer);
+         return count != null && count >= 0 && count <= rowUnitCount;
+      }
 
       if (followUpQuestions.length) {
          const needsFollowUps = shouldShowFollowUpQuestionsForWorkingRankAnswer(step, answer, workingRanks);

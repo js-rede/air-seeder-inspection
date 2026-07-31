@@ -11,11 +11,15 @@ import {
    getStepChoices,
    getWorkingRankChoiceCost,
    getWorkingRankCostMultiplier,
+   getWorkingRankReplacementCount,
+   getWorkingRankSelectionCosts,
    isSkipChoiceValue,
+   isWorkingRankUsingReplacementCount,
    getMultiSelectionAnswer,
    getMultiSelectionCostMultiplier,
    getMultiSelectionCosts,
    getReplacementTallyCosts,
+   getReplacementTallyCount,
    getRowUnitDistributionCosts,
    getSectionSelectionCosts,
    normalizeRowUnitDistribution,
@@ -155,7 +159,7 @@ export function calculateInspectionSummary(steps, answers, rowUnitCountOverride,
       }
 
       if (step.answer_type === "replacement_tally") {
-         const count = Number(answer) || 0;
+         const count = getReplacementTallyCount(answer);
          if (count <= 0) return;
 
          const choice = getStepChoices(step).find((item) => item.rating === "bad") || getStepChoices(step)[0];
@@ -231,52 +235,90 @@ export function calculateInspectionSummary(steps, answers, rowUnitCountOverride,
          return;
       }
 
-      if (step.answer_type === "working_rank_selection") {
-         const choices = getStepChoices(step);
-         const rankCount = Math.max(1, Number(workingRanks) || 1);
-         const selections = normalizeWorkingRankSelections(answer, rankCount);
-         const secondaryChoice = getSecondaryChoice(step, answer);
+   if (step.answer_type === "working_rank_selection") {
+      const choices = getStepChoices(step);
+      const rankCount = Math.max(1, Number(workingRanks) || 1);
 
-         Object.entries(selections).forEach(([rankKey, choiceValue]) => {
-            if (!choiceValue || isSkipChoiceValue(choiceValue)) return;
+      if (step.optional_replacement_count && isWorkingRankUsingReplacementCount(answer)) {
+         const count = getWorkingRankReplacementCount(answer) || 0;
+         if (count <= 0) return;
 
-            const choice = choices.find((item) => getChoiceValue(item) === choiceValue);
-            if (!choice) return;
+         const badChoice = choices.find((item) => item.rating === "bad") || choices[0];
+         if (!badChoice) return;
 
-            const rankIndex = Number(rankKey) - 1;
-            const quantity = getWorkingRankCostMultiplier(step, rowUnitCount, rankCount, rankIndex);
-            if (quantity <= 0) return;
+         const rating = badChoice.rating || "bad";
+         ratingCounts[rating] = (ratingCounts[rating] || 0) + count;
 
-            const rating = choice.rating || "unknown";
-            ratingCounts[rating] = (ratingCounts[rating] || 0) + quantity;
+         const { estimatedLowCost: itemLow, estimatedHighCost: itemHigh } = getWorkingRankSelectionCosts(
+            step,
+            answer,
+            rowUnitCount,
+            rankCount,
+         );
 
-            const {
+         estimatedLow += itemLow;
+         estimatedHigh += itemHigh;
+
+         if (itemLow > 0 || itemHigh > 0) {
+            lineItems.push({
+               slug: step.slug,
+               section: step.section,
+               stepTitle: step.summary_title || step.step_title,
+               label: badChoice.label,
+               rating,
+               quantity: count,
+               quantityLabel: step.quantity_label || "row-units",
                estimatedLowCost: itemLow,
                estimatedHighCost: itemHigh,
-               lineItemLabel,
-            } = getWorkingRankChoiceCost(step, choice, secondaryChoice, quantity);
-
-            estimatedLow += itemLow;
-            estimatedHigh += itemHigh;
-
-            if (itemLow > 0 || itemHigh > 0) {
-               const multipliesByRowUnits = Boolean(step.cost_multiplies_by_row_units);
-               lineItems.push({
-                  slug: step.slug,
-                  section: step.section,
-                  stepTitle: step.summary_title || step.step_title,
-                  label: workingRanks > 1 ? `Working rank ${rankKey}: ${lineItemLabel}` : lineItemLabel,
-                  rating,
-                  quantity,
-                  quantityLabel: multipliesByRowUnits ? step.quantity_label || "row-units" : "item",
-                  estimatedLowCost: itemLow,
-                  estimatedHighCost: itemHigh,
-               });
-            }
-         });
+            });
+         }
 
          return;
       }
+
+      const selections = normalizeWorkingRankSelections(answer, rankCount);
+      const secondaryChoice = getSecondaryChoice(step, answer);
+
+      Object.entries(selections).forEach(([rankKey, choiceValue]) => {
+         if (!choiceValue || isSkipChoiceValue(choiceValue)) return;
+
+         const choice = choices.find((item) => getChoiceValue(item) === choiceValue);
+         if (!choice) return;
+
+         const rankIndex = Number(rankKey) - 1;
+         const quantity = getWorkingRankCostMultiplier(step, rowUnitCount, rankCount, rankIndex);
+         if (quantity <= 0) return;
+
+         const rating = choice.rating || "unknown";
+         ratingCounts[rating] = (ratingCounts[rating] || 0) + quantity;
+
+         const {
+            estimatedLowCost: itemLow,
+            estimatedHighCost: itemHigh,
+            lineItemLabel,
+         } = getWorkingRankChoiceCost(step, choice, secondaryChoice, quantity);
+
+         estimatedLow += itemLow;
+         estimatedHigh += itemHigh;
+
+         if (itemLow > 0 || itemHigh > 0) {
+            const multipliesByRowUnits = Boolean(step.cost_multiplies_by_row_units);
+            lineItems.push({
+               slug: step.slug,
+               section: step.section,
+               stepTitle: step.summary_title || step.step_title,
+               label: workingRanks > 1 ? `Working rank ${rankKey}: ${lineItemLabel}` : lineItemLabel,
+               rating,
+               quantity,
+               quantityLabel: multipliesByRowUnits ? step.quantity_label || "row-units" : "item",
+               estimatedLowCost: itemLow,
+               estimatedHighCost: itemHigh,
+            });
+         }
+      });
+
+      return;
+   }
 
       if (step.answer_type === "section_selection") {
          const choices = getStepChoices(step);

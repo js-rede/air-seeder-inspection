@@ -1,6 +1,8 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import {
+   getCartRunCountLabel,
    getCartSetup,
+   getCartShootQuantityLabel,
    getCartTankSizeLabel,
    getDrillSetup,
    getRowUnitSeriesLabel,
@@ -121,6 +123,7 @@ function buildEquipmentDetails(machineSetup, summary) {
       const cart = getCartSetup(setup);
       const nameParts = [cart?.manufacturer, cart?.model].filter(Boolean);
       const details = [];
+      const attributeParts = [];
 
       if (setup.component === "both") {
          details.push({
@@ -135,14 +138,20 @@ function buildEquipmentDetails(machineSetup, summary) {
          const tankLabel = summary.tankCount === 1 ? "1 tank" : `${summary.tankCount} tanks`;
          const tankSize = getCartTankSizeLabel(cart);
          const tankSizeDisplay = tankSize ? String(tankSize).replace(/\s*bu\b/i, " bushels") : "";
-         details.push({
-            value: tankSizeDisplay ? `${tankLabel}, ${tankSizeDisplay}` : tankLabel,
-         });
+         attributeParts.push(tankLabel);
+         if (tankSizeDisplay) attributeParts.push(tankSizeDisplay);
       } else {
          const tankSize = getCartTankSizeLabel(cart);
          if (tankSize) {
-            details.push({ value: String(tankSize).replace(/\s*bu\b/i, " bushels") });
+            attributeParts.push(String(tankSize).replace(/\s*bu\b/i, " bushels"));
          }
+      }
+      const shootLabel = getCartShootQuantityLabel(cart);
+      if (shootLabel) attributeParts.push(shootLabel);
+      const runLabel = getCartRunCountLabel(cart);
+      if (runLabel) attributeParts.push(runLabel);
+      if (attributeParts.length) {
+         details.push({ value: attributeParts.join(", ") });
       }
       if (cart?.otherDetails?.trim()) {
          details.push({ label: "Cart notes", value: cart.otherDetails.trim() });
@@ -230,10 +239,7 @@ function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
    const hasMarginalItems =
       (summary.ratingCounts.maybe || 0) > 0 || summary.lineItems.some((item) => item.rating === "maybe");
 
-   const marginalItemIds = useMemo(
-      () => summary.lineItems.filter((item) => item.rating === "maybe").map(getLineItemId),
-      [summary.lineItems],
-   );
+   const marginalItemIds = summary.lineItems.filter((item) => item.rating === "maybe").map(getLineItemId);
 
    const excludeMarginal = marginalItemIds.length > 0 && marginalItemIds.every((id) => excludedIds.has(id));
 
@@ -333,19 +339,11 @@ function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
       });
    }
 
-   const includedLineItems = useMemo(
-      () => summary.lineItems.filter((item) => !excludedIds.has(getLineItemId(item))),
-      [excludedIds, summary.lineItems],
-   );
-
-   const withoutMarginalItems = useMemo(
-      () => summary.lineItems.filter((item) => item.rating !== "maybe"),
-      [summary.lineItems],
-   );
-
-   const withMarginalCosts = useMemo(() => sumLineItemCosts(summary.lineItems), [summary.lineItems]);
-   const withoutMarginalCosts = useMemo(() => sumLineItemCosts(withoutMarginalItems), [withoutMarginalItems]);
-   const { low: estimatedLow, high: estimatedHigh } = useMemo(() => sumLineItemCosts(includedLineItems), [includedLineItems]);
+   const includedLineItems = summary.lineItems.filter((item) => !excludedIds.has(getLineItemId(item)));
+   const withoutMarginalItems = summary.lineItems.filter((item) => item.rating !== "maybe");
+   const withMarginalCosts = sumLineItemCosts(summary.lineItems);
+   const withoutMarginalCosts = sumLineItemCosts(withoutMarginalItems);
+   const { low: estimatedLow, high: estimatedHigh } = sumLineItemCosts(includedLineItems);
 
    const costRange = formatCostRange(estimatedLow, estimatedHigh);
    const rangeWithoutMarginal = formatCostRange(withoutMarginalCosts.low, withoutMarginalCosts.high);
@@ -354,7 +352,7 @@ function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
    const hasBothMachines =
       lineItemGroups.some((group) => group.section === "air_cart") &&
       lineItemGroups.some((group) => group.section !== "air_cart");
-   const equipment = useMemo(() => buildEquipmentDetails(machineSetup, summary), [machineSetup, summary]);
+   const equipment = buildEquipmentDetails(machineSetup, summary);
    const hasCustomExclusions = excludedIds.size > 0;
    const onlyMarginalExcluded =
       excludeMarginal && excludedIds.size === marginalItemIds.length && marginalItemIds.every((id) => excludedIds.has(id));

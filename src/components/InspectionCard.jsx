@@ -174,6 +174,9 @@ function InspectionCard({
             hideSectionSecondary={step.hide_section_secondary === true}
             quantityLabel={step.quantity_label}
             maxCount={step.max_count ?? null}
+            tallySides={step.tally_sides === true}
+            optionalReplacementCount={step.optional_replacement_count === true}
+            optionalCountQuestion={step.optional_count_question || ""}
             allowSkip={step.allow_skip !== false}
             showMachineSetupValidation={showMachineSetupValidation}
             multiSelectionHint={step.multi_selection_hint}

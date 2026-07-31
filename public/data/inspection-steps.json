@@ -25,8 +25,8 @@
       "section": "main_arm",
       "step_title": "Main Arm Pivot Inspection",
       "summary_title": "Main Arm Pivots",
-      "instructions": "Inspect several row-units to determine pivot condition. Wiggle row-units from side to side and measure any movement between the arm and pivot point, then rate the pivot condition for this section of the drill.",
-      "instructions_multi_rank": "Evaluate each section of your drill by working rank. <br/>Inspect several row-units in each rank to determine pivot condition. Wiggle row-units from side to side and measure any movement between the arm and pivot point, then rate the pivot condition for each rank.",
+      "instructions": "Inspect several row-units to determine pivot condition. Move each row-unit laterally (side-to-side) and measure how far the disc moves off center (take this measurement at the rear of the cutting disc). <br/>Inspect bushings for pitting. If pitting is present, bushings should be replaced.",
+      "instructions_multi_rank": "Evaluate each section of your drill by working rank.<br/>Inspect several row-units in each rank to determine pivot condition. Move each row-unit laterally (side-to-side) and measure how far the disc moves off center (take this measurement at the rear of the cutting disc). <br/>Inspect bushings for pitting. If pitting is present, bushings should be replaced.",
       "question": "How much side-to-side movement is present?",
       "question_multi_rank": "Rate the pivot condition for each working rank:",
       "answer_type": "working_rank_selection",
@@ -48,16 +48,16 @@
             "recommended_action": "Moderate wear is present. Plan to replace pivot bushings and inspect pins before the next seeding season.",
             "estimated_low_cost": 50,
             "estimated_high_cost": 100,
-            "labor_cost": 25
+            "labor_cost": 55
          },
          {
-            "label": "Greater than 1/2-inch",
+            "label": "Greater than 1/2-inch, and/or bushings are pitted",
             "value": "greater-than-half-inch",
             "rating": "bad",
-            "recommended_action": "Excessive movement indicates worn bushings and pins. Replace pivot bushings and hardware before operating.",
+            "recommended_action": "Excessive movement (or pitting) indicates worn bushings and pins. Replace pivot bushings and hardware before operating.",
             "estimated_low_cost": 50,
             "estimated_high_cost": 100,
-            "labor_cost": 25
+            "labor_cost": 55
          }
       ],
       "video_url": "",
@@ -143,7 +143,7 @@
             "recommended_action": "Replace or service disc hubs and bearings that do not spin freely or are catching before operating.",
             "estimated_low_cost": 50,
             "estimated_high_cost": 65,
-            "labor_cost": 50
+            "labor_cost": 120
          }
       ],
       "video_url": "",
@@ -160,39 +160,39 @@
       "section": "closing_system",
       "step_title": "Closing Wheel Pivot Inspection",
       "summary_title": "Closing Wheel Pivots",
-      "instructions": "Inspect several row-units and check for side-to-side movement at the closing wheel pivot. Measure the movement between the arm and pivot point, then rate pivot condition for this section of the drill.",
-      "instructions_multi_rank": "Evaluate closing wheel pivot condition by working rank. <br/>Inspect several row-units in each rank, check for side-to-side movement at the pivot, then rate pivot condition for each rank.",
-      "question": "How much side-to-side movement is present at the closing wheel pivot?",
-      "question_multi_rank": "Rate the closing wheel pivot condition for each working rank:",
+      "instructions": "Inspect several row-units and check for side-to-side movement of the arm when measured at the rear of the closing wheel.",
+      "instructions_multi_rank": "Evaluate closing wheel pivot condition by working rank. <br/>Inspect several row-units in each rank, check for side-to-side movement of the arm when measured at the rear of the closing wheel.",
+      "question": "How much side-to-side movement is present?",
+      "question_multi_rank": "Rate the side-to-side movement for each working rank:",
       "answer_type": "working_rank_selection",
       "cost_multiplies_by_row_units": true,
       "choices": [
          {
-            "label": "All move up and down, and are tight from side-to-side",
+            "label": "All pivots move up and down, with minimal side-to-side movement",
             "value": "all-move-up-and-down-and-are-tight-from-side-to-side",
             "rating": "good",
-            "recommended_action": "Closing wheel pivot wear is within an acceptable range. No immediate bushing or hardware replacement is needed.",
+            "recommended_action": "Closing wheel pivots are in good working order. No immediate bushing or hardware replacement is needed.",
             "estimated_low_cost": 0,
             "estimated_high_cost": 0,
             "labor_cost": 0
          },
          {
-            "label": "Less than 1/4\" slop from side-to-side",
+            "label": "Less than 1/4\" movement from side-to-side",
             "value": "less-than-quarter-inch-slop-from-side-to-side",
             "rating": "maybe",
             "recommended_action": "Moderate closing wheel pivot wear is present. Plan to replace bushings and inspect pins before the next seeding season.",
             "estimated_low_cost": 65,
             "estimated_high_cost": 75,
-            "labor_cost": 30
+            "labor_cost": 65
          },
          {
-            "label": "Stuck or greater than 1/4\" slop from side-to-side",
+            "label": "Stuck or greater than 1/4\" movement from side-to-side",
             "value": "stuck-or-greater-than-quarter-inch-slop-from-side-to-side",
             "rating": "bad",
             "recommended_action": "Replace closing wheel pivot hardware before operating.",
             "estimated_low_cost": 65,
             "estimated_high_cost": 75,
-            "labor_cost": 30
+            "labor_cost": 65
          }
       ],
       "video_url": "",
@@ -229,7 +229,7 @@
             "recommended_action": "Springs are on the top spring position. Monitor closing performance and plan replacement as wear continues.",
             "estimated_low_cost": 15,
             "estimated_high_cost": 35,
-            "labor_cost": 15
+            "labor_cost": 8
          },
          {
             "label": "Spring is worn out and needs replacing",
@@ -238,7 +238,7 @@
             "recommended_action": "Replace worn closing wheel springs to restore proper furrow closing.",
             "estimated_low_cost": 15,
             "estimated_high_cost": 35,
-            "labor_cost": 15
+            "labor_cost": 8
          }
       ],
       "video_url": "",
@@ -252,43 +252,24 @@
       "section": "closing_system",
       "step_title": "Closing Wheel Arm Inspection",
       "summary_title": "Closing Wheel Arms",
-      "instructions": "?? Inspect closing wheel arms on several row-units. Look for broken plastic, plastic deformation, and loose hardware.",
-      "instructions_multi_rank": "Evaluate closing wheel arm condition by working rank. <br/>Inspect several row-units in each rank and rate arm condition for each rank. Look for broken plastic, plastic deformation, and loose hardware.",
-      "question": "What is the overall closing wheel arm condition?",
-      "question_multi_rank": "Rate the closing wheel arm condition for each working rank:",
-      "answer_type": "working_rank_selection",
-      "cost_multiplies_by_row_units": true,
+      "instructions": "Inspect several row-units—especially at wing hinge points—checking for bent arms. If pivot is tight the arm should land squarely on the stop. If there is a lof of overhang on either side of the stop the arm is likely bent. <br/>Bent arms can also be observed by noting the distance between the press wheel and closing wheel. This distance should be roughly the same across the board: any tighter or wider gaps indicate a bent arm.",
+      "question": "Number of broken / bent closing wheel arms",
+      "answer_type": "replacement_tally",
+      "tally_sides": true,
+      "quantity_label": "arms",
       "choices": [
          {
-            "label": "Good working order",
-            "value": "good-working-order",
-            "rating": "good",
-            "recommended_action": "Closing wheel arms are in good working order. No immediate replacement is needed.",
-            "estimated_low_cost": 0,
-            "estimated_high_cost": 0,
-            "labor_cost": 0
-         },
-         {
-            "label": "?",
-            "value": "broken-or-plastic-deformation",
+            "label": "Replace",
+            "value": "bent-or-broken-arm",
             "rating": "bad",
             "recommended_action": "Replace damaged closing wheel arms or tighten loose hardware to restore proper furrow closing.",
+            "summary_line": "{count} closing wheel arms will likely need replacing",
             "estimated_low_cost": 100,
             "estimated_high_cost": 350,
-            "labor_cost": 50
+            "labor_cost": 20
          }
       ],
-      "secondary_question": "Current setup",
-      "secondary_choices": [
-         {
-            "label": "Bearing in arm",
-            "value": "bearing-in-arm"
-         },
-         {
-            "label": "Welded pin with bearing in closing wheel",
-            "value": "welded-pin-with-bearing-in-closing-wheel"
-         }
-      ],
+      "good_condition_action": "Closing wheel arms are in good working order. No immediate replacement is needed.",
       "video_url": "",
       "video_caption": "",
       "image_url": "https://rede-ag.com/wp-content/uploads/2026/07/closing-wheel-arm.webp",
@@ -300,8 +281,8 @@
       "section": "closing_system",
       "step_title": "Closing Wheel Inspection",
       "summary_title": "Closing Wheels",
-      "instructions": "Inspect closing wheels on several row-units in each rank. Check rubber condition, cracks, chips, and uneven wear.",
-      "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect closing wheels on several row-units in each rank. Check rubber condition, cracks, chips, and uneven wear.",
+      "instructions": "Inspect closing wheels on several row-units in each rank. Are they worn smooth? Do they jump in the field?",
+      "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect closing wheels on several row-units in each rank. Are they worn smooth? Do they jump in the field?",
       "question": "What is the overall closing wheel condition?",
       "question_multi_rank": "Rate the closing wheel condition for each working rank:",
       "answer_type": "working_rank_selection",
@@ -323,7 +304,7 @@
             "recommended_action": "Closing wheel performance may vary. Experiment with setup adjustments and monitor during seeding.",
             "estimated_low_cost": 110,
             "estimated_high_cost": 180,
-            "labor_cost": 25
+            "labor_cost": 12
          },
          {
             "label": "Deteriorated or worn out wheel",
@@ -332,7 +313,7 @@
             "recommended_action": "Replace deteriorated closing wheels before operating.",
             "estimated_low_cost": 110,
             "estimated_high_cost": 180,
-            "labor_cost": 25
+            "labor_cost": 12
          }
       ],
       "secondary_question": "Current setup",
@@ -388,7 +369,7 @@
             "recommended_action": "Replace deteriorated closing wheel bearings before operating.",
             "estimated_low_cost": 20,
             "estimated_high_cost": 40,
-            "labor_cost": 20
+            "labor_cost": 12
          }
       ],
       "video_url": "",
@@ -402,8 +383,8 @@
       "section": "press_wheels",
       "step_title": "Press-Wheel-Pivot Inspection",
       "summary_title": "Press Wheel Pivots",
-      "instructions": "If the press-wheel-pivot is loose or broken it won't properly press the seed into the furrow. Inspect several row-units and check for side-to-side movement at the press wheel pivot. Measure the movement between the arm and pivot point, then rate pivot condition for this section of the drill.",
-      "instructions_multi_rank": "Evaluate press-wheel-pivot condition by working rank. <br/>If the press-wheel-pivot is loose or broken it won't properly press the seed into the furrow. Inspect several row-units in each rank, check for side-to-side movement at the pivot, then rate pivot condition for each rank.",
+      "instructions": "Inspect several row-units and check for side-to-side movement of the arm when measured at the rear of the press wheel.",
+      "instructions_multi_rank": "Evaluate press wheel pivot condition by working rank. <br/>Inspect several row-units in each rank, check for side-to-side movement of the arm when measured at the rear of the press wheel.",
       "question": "How much side-to-side movement is present at the press wheel pivot?",
       "question_multi_rank": "Rate the press wheel pivot condition for each working rank:",
       "answer_type": "working_rank_selection",
@@ -425,7 +406,7 @@
             "recommended_action": "Moderate press wheel pivot wear is present. Plan to replace bushings and inspect pins before the next seeding season.",
             "estimated_low_cost": 45,
             "estimated_high_cost": 60,
-            "labor_cost": 30
+            "labor_cost": 70
          },
          {
             "label": "Stuck or greater than 1/4\" slop from side-to-side",
@@ -434,7 +415,7 @@
             "recommended_action": "Replace press wheel pivot hardware before operating.",
             "estimated_low_cost": 45,
             "estimated_high_cost": 60,
-            "labor_cost": 30
+            "labor_cost": 70
          }
       ],
       "video_url": "",
@@ -448,32 +429,23 @@
       "section": "press_wheels",
       "step_title": "Press Wheel Arm Inspection",
       "summary_title": "Press Wheel Arms",
-      "instructions": "Inspect press wheel arms on several row-units. Look for ?.",
-      "instructions_multi_rank": "Evaluate press wheel arm condition by working rank. <br/>Inspect several row-units in each rank and rate arm condition for each rank. Look for broken plastic, plastic deformation, and loose hardware.",
-      "question": "What is the overall press wheel arm condition?",
-      "question_multi_rank": "Rate the press-wheel-arm condition for each working rank:",
-      "answer_type": "working_rank_selection",
-      "cost_multiplies_by_row_units": true,
+      "instructions": "Inspect several row-units in each rank. Note any press wheels not lining up with the seed tab. If any wheels can't be lined up with the seed tab, then the arm is likely bent and needs to be replaced.",
+      "question": "Number of broken / bent press wheel arms",
+      "answer_type": "replacement_tally",
+      "quantity_label": "arms",
       "choices": [
          {
-            "label": "Good working order ?",
-            "value": "good-working-order",
-            "rating": "good",
-            "recommended_action": "Press wheel arms are in good working order. No immediate replacement is needed.",
-            "estimated_low_cost": 0,
-            "estimated_high_cost": 0,
-            "labor_cost": 0
-         },
-         {
-            "label": "Broken or plastic deformation ?",
-            "value": "broken-or-plastic-deformation",
+            "label": "Replace",
+            "value": "bent-or-broken-arm",
             "rating": "bad",
             "recommended_action": "Replace press wheel arms showing plastic deformation or damage to restore proper seed press into the furrow.",
+            "summary_line": "{count} press wheel arms will likely need replacing",
             "estimated_low_cost": 15,
             "estimated_high_cost": 25,
-            "labor_cost": 25
+            "labor_cost": 10
          }
       ],
+      "good_condition_action": "Press wheel arms are in good working order. No immediate replacement is needed.",
       "video_url": "",
       "video_caption": "",
       "image_url": "https://rede-ag.com/wp-content/uploads/2026/07/press-wheel-arm.webp",
@@ -508,7 +480,7 @@
             "recommended_action": "Springs are on the top adjustment setting. Monitor press wheel performance and adjust as needed before seeding.",
             "estimated_low_cost": 15,
             "estimated_high_cost": 25,
-            "labor_cost": 25
+            "labor_cost": 7
          },
          {
             "label": "Broken or worn out",
@@ -517,7 +489,7 @@
             "recommended_action": "Replace broken or worn press wheel springs to restore proper seed press into the furrow.",
             "estimated_low_cost": 15,
             "estimated_high_cost": 25,
-            "labor_cost": 25
+            "labor_cost": 7
          }
       ],
       "secondary_question": "Current setup",
@@ -562,7 +534,7 @@
             "recommended_action": "Some press wheels show early wear. Schedule replacement and inspect pivots and bearings.",
             "estimated_low_cost": 45,
             "estimated_high_cost": 55,
-            "labor_cost": 40
+            "labor_cost": 8
          },
          {
             "label": "Deteriorated wheel or bearing",
@@ -571,7 +543,7 @@
             "recommended_action": "Replace deteriorated press wheels and/or bearings before operating.",
             "estimated_low_cost": 45,
             "estimated_high_cost": 55,
-            "labor_cost": 40
+            "labor_cost": 8
          }
       ],
       "video_url": "",
@@ -611,7 +583,7 @@
             "recommended_action": "Some depth adjustment pivots are harder to move. Plan to inspect and service before the next seeding season.",
             "estimated_low_cost": 100,
             "estimated_high_cost": 150,
-            "labor_cost": 30
+            "labor_cost": 65
          },
          {
             "label": "Most adjustments are seized or stuck",
@@ -620,30 +592,7 @@
             "recommended_action": "Replace or service depth adjustment pivot hardware that is stuck or barely moving before operating.",
             "estimated_low_cost": 100,
             "estimated_high_cost": 150,
-            "labor_cost": 30
-         }
-      ],
-      "secondary_question": "Current setup",
-      "secondary_choices": [
-         {
-            "label": "OEM Pivots",
-            "value": "oem-pivots"
-         },
-         {
-            "label": "Needham",
-            "value": "needham"
-         },
-         {
-            "label": "Red E",
-            "value": "red-e"
-         },
-         {
-            "label": "Aricks",
-            "value": "aricks"
-         },
-         {
-            "label": "Other",
-            "value": "other"
+            "labor_cost": 65
          }
       ],
       "video_url": "",
@@ -657,12 +606,15 @@
       "section": "depth_control",
       "step_title": "Depth Arm Inspection",
       "summary_title": "Depth Arms",
-      "instructions": "Inspect depth arms on several row-units in each rank. Look for bent arms, excessive play, and loose hardware.",
-      "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect depth arms on several row-units in each rank. Look for bent arms, excessive play, and loose hardware.",
-      "question": "What is the overall depth arm condition?",
+      "instructions": "Inspect depth arms on several row-units in each rank. Look for arms that when the depth handle is held firm, depth shaft rotates freely in the arm. Any arms that allow the shaft to rotate freely in the arm need to be replaced.",
+      "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect depth arms on several row-units in each rank. Look for arms that when the depth handle is held firm, depth shaft rotates freely in the arm. Any arms that allow the shaft to rotate freely in the arm need to be replaced.",
+      "question": "Overall condition of depth arms",
       "question_multi_rank": "Rate the depth arm condition for each working rank:",
       "answer_type": "working_rank_selection",
       "cost_multiplies_by_row_units": true,
+      "optional_replacement_count": true,
+      "optional_count_question": "Or enter how many arms need replacement",
+      "quantity_label": "arms",
       "choices": [
          {
             "label": "Arms are tight and good working order",
@@ -674,13 +626,13 @@
             "labor_cost": 0
          },
          {
-            "label": "Arms are loose on shaft, and need replacement",
+            "label": "Arms are loose on shaft, and ALL arms need replacement",
             "value": "arms-are-loose-on-shaft-and-need-replacement",
             "rating": "bad",
             "recommended_action": "Replace or repair depth arms that are loose on the shaft to maintain proper depth control.",
             "estimated_low_cost": 40,
             "estimated_high_cost": 60,
-            "labor_cost": 30
+            "labor_cost": 25
          }
       ],
       "video_url": "",
@@ -694,8 +646,8 @@
       "section": "depth_control",
       "step_title": "Depth Cover & Handle Inspection",
       "summary_title": "Depth Covers & Handles",
-      "instructions": "Inspect depth covers and handles on several row-units in each rank. Look for missing covers, damaged handles, and loose hardware.",
-      "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect depth covers and handles on several row-units in each rank. Look for missing covers, damaged handles, and loose hardware.",
+      "instructions": "Inspect depth covers and handles on several row-units in each rank. Look for handles that rattle loosely in the cover plate. Look for broken or missing handle-teeth and enlargeded cover slots.",
+      "instructions_multi_rank": "Evaluate this section by working rank. <br/>Inspect depth covers and handles on several row-units in each rank. Look for handles that rattle loosely in the cover plate. Look for broken or missing handle-teeth and enlargeded cover slots.",
       "question": "What is the overall depth cover and handle condition?",
       "question_multi_rank": "Rate the depth cover and handle condition for each working rank:",
       "answer_type": "working_rank_selection",
@@ -711,27 +663,27 @@
             "labor_cost": 0
          },
          {
-            "label": "Some wear or damage is present, but still serviceable",
+            "label": "Some play or wear, but depth will remain consistent",
             "value": "some-wear-or-damage-present-but-still-serviceable",
             "rating": "maybe",
             "recommended_action": "Some cover or handle wear is present. Monitor and plan repairs before seeding season.",
             "estimated_low_cost": 40,
             "estimated_high_cost": 60,
-            "labor_cost": 30
+            "labor_cost": 15
          },
          {
-            "label": "Covers or handles are missing, damaged, or in poor working order",
+            "label": "Depth is inconsistent, axle seals will quickly wear out, or covers/handles are broken",
             "value": "covers-or-handles-missing-damaged-or-poor-working-order",
             "rating": "bad",
-            "recommended_action": "Replace missing or damaged depth covers and handles to maintain proper depth control.",
+            "recommended_action": "Replace broken depth covers and handles to maintain proper depth control.",
             "estimated_low_cost": 40,
             "estimated_high_cost": 60,
-            "labor_cost": 30
+            "labor_cost": 15
          }
       ],
       "video_url": "",
       "video_caption": "",
-      "image_url": "https://rede-ag.com/wp-content/uploads/2026/07/depth-arm-cover-and-handle-1.webp",
+      "image_url": "https://rede-ag.com/wp-content/uploads/2026/07/depth-adjustment-cover-and-handle.webp",
       "image_caption": ""
    },
    {
@@ -875,7 +827,7 @@
             "recommended_action": "Moderate seed boot pivot wear is present. Plan to replace bushings and inspect pins before the next seeding season.",
             "estimated_low_cost": 15,
             "estimated_high_cost": 50,
-            "labor_cost": 20
+            "labor_cost": 40
          },
          {
             "label": "Greater than 3/4\" vertical movement",
@@ -884,7 +836,7 @@
             "recommended_action": "Excessive seed boot pivot movement indicates worn bushings and pins. Replace hardware before operating.",
             "estimated_low_cost": 15,
             "estimated_high_cost": 50,
-            "labor_cost": 25
+            "labor_cost": 40
          }
       ],
       "secondary_question": "Current setup",
@@ -944,7 +896,7 @@
             "recommended_action": "Seed boots still have some life left but show wear. Plan replacement to maintain accurate seed placement.",
             "estimated_low_cost": 110,
             "estimated_high_cost": 150,
-            "labor_cost": 25
+            "labor_cost": 35
          },
          {
             "label": "Worn through",
@@ -953,7 +905,7 @@
             "recommended_action": "Replace worn-through seed boots before seeding to prevent seed from being ejected out the side of the furrow.",
             "estimated_low_cost": 110,
             "estimated_high_cost": 150,
-            "labor_cost": 25
+            "labor_cost": 35
          }
       ],
       "secondary_question": "Current setup",
@@ -1013,7 +965,7 @@
             "recommended_action": "Seed-boot-springs are worn but still serviceable. Plan replacement when other row-unit work is scheduled.",
             "estimated_low_cost": 10,
             "estimated_high_cost": 20,
-            "labor_cost": 5
+            "labor_cost": 35
          },
          {
             "label": "Needs replacement (boot doesn't hold firmly against the disc)",
@@ -1022,7 +974,7 @@
             "recommended_action": "Replace worn or broken seed-boot-springs before seeding so the boot stays against the disc and in the furrow.",
             "estimated_low_cost": 10,
             "estimated_high_cost": 20,
-            "labor_cost": 5
+            "labor_cost": 35
          }
       ],
       "video_url": "",
@@ -1059,7 +1011,7 @@
             "recommended_action": "Seed tabs are wearing but still have usable life. Plan replacement before seeding season.",
             "estimated_low_cost": 10,
             "estimated_high_cost": 15,
-            "labor_cost": 5
+            "labor_cost": 3.5
          },
          {
             "label": "Less than 15% remaining",
@@ -1068,7 +1020,7 @@
             "recommended_action": "Replace worn seed tabs before seeding to help keep seed in the furrow.",
             "estimated_low_cost": 10,
             "estimated_high_cost": 15,
-            "labor_cost": 5
+            "labor_cost": 3.5
          }
       ],
       "video_url": "",
@@ -1104,7 +1056,7 @@
             "recommended_action": "Some drill hoses show early wear or loose fittings. Plan hose replacement or service before seeding season.",
             "estimated_low_cost": 600,
             "estimated_high_cost": 2000,
-            "labor_cost": 0
+            "labor_cost": 15
          },
          {
             "label": "Needs replacement (cracks, holes, broken, or otherwise unusable)",
@@ -1113,7 +1065,7 @@
             "recommended_action": "Replace damaged drill hoses and fittings before operating to prevent product loss and downtime.",
             "estimated_low_cost": 600,
             "estimated_high_cost": 3500,
-            "labor_cost": 0
+            "labor_cost": 15
          }
       ],
       "video_url": "",

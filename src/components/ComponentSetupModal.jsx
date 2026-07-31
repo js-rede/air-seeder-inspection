@@ -90,12 +90,16 @@ function ComponentSetupModalContent({ type, setup, onSave }) {
             nextCart.tankCount = "";
             nextCart.tankSize = "";
             nextCart.tankSizeOther = "";
+            nextCart.shootQuantity = "";
+            nextCart.runCount = "";
          }
 
          if (field === "model") {
             nextCart.tankCount = "";
             nextCart.tankSize = "";
             nextCart.tankSizeOther = "";
+            nextCart.shootQuantity = "";
+            nextCart.runCount = "";
             if (nextValue !== "Other") {
                nextCart.otherDetails = "";
             }

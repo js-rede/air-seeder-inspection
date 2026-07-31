@@ -132,6 +132,8 @@ function MachineSetupForm({ value, onChange, showValidation = false }) {
          next.tankCount = "";
          next.tankSize = "";
          next.tankSizeOther = "";
+         next.shootQuantity = "";
+         next.runCount = "";
       }
 
       if (field === "model") {
@@ -143,6 +145,8 @@ function MachineSetupForm({ value, onChange, showValidation = false }) {
          next.tankCount = "";
          next.tankSize = "";
          next.tankSizeOther = "";
+         next.shootQuantity = "";
+         next.runCount = "";
          if (nextValue !== "Other") {
             next.otherDetails = "";
          }
@@ -203,12 +207,16 @@ function MachineSetupForm({ value, onChange, showValidation = false }) {
          nextCart.tankCount = "";
          nextCart.tankSize = "";
          nextCart.tankSizeOther = "";
+         nextCart.shootQuantity = "";
+         nextCart.runCount = "";
       }
 
       if (field === "model") {
          nextCart.tankCount = "";
          nextCart.tankSize = "";
          nextCart.tankSizeOther = "";
+         nextCart.shootQuantity = "";
+         nextCart.runCount = "";
          if (nextValue !== "Other") {
             nextCart.otherDetails = "";
          }

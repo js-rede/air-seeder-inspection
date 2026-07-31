@@ -4,6 +4,7 @@ import {
    getFollowUpAnswers,
    getSecondaryAnswer,
    getSecondaryOtherAnswer,
+   getWorkingRankReplacementCount,
    getWorkingRankSelections,
    getSkipChoiceLabel,
    shouldShowFollowUpQuestionsForWorkingRankAnswer,
@@ -14,6 +15,7 @@ import SecondaryQuestionFields from "./SecondaryQuestionFields";
 import FollowUpQuestionsFields from "./FollowUpQuestionsFields";
 import AnswerChoiceContent from "./AnswerChoiceContent";
 import SkipChoiceButton from "./SkipChoiceButton";
+import CountStepper from "./CountStepper";
 import { choiceButtonRatingStyles } from "../utils/ratingStyles";
 
 const ratingStyles = choiceButtonRatingStyles;
@@ -21,6 +23,14 @@ const ratingStyles = choiceButtonRatingStyles;
 const buttonBase = "w-full rounded-xl border p-4 text-left transition cursor-pointer";
 const rankCardClass = "rounded-xl border border-slate-300 bg-slate-100 p-4";
 const rankCardTitleClass = "text-sm font-semibold uppercase tracking-wide text-slate-700";
+
+function emptyRankSelections(rankCount) {
+   const next = {};
+   for (let rank = 1; rank <= rankCount; rank += 1) {
+      next[String(rank)] = "";
+   }
+   return next;
+}
 
 function WorkingRankSelectionForm({
    choices,
@@ -32,6 +42,10 @@ function WorkingRankSelectionForm({
    secondaryHideForValues = [],
    secondaryShowForValues = [],
    followUpQuestions = [],
+   optionalReplacementCount = false,
+   optionalCountQuestion = "",
+   rowUnitCount = 0,
+   quantityLabel = "row-units",
 }) {
    const rankCount = Math.max(1, Number(workingRanks) || 1);
    const selections = getWorkingRankSelections(value);
@@ -52,10 +66,18 @@ function WorkingRankSelectionForm({
    const showSecondaryQuestion =
       hasSecondaryQuestion && shouldShowSecondaryForWorkingRankAnswer(secondaryStep, value, rankCount);
    const showRankLabels = rankCount > 1;
+   const maxCount = Math.max(0, Number(rowUnitCount) || 0);
+   const storedCount = getWorkingRankReplacementCount(value);
+   const numericCount =
+      storedCount != null ? Math.max(0, Math.min(maxCount, storedCount)) : 0;
 
    function emitAnswer(nextSelections, extras = {}) {
       const nextValue = { ranks: nextSelections };
       const probe = { ranks: nextSelections, ...extras };
+
+      if (optionalReplacementCount && extras.replacementCount != null) {
+         nextValue.replacementCount = String(extras.replacementCount);
+      }
 
       if (hasFollowUpQuestions) {
          const showFollowUps = shouldShowFollowUpQuestionsForWorkingRankAnswer(followUpStep, probe, rankCount);
@@ -86,12 +108,39 @@ function WorkingRankSelectionForm({
    }
 
    function selectRankChoice(rankNumber, choiceValue) {
+      const choice = choices.find((item) => getChoiceValue(item) === choiceValue);
       const nextSelections = {
          ...selections,
          [String(rankNumber)]: choiceValue,
       };
 
-      emitAnswer(nextSelections, {
+      const extras = {
+         secondary: secondaryAnswer,
+         secondaryOther,
+         followUps,
+      };
+
+      if (optionalReplacementCount) {
+         if (choice?.rating === "good") {
+            extras.replacementCount = 0;
+         } else if (choice?.rating === "bad") {
+            extras.replacementCount = maxCount;
+         } else if (choiceValue !== SKIP_CHOICE_VALUE && storedCount != null) {
+            extras.replacementCount = storedCount;
+         }
+      }
+
+      emitAnswer(nextSelections, extras);
+   }
+
+   function updateReplacementCount(nextValue) {
+      if (!optionalReplacementCount) return;
+
+      const parsed =
+         nextValue === "" ? 0 : Math.max(0, Math.min(maxCount, Number(nextValue) || 0));
+
+      emitAnswer(emptyRankSelections(rankCount), {
+         replacementCount: parsed,
          secondary: secondaryAnswer,
          secondaryOther,
          followUps,
@@ -102,25 +151,27 @@ function WorkingRankSelectionForm({
       emitAnswer(selections, {
          secondary: getSecondaryAnswer(nextValue),
          secondaryOther: getSecondaryOtherAnswer(nextValue),
+         replacementCount: storedCount,
       });
    }
 
    function handleFollowUpChange(nextValue) {
       emitAnswer(selections, {
          followUps: getFollowUpAnswers(nextValue),
+         replacementCount: storedCount,
       });
    }
 
    useEffect(() => {
       if (hasFollowUpQuestions) {
          if (showFollowUpQuestions || Object.keys(followUps).length === 0) return;
-         emitAnswer(selections, {});
+         emitAnswer(selections, { replacementCount: storedCount });
          return;
       }
 
       if (showSecondaryQuestion || (!secondaryAnswer && !secondaryOther)) return;
 
-      emitAnswer(selections, {});
+      emitAnswer(selections, { replacementCount: storedCount });
    }, [showSecondaryQuestion, showFollowUpQuestions]);
 
    return (
@@ -160,6 +211,36 @@ function WorkingRankSelectionForm({
                </div>
             );
          })}
+
+         {optionalReplacementCount && (
+            <div className="space-y-2">
+               <div className="text-sm font-medium text-slate-700">
+                  {optionalCountQuestion || `Or enter how many ${quantityLabel} need replacement`}
+               </div>
+               {maxCount > 0 ? (
+                  <div className="w-fit">
+                     <CountStepper
+                        value={numericCount}
+                        onChange={updateReplacementCount}
+                        onIncrement={() => {
+                           if (numericCount >= maxCount) return;
+                           updateReplacementCount(numericCount + 1);
+                        }}
+                        onDecrement={() => updateReplacementCount(Math.max(0, numericCount - 1))}
+                        canIncrement={numericCount < maxCount}
+                        canDecrement={numericCount > 0}
+                        min={0}
+                        max={maxCount}
+                        ariaLabel={`${quantityLabel} needing replacement`}
+                     />
+                  </div>
+               ) : (
+                  <p className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-900">
+                     Complete machine width and row spacing on the previous step to calculate {quantityLabel}.
+                  </p>
+               )}
+            </div>
+         )}
 
          {hasFollowUpQuestions && showFollowUpQuestions && (
             <FollowUpQuestionsFields
