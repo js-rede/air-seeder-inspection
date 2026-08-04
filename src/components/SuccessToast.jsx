@@ -1,14 +1,15 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useEffectEvent } from "react";
 
 function SuccessToast({ title, message, onDismiss, durationMs = 4000 }) {
-   const onDismissRef = useRef(onDismiss);
-   onDismissRef.current = onDismiss;
+   const dismiss = useEffectEvent(() => {
+      onDismiss?.();
+   });
 
    useEffect(() => {
       if (!title) return undefined;
 
       const timeoutId = window.setTimeout(() => {
-         onDismissRef.current?.();
+         dismiss();
       }, durationMs);
 
       return () => window.clearTimeout(timeoutId);
