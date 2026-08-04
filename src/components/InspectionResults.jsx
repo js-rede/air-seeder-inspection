@@ -16,6 +16,7 @@ import { getRatingLabel } from "../utils/ratingStyles";
 import RatingBadge from "./RatingBadge";
 import EmailReportModal from "./EmailReportModal";
 import ContactFollowUpModal from "./ContactFollowUpModal";
+import SuccessToast from "./SuccessToast";
 
 /** Hide "1 row-units" / "1 item" for whole-machine costs; keep real counts (towers, row-units, etc.). */
 function shouldShowQuantity(item) {
@@ -110,6 +111,12 @@ function buildEquipmentDetails(machineSetup, summary) {
          details.push({
             label: "Working ranks",
             value: String(summary.workingRanks),
+         });
+      }
+      if (summary.towerPortCount) {
+         details.push({
+            label: "Tower ports",
+            value: String(summary.towerPortCount),
          });
       }
       if (drill.otherDetails?.trim()) {
@@ -235,6 +242,11 @@ function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
    const [emailStatus, setEmailStatus] = useState("idle"); // idle | sending | error | follow_up_failed
    const [followUpModalOpen, setFollowUpModalOpen] = useState(false);
    const [followUpRequested, setFollowUpRequested] = useState(false);
+   const [toast, setToast] = useState(null);
+
+   function showSuccessToast(title, message) {
+      setToast({ title, message });
+   }
 
    const hasMarginalItems =
       (summary.ratingCounts.maybe || 0) > 0 || summary.lineItems.some((item) => item.rating === "maybe");
@@ -244,7 +256,7 @@ function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
    const excludeMarginal = marginalItemIds.length > 0 && marginalItemIds.every((id) => excludedIds.has(id));
 
    const emailButtonClass =
-      "cursor-pointer rounded-xl bg-[#e21313] px-6 py-3 font-rede-geom text-sm font-semibold uppercase italic tracking-wider text-white shadow-sm transition hover:bg-[#ce1b1b] disabled:cursor-default disabled:opacity-60 min-w-[185px] text-center h-[44px]";
+      "h-[44px] w-full cursor-pointer rounded-xl bg-[#e21313] px-6 py-3 text-center font-rede-geom text-sm font-semibold uppercase italic tracking-wider text-white shadow-sm transition hover:bg-[#ce1b1b] disabled:cursor-default disabled:opacity-60 sm:w-auto sm:min-w-[185px]";
 
    function openEmailModal() {
       setEmailStatus("idle");
@@ -289,7 +301,32 @@ function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
       }
    }
 
-   async function handleFollowUpConfirm(nextContact) {
+   async function postEmailReport(emails, contact, report) {
+      const name =
+         [contact?.firstName, contact?.lastName].filter(Boolean).join(" ").trim() ||
+         [contactInfo?.firstName, contactInfo?.lastName].filter(Boolean).join(" ").trim() ||
+         "there";
+
+      const response = await fetch(getSendReportUrl(), {
+         method: "POST",
+         headers: { "Content-Type": "application/json" },
+         body: JSON.stringify({
+            name,
+            firstName: contact?.firstName || contactInfo?.firstName || "",
+            lastName: contact?.lastName || contactInfo?.lastName || "",
+            emails,
+            email: contact?.email || contactInfo?.email || "",
+            phone: contact?.phone || contactInfo?.phone || "",
+            report,
+         }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || data?.ok === false) {
+         throw new Error(data?.message || `Request failed (${response.status})`);
+      }
+   }
+
+   async function handleFollowUpConfirm(nextContact, { alsoEmailReport = true } = {}) {
       const report = buildEmailReport({
          equipment,
          includedLineItems,
@@ -302,12 +339,31 @@ function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
 
       await postFollowUpRequest(nextContact, report);
       setFollowUpRequested(true);
+
+      if (alsoEmailReport) {
+         try {
+            await postEmailReport([nextContact.email], nextContact, report);
+         } catch (emailError) {
+            console.error("Follow-up requested, but email report failed:", emailError);
+            const error = new Error("email_failed");
+            error.code = "email_failed";
+            throw error;
+         }
+      }
+
       setFollowUpModalOpen(false);
+      showSuccessToast(
+         "Follow-up requested",
+         alsoEmailReport ? "We also emailed your report." : "We’ll be in touch about your estimate.",
+      );
    }
 
    function renderActionButtons({ align = "start" } = {}) {
       return (
-         <div className={`mt-3 mb-2 flex flex-wrap gap-3 ${align === "end" ? "justify-end" : ""}`}>
+         <div
+            className={`mt-3 mb-2 flex flex-col gap-3 sm:flex-row sm:flex-wrap ${
+               align === "end" ? "sm:justify-end" : ""
+            }`}>
             <button type="button" onClick={openFollowUpModal} disabled={followUpRequested} className={emailButtonClass}>
                {followUpRequested ? "Follow-up requested" : "Request a follow-up"}
             </button>
@@ -358,8 +414,6 @@ function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
       excludeMarginal && excludedIds.size === marginalItemIds.length && marginalItemIds.every((id) => excludedIds.has(id));
 
    async function handleSendReport(emails, followUpChoice = null) {
-      const name = [contactInfo?.firstName, contactInfo?.lastName].filter(Boolean).join(" ").trim() || "there";
-      const url = getSendReportUrl();
       const report = buildEmailReport({
          equipment,
          includedLineItems,
@@ -372,23 +426,7 @@ function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
 
       setEmailStatus("sending");
       try {
-         const response = await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-               name,
-               firstName: contactInfo?.firstName || "",
-               lastName: contactInfo?.lastName || "",
-               emails,
-               email: contactInfo?.email || "",
-               phone: contactInfo?.phone || "",
-               report,
-            }),
-         });
-         const data = await response.json().catch(() => ({}));
-         if (!response.ok || data?.ok === false) {
-            throw new Error(data?.message || `Request failed (${response.status})`);
-         }
+         await postEmailReport(emails, contactInfo, report);
 
          if (followUpChoice === "yes") {
             try {
@@ -403,6 +441,10 @@ function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
 
          setEmailModalOpen(false);
          setEmailStatus("idle");
+         showSuccessToast(
+            "Report emailed",
+            followUpChoice === "yes" ? "We also requested a follow-up." : "Check your inbox for the estimate.",
+         );
       } catch (error) {
          console.error("Failed to email report:", error);
          setEmailStatus("error");
@@ -458,9 +500,9 @@ function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
                <div className="mt-8">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                      <h3 className="text-xl font-semibold text-slate-900">Items Affecting Estimate</h3>
-                     <div className="flex flex-wrap items-center gap-3 sm:justify-end">
+                     <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
                         <div
-                           className={`overflow-hidden transition-all duration-200 ease-out max-w-[150px] ${
+                           className={`order-2 overflow-hidden transition-all duration-200 ease-out max-w-[150px] sm:order-1 ${
                               hasCustomExclusions ? " opacity-100" : "pointer-events-none max-w-0 opacity-0"
                            }`}>
                            <button
@@ -473,7 +515,7 @@ function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
                            </button>
                         </div>
                         {hasMarginalItems && (
-                           <div className="flex items-center gap-2">
+                           <div className="order-1 flex items-center gap-2 sm:order-2">
                               <p className="text-xs font-medium uppercase italic tracking-wide text-slate-500 opacity-70">
                                  Turn off marginal items
                               </p>
@@ -547,7 +589,7 @@ function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
             )}
 
             <div className="mt-8 flex justify-end pt-5">
-               <div className="text-right">
+               <div className="w-full text-right">
                   <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">Total estimate</p>
                   <p className="mt-1 text-3xl font-bold text-slate-900">{costRange || "$0"}</p>
                   {hasCustomExclusions && (
@@ -626,11 +668,11 @@ function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
                </div>
             )}
          </section>
-         <footer className="mt-7 flex justify-end">
+         <footer className="mt-7 flex sm:justify-end">
             <button
                type="button"
                onClick={onRestart}
-               className="cursor-pointer rounded-xl border border-slate-300 bg-white px-6 py-3 font-rede-geom text-sm font-semibold uppercase italic tracking-wider text-slate-600 shadow-sm transition hover:bg-slate-50">
+               className="w-full cursor-pointer rounded-xl border border-slate-300 bg-white px-6 py-3 font-rede-geom text-sm font-semibold uppercase italic tracking-wider text-slate-600 shadow-sm transition hover:bg-slate-50 sm:w-auto">
                Start Over
             </button>
          </footer>
@@ -649,6 +691,12 @@ function InspectionResults({ summary, machineSetup, contactInfo, onRestart }) {
             initialContact={contactInfo}
             onClose={closeFollowUpModal}
             onConfirm={handleFollowUpConfirm}
+         />
+
+         <SuccessToast
+            title={toast?.title}
+            message={toast?.message}
+            onDismiss={() => setToast(null)}
          />
       </>
    );

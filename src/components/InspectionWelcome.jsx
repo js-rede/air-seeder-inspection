@@ -52,7 +52,7 @@ function WelcomeVideo() {
 
 function InspectionWelcome({ onStart }) {
    return (
-      <section className="mt-2 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+      <section className="-mx-4 mt-2 rounded-none border border-slate-200 border-x-0 bg-white p-4 shadow-sm sm:mx-0 sm:rounded-2xl sm:border-x sm:p-8">
          <h2 className="mb-4 text-2xl sm:text-3xl font-bold text-slate-900">Welcome to the Red E Online Inspection Tool</h2>
 
          <div className="space-y-4 text-lg leading-relaxed text-slate-600 lg:flex-1">
@@ -65,7 +65,7 @@ function InspectionWelcome({ onStart }) {
             </div>
 
             <div>
-               <div className="mb-1">Learn more about our inspections, or schedule a free onsite inspection:</div>
+               <div className="sm:mb-1 mb-4">Learn more about our inspections, or schedule a free onsite inspection:</div>
                <a
                   href="https://rede.ag/inspection"
                   target="_blank"
@@ -95,7 +95,7 @@ function InspectionWelcome({ onStart }) {
          <button
             type="button"
             onClick={onStart}
-            className="mb-8 sm:text-2xl text-xl w-full cursor-pointer rounded-xl bg-[#e21313] px-6 py-5 font-rede-geom font-semibold uppercase italic sm:tracking-normal tracking-wider text-white shadow-sm transition hover:bg-[#ce1b1b]">
+            className="mb-8 sm:text-2xl text-base w-full cursor-pointer rounded-xl bg-[#e21313] sm:px-6 px-4 py-5 font-rede-geom font-semibold uppercase italic sm:tracking-normal tracking-wider text-white shadow-sm transition hover:bg-[#ce1b1b]">
             Start Online Inspection →
          </button>
 

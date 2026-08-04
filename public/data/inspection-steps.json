@@ -42,8 +42,8 @@
             "labor_cost": 0
          },
          {
-            "label": "Between 1/4-inch and 1/2-inch slop",
-            "value": "quarter-to-half-inch-slop",
+            "label": "Between 1/4-inch and 1/2-inch movement (side-to-side)",
+            "value": "quarter-to-half-inch-movement-side-to-side",
             "rating": "maybe",
             "recommended_action": "Moderate wear is present. Plan to replace pivot bushings and inspect pins before the next seeding season.",
             "estimated_low_cost": 50,
@@ -178,7 +178,7 @@
          },
          {
             "label": "Less than 1/4\" movement from side-to-side",
-            "value": "less-than-quarter-inch-slop-from-side-to-side",
+            "value": "less-than-quarter-inch-movement-side-to-side",
             "rating": "maybe",
             "recommended_action": "Moderate closing wheel pivot wear is present. Plan to replace bushings and inspect pins before the next seeding season.",
             "estimated_low_cost": 65,
@@ -187,7 +187,7 @@
          },
          {
             "label": "Stuck or greater than 1/4\" movement from side-to-side",
-            "value": "stuck-or-greater-than-quarter-inch-slop-from-side-to-side",
+            "value": "stuck-or-greater-than-quarter-inch-movement-side-to-side",
             "rating": "bad",
             "recommended_action": "Replace closing wheel pivot hardware before operating.",
             "estimated_low_cost": 65,
@@ -400,8 +400,8 @@
             "labor_cost": 0
          },
          {
-            "label": "Less than 1/4\" slop from side-to-side",
-            "value": "less-than-quarter-inch-slop-from-side-to-side",
+            "label": "Less than 1/4\" movement from side-to-side",
+            "value": "less-than-quarter-inch-movement-side-to-side",
             "rating": "maybe",
             "recommended_action": "Moderate press wheel pivot wear is present. Plan to replace bushings and inspect pins before the next seeding season.",
             "estimated_low_cost": 45,
@@ -409,8 +409,8 @@
             "labor_cost": 70
          },
          {
-            "label": "Stuck or greater than 1/4\" slop from side-to-side",
-            "value": "stuck-or-greater-than-quarter-inch-slop-from-side-to-side",
+            "label": "Stuck or greater than 1/4\" movement from side-to-side",
+            "value": "stuck-or-greater-than-quarter-inch-movement-side-to-side",
             "rating": "bad",
             "recommended_action": "Replace press wheel pivot hardware before operating.",
             "estimated_low_cost": 45,
@@ -457,7 +457,7 @@
       "section": "press_wheels",
       "step_title": "Press Wheel Spring Inspection",
       "summary_title": "Press Wheel Springs",
-      "instructions": "? If the spring is loose or broken it won't properly press the seeds into the furrow. Inspect press wheel springs on several row-units. Look for loose or broken springs, plastic deformation, and whether springs are on the top adjustment setting.",
+      "instructions": "If the spring is loose or broken it won't properly press the seeds into the furrow. Inspect press wheel springs on several row-units. Look for loose or broken springs, deformation, and whether springs are on the top adjustment setting.",
       "instructions_multi_rank": "Evaluate press wheel spring condition by working rank. <br/>If the spring is loose or broken it won't properly press the seeds into the furrow. Inspect several row-units in each rank and rate spring condition for each rank.",
       "question": "What is the overall press wheel spring condition?",
       "question_multi_rank": "Rate the press wheel spring condition for each working rank:",
@@ -465,19 +465,19 @@
       "cost_multiplies_by_row_units": true,
       "choices": [
          {
-            "label": "Good working order",
-            "value": "good-working-order",
+            "label": "Still on first spring position",
+            "value": "still-on-first-spring-position",
             "rating": "good",
-            "recommended_action": "Press wheel springs are in good working order. No immediate replacement is needed.",
+            "recommended_action": "Closing wheel springs are still on the first spring position. No immediate replacement is needed.",
             "estimated_low_cost": 0,
             "estimated_high_cost": 0,
             "labor_cost": 0
          },
          {
-            "label": "On top adjustment setting (can we do better?)",
-            "value": "on-top-adjustment-setting",
+            "label": "On top spring position",
+            "value": "on-top-spring-position",
             "rating": "maybe",
-            "recommended_action": "Springs are on the top adjustment setting. Monitor press wheel performance and adjust as needed before seeding.",
+            "recommended_action": "Springs are on the top spring position. Monitor press wheel performance and adjust as needed before seeding.",
             "estimated_low_cost": 15,
             "estimated_high_cost": 25,
             "labor_cost": 7
@@ -1085,6 +1085,18 @@
       "question": "How many towers need replacing?",
       "answer_type": "replacement_tally",
       "quantity_label": "towers",
+      "secondary_question": "How many ports are on your towers?",
+      "secondary_choices": [
+         { "label": "4 ports", "value": "4" },
+         { "label": "5 ports", "value": "5" },
+         { "label": "6 ports", "value": "6" },
+         { "label": "7 ports", "value": "7" },
+         { "label": "8 ports", "value": "8" },
+         { "label": "9 ports", "value": "9" },
+         { "label": "10 ports", "value": "10" },
+         { "label": "11 ports", "value": "11" },
+         { "label": "12 ports", "value": "12" }
+      ],
       "choices": [
          {
             "label": "Replace",
@@ -1654,6 +1666,15 @@
          {
             "label": "Hydraulic drive conversion",
             "value": "hydraulic-drive-conversion",
+            "rating": "unknown",
+            "recommended_action": "A Red E representative can follow up with more information.",
+            "estimated_low_cost": 0,
+            "estimated_high_cost": 0,
+            "labor_cost": 0
+         },
+         {
+            "label": "Tank scales",
+            "value": "tank-scales",
             "rating": "unknown",
             "recommended_action": "A Red E representative can follow up with more information.",
             "estimated_low_cost": 0,

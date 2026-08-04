@@ -6,6 +6,7 @@ import {
    getStepInspectionSections,
    getSecondaryAnswer,
    getFollowUpQuestions,
+   getReplacementTallyRawCount,
    getWorkingRankReplacementCount,
    isFollowUpQuestionsComplete,
    isSecondaryAnswerComplete,
@@ -43,29 +44,46 @@ export function isAnswerComplete(step, answer, answers = {}, rowUnitCountOverrid
             : getEffectiveRowUnitCount(answers["machine-setup"], rowUnitCountOverride);
       if (!quantityCount) return false;
 
+      const requiresSecondary = Boolean(step.secondary_question && step.secondary_choices?.length);
+
       if (step.tally_sides) {
-         if (answer === "" || answer == null) return true;
+         if (answer === "" || answer == null) return !requiresSecondary;
          if (typeof answer !== "object" || Array.isArray(answer)) {
             const count = Number(answer);
-            return Number.isFinite(count) && count >= 0 && count <= quantityCount * 2;
+            const countOk = Number.isFinite(count) && count >= 0 && count <= quantityCount * 2;
+            return requiresSecondary ? false : countOk;
          }
-         // Legacy non-sides objects (e.g. old working-rank answers) count as unanswered/0.
-         if (!("left" in answer) && !("right" in answer)) return true;
+         if (!("left" in answer) && !("right" in answer)) return !requiresSecondary;
 
          const left = Number(answer.left);
          const right = Number(answer.right);
-         return (
+         const countOk =
             Number.isFinite(left) &&
             left >= 0 &&
             left <= quantityCount &&
             Number.isFinite(right) &&
             right >= 0 &&
-            right <= quantityCount
-         );
+            right <= quantityCount;
+         if (!countOk) return false;
+         return requiresSecondary ? isSecondaryAnswerComplete(answer, step.secondary_choices) : true;
+      }
+
+      if (requiresSecondary) {
+         if (answer == null || answer === "" || typeof answer !== "object" || Array.isArray(answer)) {
+            return false;
+         }
+         const rawCount = getReplacementTallyRawCount(answer);
+         const countOk = rawCount != null && rawCount >= 0 && rawCount <= quantityCount;
+         return countOk && isSecondaryAnswerComplete(answer, step.secondary_choices);
       }
 
       // Unanswered or legacy non-numeric answers count as 0.
-      if (answer === "" || answer == null || typeof answer === "object") return true;
+      if (answer === "" || answer == null || (typeof answer === "object" && !("count" in answer))) return true;
+
+      if (typeof answer === "object" && "count" in answer) {
+         const rawCount = getReplacementTallyRawCount(answer);
+         return rawCount != null && rawCount >= 0 && rawCount <= quantityCount;
+      }
 
       const count = Number(answer);
       return Number.isFinite(count) && count >= 0 && count <= quantityCount;

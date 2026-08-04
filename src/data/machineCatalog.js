@@ -590,8 +590,8 @@ export function enableDrillInspection(setup) {
 
 export function createEmptyMachineSetup() {
    return {
-      equipmentType: "",
-      component: "",
+      equipmentType: "air_seeder",
+      component: "both",
       includeDrill: true,
       includeCart: true,
       inspectionOrder: "drill_first",

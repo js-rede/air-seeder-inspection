@@ -50,7 +50,7 @@ function SideTallyField({ label, value, quantityCount, onChange, ariaLabel }) {
 
    return (
       <div className="flex items-center gap-3">
-         <div className="min-w-[2.75rem] text-sm font-medium text-slate-700">{label}</div>
+         <div className="min-w-[44px] text-sm font-medium text-slate-700">{label}</div>
          <CountStepper
             value={numericCount}
             onChange={updateCount}

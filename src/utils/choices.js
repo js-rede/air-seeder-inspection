@@ -716,15 +716,43 @@ export function getReplacementTallyCount(answer) {
    if (answer === "" || answer == null) return 0;
 
    if (typeof answer === "object") {
-      if (!("left" in answer) && !("right" in answer)) return 0;
-      const left = Number(answer.left);
-      const right = Number(answer.right);
-      const total = (Number.isFinite(left) ? Math.max(0, left) : 0) + (Number.isFinite(right) ? Math.max(0, right) : 0);
-      return total > 0 ? total : 0;
+      if ("count" in answer) {
+         const count = Number(answer.count);
+         return Number.isFinite(count) && count > 0 ? count : 0;
+      }
+      if ("left" in answer || "right" in answer) {
+         const left = Number(answer.left);
+         const right = Number(answer.right);
+         const total = (Number.isFinite(left) ? Math.max(0, left) : 0) + (Number.isFinite(right) ? Math.max(0, right) : 0);
+         return total > 0 ? total : 0;
+      }
+      return 0;
    }
 
    const count = Number(answer);
    return Number.isFinite(count) && count > 0 ? count : 0;
+}
+
+/** Raw tally count including 0; null when unanswered / invalid. */
+export function getReplacementTallyRawCount(answer) {
+   if (answer === "" || answer == null) return null;
+
+   if (typeof answer === "object") {
+      if ("count" in answer) {
+         const count = Number(answer.count);
+         return Number.isFinite(count) ? Math.max(0, count) : null;
+      }
+      if ("left" in answer || "right" in answer) {
+         const left = Number(answer.left);
+         const right = Number(answer.right);
+         if (!Number.isFinite(left) || !Number.isFinite(right)) return null;
+         return Math.max(0, left) + Math.max(0, right);
+      }
+      return null;
+   }
+
+   const count = Number(answer);
+   return Number.isFinite(count) ? Math.max(0, count) : null;
 }
 
 export function getReplacementTallyCosts(step, answer) {

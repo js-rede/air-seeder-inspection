@@ -130,6 +130,7 @@ function asi_handle_request_follow_up($request) {
          'contact_id' => $result['contact_id'],
          'file_id'    => $result['file_id'],
          'note_id'    => $result['note_id'],
+         'deal_id'    => isset($result['deal_id']) ? $result['deal_id'] : null,
       )
    );
 }

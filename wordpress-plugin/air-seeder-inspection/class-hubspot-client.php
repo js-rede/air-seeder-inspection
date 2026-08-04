@@ -5,9 +5,16 @@
  * Token: define('ASI_HUBSPOT_ACCESS_TOKEN', 'pat-...'); in wp-config.php
  *    or set option asi_hubspot_access_token
  *
+ * Optional deal overrides (wp-config.php):
+ *   ASI_HUBSPOT_DEAL_PIPELINE / ASI_HUBSPOT_DEAL_STAGE — internal ids
+ *   ASI_HUBSPOT_DEAL_PIPELINE_LABEL — default "Sales Pipeline"
+ *   ASI_HUBSPOT_DEAL_STAGE_LABEL    — default "VERIFY INFO"
+ *   ASI_HUBSPOT_DEAL_OWNER_ID       — HubSpot owner id (else looks up "Red E")
+ *
  * Private app scopes needed:
  *   crm.objects.contacts.read, crm.objects.contacts.write,
- *   crm.objects.notes.write, files
+ *   crm.objects.notes.write, files,
+ *   crm.objects.deals.read, crm.objects.deals.write
  */
 
 if (!defined('ABSPATH')) {
@@ -18,6 +25,8 @@ class Asi_HubSpot_Client {
    const API_BASE = 'https://api.hubapi.com';
    /** Note-to-contact association type id */
    const NOTE_TO_CONTACT = 202;
+   /** Deal-to-contact association type id */
+   const DEAL_TO_CONTACT = 3;
 
    /**
     * @return string
@@ -44,13 +53,13 @@ class Asi_HubSpot_Client {
    }
 
    /**
-    * Upsert contact by email, upload PDF, attach as a note on the contact.
+    * Upsert contact by email, upload PDF, attach as a note, create a follow-up deal.
     *
     * @param array  $customer name, email, phone, firstName?, lastName?
     * @param string $pdf_path Absolute path to PDF file
     * @param string $pdf_filename Basename for HubSpot
     * @param array  $report Optional report for note body summary
-    * @return array Keys: contact_id, file_id, note_id
+    * @return array Keys: contact_id, file_id, note_id, deal_id
     */
    public function attach_inspection_report(array $customer, $pdf_path, $pdf_filename, array $report = array()) {
       if (!self::is_configured()) {
@@ -64,10 +73,21 @@ class Asi_HubSpot_Client {
       $file_id = $this->upload_file($pdf_path, $pdf_filename);
       $note_id = $this->create_note_with_attachment($contact_id, $file_id, $customer, $report);
 
+      $deal_id = null;
+      try {
+         $deal_id = $this->create_follow_up_deal($contact_id, $customer, $report);
+      } catch (Exception $e) {
+         if (function_exists('error_log')) {
+            error_log('Air Seeder Inspection: HubSpot deal create failed: ' . $e->getMessage());
+         }
+         // Contact + PDF note already succeeded; don't fail the whole follow-up.
+      }
+
       return array(
          'contact_id' => $contact_id,
          'file_id'    => $file_id,
          'note_id'    => $note_id,
+         'deal_id'    => $deal_id,
       );
    }
 
@@ -169,8 +189,8 @@ class Asi_HubSpot_Client {
 
       $options = wp_json_encode(
          array(
-            'access'        => 'PRIVATE',
-            'overwrite'     => false,
+            'access'                      => 'PRIVATE',
+            'overwrite'                   => false,
             'duplicateValidationStrategy' => 'NONE',
          )
       );
@@ -246,6 +266,211 @@ class Asi_HubSpot_Client {
       }
 
       return (string) $created['id'];
+   }
+
+   /**
+    * Create a Sales Pipeline deal for an online inspection follow-up.
+    *
+    * @param string $contact_id
+    * @param array  $customer
+    * @param array  $report
+    * @return string Deal ID
+    */
+   private function create_follow_up_deal($contact_id, array $customer, array $report) {
+      $first = isset($customer['firstName']) ? trim((string) $customer['firstName']) : '';
+      $last = isset($customer['lastName']) ? trim((string) $customer['lastName']) : '';
+      $name = trim($first . ' ' . $last);
+      if ($name === '' && !empty($customer['name']) && strtolower((string) $customer['name']) !== 'there') {
+         $name = trim((string) $customer['name']);
+      }
+      if ($name === '') {
+         $name = 'Online Inspection';
+      }
+
+      $deal_name = $name . ' - Completed Online Inspection (see customer notes for PDF)';
+      list($pipeline_id, $stage_id) = $this->resolve_deal_pipeline_and_stage();
+
+      $properties = array(
+         'dealname'    => $deal_name,
+         'description' => 'Completed Online Inspection',
+         'pipeline'    => $pipeline_id,
+         'dealstage'   => $stage_id,
+      );
+
+      $owner_id = $this->resolve_deal_owner_id();
+      if ($owner_id !== '') {
+         $properties['hubspot_owner_id'] = $owner_id;
+      }
+
+      $estimate = isset($report['estimate']['label']) ? trim((string) $report['estimate']['label']) : '';
+      if ($estimate !== '') {
+         $properties['description'] = 'Completed Online Inspection. Estimate: ' . $estimate;
+      }
+
+      // Hardcoded to match the old workflow: Interested In = On-Site Inspection, Referral Source = Website
+      $this->apply_deal_property_by_label($properties, 'Interested In', 'On-Site Inspection');
+      $this->apply_deal_property_by_label($properties, 'Referral Source', 'Website');
+
+      $created = $this->request('POST', '/crm/v3/objects/deals', array(
+         'properties'   => $properties,
+         'associations' => array(
+            array(
+               'to'    => array('id' => (string) $contact_id),
+               'types' => array(
+                  array(
+                     'associationCategory' => 'HUBSPOT_DEFINED',
+                     'associationTypeId'   => self::DEAL_TO_CONTACT,
+                  ),
+               ),
+            ),
+         ),
+      ));
+
+      if (empty($created['id'])) {
+         throw new RuntimeException('HubSpot did not return a deal id.');
+      }
+
+      return (string) $created['id'];
+   }
+
+   /**
+    * Look up a deal property by its HubSpot label and set the matching option value.
+    *
+    * @param array  $properties Deal properties (by ref)
+    * @param string $label      Property label, e.g. "Referral Source"
+    * @param string $value_label Option label or raw value, e.g. "Website"
+    */
+   private function apply_deal_property_by_label(array &$properties, $label, $value_label) {
+      static $deal_props = null;
+
+      try {
+         if ($deal_props === null) {
+            $data = $this->request('GET', '/crm/v3/properties/deals');
+            $deal_props = isset($data['results']) && is_array($data['results']) ? $data['results'] : array();
+         }
+      } catch (Exception $e) {
+         return;
+      }
+
+      $prop = null;
+      foreach ($deal_props as $candidate) {
+         $candidate_label = isset($candidate['label']) ? (string) $candidate['label'] : '';
+         if (strcasecmp($candidate_label, $label) === 0) {
+            $prop = $candidate;
+            break;
+         }
+      }
+
+      if ($prop === null || empty($prop['name'])) {
+         return;
+      }
+
+      $name = (string) $prop['name'];
+      $value = (string) $value_label;
+      $options = isset($prop['options']) && is_array($prop['options']) ? $prop['options'] : array();
+
+      foreach ($options as $opt) {
+         $opt_label = isset($opt['label']) ? (string) $opt['label'] : '';
+         $opt_value = isset($opt['value']) ? (string) $opt['value'] : '';
+         if (strcasecmp($opt_label, $value_label) === 0 || strcasecmp($opt_value, $value_label) === 0) {
+            $value = $opt_value;
+            break;
+         }
+      }
+
+      // Checkbox / multi-select properties expect semicolon-delimited values.
+      $type = isset($prop['type']) ? (string) $prop['type'] : '';
+      $field_type = isset($prop['fieldType']) ? (string) $prop['fieldType'] : '';
+      if ($type === 'enumeration' && ($field_type === 'checkbox' || $field_type === 'checkboxselect')) {
+         $value = $value;
+      }
+
+      $properties[$name] = $value;
+   }
+
+   /**
+    * @return array{0:string,1:string} pipeline id, stage id
+    */
+   private function resolve_deal_pipeline_and_stage() {
+      $pipeline_id = defined('ASI_HUBSPOT_DEAL_PIPELINE') ? trim((string) ASI_HUBSPOT_DEAL_PIPELINE) : '';
+      $stage_id = defined('ASI_HUBSPOT_DEAL_STAGE') ? trim((string) ASI_HUBSPOT_DEAL_STAGE) : '';
+      if ($pipeline_id !== '' && $stage_id !== '') {
+         return array($pipeline_id, $stage_id);
+      }
+
+      $pipeline_label = defined('ASI_HUBSPOT_DEAL_PIPELINE_LABEL')
+         ? (string) ASI_HUBSPOT_DEAL_PIPELINE_LABEL
+         : 'Sales Pipeline';
+      $stage_label = defined('ASI_HUBSPOT_DEAL_STAGE_LABEL')
+         ? (string) ASI_HUBSPOT_DEAL_STAGE_LABEL
+         : 'VERIFY INFO';
+
+      $data = $this->request('GET', '/crm/v3/pipelines/deals');
+      $results = isset($data['results']) && is_array($data['results']) ? $data['results'] : array();
+      if (!$results) {
+         throw new RuntimeException('No HubSpot deal pipelines found.');
+      }
+
+      $chosen = null;
+      foreach ($results as $pipe) {
+         $label = isset($pipe['label']) ? (string) $pipe['label'] : '';
+         if (strcasecmp($label, $pipeline_label) === 0) {
+            $chosen = $pipe;
+            break;
+         }
+      }
+      if ($chosen === null) {
+         foreach ($results as $pipe) {
+            if (isset($pipe['id']) && (string) $pipe['id'] === 'default') {
+               $chosen = $pipe;
+               break;
+            }
+         }
+      }
+      if ($chosen === null) {
+         $chosen = $results[0];
+      }
+
+      $stages = isset($chosen['stages']) && is_array($chosen['stages']) ? $chosen['stages'] : array();
+      if (!$stages) {
+         throw new RuntimeException('HubSpot deal pipeline has no stages.');
+      }
+
+      foreach ($stages as $stage) {
+         $label = isset($stage['label']) ? (string) $stage['label'] : '';
+         if (strcasecmp($label, $stage_label) === 0) {
+            return array((string) $chosen['id'], (string) $stage['id']);
+         }
+      }
+
+      return array((string) $chosen['id'], (string) $stages[0]['id']);
+   }
+
+   /**
+    * @return string Owner id or empty
+    */
+   private function resolve_deal_owner_id() {
+      if (defined('ASI_HUBSPOT_DEAL_OWNER_ID') && ASI_HUBSPOT_DEAL_OWNER_ID) {
+         return (string) ASI_HUBSPOT_DEAL_OWNER_ID;
+      }
+
+      try {
+         $data = $this->request('GET', '/crm/v3/owners?limit=100&archived=false');
+      } catch (Exception $e) {
+         return '';
+      }
+
+      $results = isset($data['results']) && is_array($data['results']) ? $data['results'] : array();
+      foreach ($results as $owner) {
+         $first = isset($owner['firstName']) ? (string) $owner['firstName'] : '';
+         $last = isset($owner['lastName']) ? (string) $owner['lastName'] : '';
+         $full = trim($first . ' ' . $last);
+         if (strcasecmp($full, 'Red E') === 0 || strcasecmp($first, 'Red E') === 0) {
+            return isset($owner['id']) ? (string) $owner['id'] : '';
+         }
+      }
+
+      return '';
    }
 
    /**

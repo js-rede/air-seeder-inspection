@@ -15,7 +15,7 @@ function InspectionNav({
       "cursor-pointer rounded-xl px-6 py-3 font-rede-geom text-sm font-semibold uppercase italic tracking-wider transition disabled:cursor-default disabled:opacity-40";
 
    return (
-      <footer className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <footer className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
          <button
             type="button"
             onClick={onBack}

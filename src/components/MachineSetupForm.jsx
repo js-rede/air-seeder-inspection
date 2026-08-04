@@ -1,7 +1,5 @@
 import { useEffect } from "react";
 import {
-   MACHINE_CHOICES,
-   getMachineChoice,
    getMachineChoiceTarget,
    getManufacturers,
    getMissingMachineSetupFields,
@@ -63,7 +61,6 @@ function SetupCard({ title, included = true, onIncludedChange, canDisable = true
 
 function MachineSetupForm({ value, onChange, showValidation = false }) {
    const setup = normalizeMachineSetup(value);
-   const machineChoice = getMachineChoice(setup);
    const isAirSeederBoth = setup.component === "both";
    const includeDrill = setup.includeDrill !== false;
    const includeCart = setup.includeCart !== false;
@@ -81,7 +78,12 @@ function MachineSetupForm({ value, onChange, showValidation = false }) {
    const rowUnitCountOptions = getRowUnitCountOptions(predictedRowUnitCount, drillValues.rowUnitCount);
    const invalidFields = showValidation ? new Set(getMissingMachineSetupFields(setup)) : null;
    const revealAll = showValidation;
-   const choiceError = invalidFields?.has("machine-setup-choice");
+
+   useEffect(() => {
+      // Planter choice UI is hidden for now — always keep Air Seeder selected.
+      if (setup.equipmentType === "air_seeder" && setup.component) return;
+      onChange(switchMachineSetup(setup, getMachineChoiceTarget("air_seeder")));
+   }, [setup, onChange]);
 
    useEffect(() => {
       if (!showSingleDrillFields && !isAirSeederBoth) return;
@@ -255,40 +257,11 @@ function MachineSetupForm({ value, onChange, showValidation = false }) {
 
    return (
       <div className="mt-6 space-y-5" id="machine-setup">
-         <div id="machine-setup-choice">
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-               {MACHINE_CHOICES.map((option) => {
-                  const isSelected = machineChoice === option.value;
-
-                  return (
-                     <button
-                        key={option.value}
-                        type="button"
-                        onClick={() => updateField("machineChoice", option.value)}
-                        className={`flex h-full cursor-pointer flex-col items-start justify-start rounded-xl border p-4 text-left transition ${
-                           isSelected
-                              ? "border-[#1347e2] bg-blue-50 text-slate-900"
-                              : choiceError
-                                ? "border-red-400 bg-red-50 hover:border-red-500"
-                                : "border-slate-300 bg-white hover:border-slate-400 hover:bg-slate-50"
-                        }`}>
-                        <span className="block text-lg font-semibold">{option.label}</span>
-                        {option.description && option.description.length > 0 ? (
-                           <span className="mt-1 block text-sm text-slate-500">{option.description}</span>
-                        ) : null}
-                     </button>
-                  );
-               })}
-            </div>
-         </div>
+         {/* Machine type buttons (Air Seeder / Planter) hidden until planter support ships. */}
 
          {isAirSeederBoth && (
             <div className="space-y-5">
-               <SetupCard
-                  title="Drill"
-                  included={includeDrill}
-                  onIncludedChange={setIncludeDrill}
-                  canDisable={includeCart}>
+               <SetupCard title="Drill" included={includeDrill} onIncludedChange={setIncludeDrill} canDisable={includeCart}>
                   <ManufacturerModelFields
                      idPrefix="machine-drill"
                      values={drillValues}
@@ -309,11 +282,7 @@ function MachineSetupForm({ value, onChange, showValidation = false }) {
                   />
                </SetupCard>
 
-               <SetupCard
-                  title="Air Cart"
-                  included={includeCart}
-                  onIncludedChange={setIncludeCart}
-                  canDisable={includeDrill}>
+               <SetupCard title="Air Cart" included={includeCart} onIncludedChange={setIncludeCart} canDisable={includeDrill}>
                   <ManufacturerModelFields
                      idPrefix="machine-cart"
                      values={cartValues}

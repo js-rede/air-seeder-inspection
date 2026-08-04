@@ -20,6 +20,7 @@ import {
    getMultiSelectionCosts,
    getReplacementTallyCosts,
    getReplacementTallyCount,
+   getSecondaryAnswer,
    getRowUnitDistributionCosts,
    getSectionSelectionCosts,
    normalizeRowUnitDistribution,
@@ -120,10 +121,16 @@ export function calculateInspectionSummary(steps, answers, rowUnitCountOverride,
    let estimatedHigh = 0;
    const lineItems = [];
    const interestItems = [];
+   let towerPortCount = null;
 
    steps.forEach((step) => {
       const answer = answers[step.slug];
       if (answer == null || answer === "") return;
+
+      if (step.slug === "towers" && step.secondary_question) {
+         const ports = getSecondaryAnswer(answer);
+         if (ports) towerPortCount = ports;
+      }
 
       if (step.informational_only) {
          if (step.answer_type === "selection" && getSelectionAnswerValue(answer) === "yes") {
@@ -470,6 +477,7 @@ export function calculateInspectionSummary(steps, answers, rowUnitCountOverride,
       rowUnitCount,
       workingRanks,
       tankCount,
+      towerPortCount,
       ratingCounts,
       estimatedLow,
       estimatedHigh,

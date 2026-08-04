@@ -3,8 +3,15 @@ function InspectionHeader({ currentIndex, totalSteps, showProgress = true }) {
 
    return (
       <header className="pb-2">
-         <div className="flex items-center justify-between pb-3">
-            <div className="text-2xl font-bold font-rede-geom italic uppercase">Online Inspection</div>
+         <div
+            className={`flex pb-3 ${
+               showProgress
+                  ? "flex-row items-center justify-between"
+                  : "flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between"
+            }`}>
+            <div className={`font-bold font-rede-geom italic uppercase ${showProgress ? "text-2xl" : "text-xl sm:text-2xl"}`}>
+               Online Inspection
+            </div>
             <img src="https://rede-ag.com/wp-content/uploads/2026/06/rede_logo.webp" alt="Red E" className="h-8 w-auto" />
          </div>
 

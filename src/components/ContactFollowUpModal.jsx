@@ -23,8 +23,9 @@ function validateContact(contact) {
 
 function ContactFollowUpModalContent({ initialContact, onClose, onConfirm }) {
    const [contact, setContact] = useState(() => normalizeContact(initialContact));
+   const [alsoEmailReport, setAlsoEmailReport] = useState(true);
    const [showErrors, setShowErrors] = useState(false);
-   const [status, setStatus] = useState("idle"); // idle | submitting | error
+   const [status, setStatus] = useState("idle"); // idle | submitting | error | email_failed
 
    const errors = showErrors ? validateContact(contact) : {};
    const isSubmitting = status === "submitting";
@@ -43,14 +44,21 @@ function ContactFollowUpModalContent({ initialContact, onClose, onConfirm }) {
 
       setStatus("submitting");
       try {
-         await onConfirm({
-            firstName: contact.firstName.trim(),
-            lastName: contact.lastName.trim(),
-            email: contact.email.trim(),
-            phone: contact.phone.trim(),
-         });
+         await onConfirm(
+            {
+               firstName: contact.firstName.trim(),
+               lastName: contact.lastName.trim(),
+               email: contact.email.trim(),
+               phone: contact.phone.trim(),
+            },
+            { alsoEmailReport },
+         );
       } catch (error) {
          console.error("Failed to request follow-up:", error);
+         if (error?.code === "email_failed") {
+            setStatus("email_failed");
+            return;
+         }
          setStatus("error");
       }
    }
@@ -74,12 +82,11 @@ function ContactFollowUpModalContent({ initialContact, onClose, onConfirm }) {
                </div>
             )}
 
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex items-start justify-between gap-4 mb-9">
                <div>
                   <h2 id="contact-follow-up-title" className="text-2xl font-bold text-slate-900">
                      Request a follow-up
                   </h2>
-                  <p className="mt-1 text-sm text-slate-600 italic">We’ll contact you about your estimate.</p>
                </div>
                <button
                   type="button"
@@ -166,6 +173,12 @@ function ContactFollowUpModalContent({ initialContact, onClose, onConfirm }) {
                </div>
 
                {status === "error" && <p className="text-sm text-red-600">Couldn’t submit your request. Please try again.</p>}
+               {status === "email_failed" && (
+                  <p className="text-sm text-amber-700">
+                     Follow-up requested, but we couldn’t email the report. You can try{" "}
+                     <span className="font-semibold">Email my report</span> from the summary page.
+                  </p>
+               )}
 
                <div className="flex justify-end gap-2 pt-2">
                   <button
@@ -173,14 +186,41 @@ function ContactFollowUpModalContent({ initialContact, onClose, onConfirm }) {
                      onClick={onClose}
                      disabled={isSubmitting}
                      className="cursor-pointer rounded-xl border border-slate-300 bg-white px-5 py-2.5 font-rede-geom text-sm font-semibold uppercase italic tracking-wider text-slate-600 shadow-sm transition hover:bg-slate-50 disabled:cursor-default disabled:opacity-50">
-                     Cancel
+                     {status === "email_failed" ? "Close" : "Cancel"}
                   </button>
+                  {status !== "email_failed" && (
+                     <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="cursor-pointer rounded-xl bg-[#e21313] px-5 py-2.5 font-rede-geom text-sm font-semibold uppercase italic tracking-wider text-white shadow-sm transition hover:bg-[#ce1b1b] disabled:cursor-default disabled:opacity-60">
+                        Yes, contact me
+                     </button>
+                  )}
+               </div>
+
+               <div className="mt-6 mb-2 flex items-center justify-end gap-3">
+                  <div className="min-w-0">
+                     <p className="text-xs font-medium uppercase italic tracking-wide text-slate-500">
+                        Send this report to the email above
+                     </p>
+                  </div>
                   <button
-                     type="submit"
+                     type="button"
+                     role="switch"
+                     aria-checked={alsoEmailReport}
+                     aria-label="Also email me this report"
                      disabled={isSubmitting}
-                     className="cursor-pointer rounded-xl bg-[#e21313] px-5 py-2.5 font-rede-geom text-sm font-semibold uppercase italic tracking-wider text-white shadow-sm transition hover:bg-[#ce1b1b] disabled:cursor-default disabled:opacity-60">
-                     Yes, contact me
+                     onClick={() => setAlsoEmailReport((prev) => !prev)}
+                     className={`relative h-6 w-11 shrink-0 cursor-pointer rounded-full border-0 border-none transition-colors disabled:cursor-default disabled:opacity-50 ${
+                        alsoEmailReport ? "bg-[#e21313]" : "bg-slate-300"
+                     }`}>
+                     <span
+                        className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
+                           alsoEmailReport ? "translate-x-5" : "translate-x-0"
+                        }`}
+                     />
                   </button>
+                  <input type="hidden" name="email_report" value={alsoEmailReport ? "yes" : "no"} />
                </div>
             </form>
          </div>

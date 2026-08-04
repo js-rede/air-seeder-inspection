@@ -12,6 +12,14 @@ function asi_build_report_email_html($name, $report) {
    $maybe_count = isset($report['ratingCounts']['maybe']) ? (int) $report['ratingCounts']['maybe'] : 0;
    $bad_count = isset($report['ratingCounts']['bad']) ? (int) $report['ratingCounts']['bad'] : 0;
 
+   $logo_src = '';
+   if (defined('ASI_PLUGIN_URL')) {
+      $logo_src = esc_url(ASI_PLUGIN_URL . 'assets/rede-logo.png');
+   }
+   if ($logo_src === '') {
+      $logo_src = 'https://rede-ag.com/wp-content/plugins/air-seeder-inspection/assets/rede-logo.png';
+   }
+
    $equipment_html = '';
    if (!empty($report['equipment']) && is_array($report['equipment'])) {
       $equipment_html .= '<h2 style="margin:24px 0 8px;font-size:16px;color:#334155;">Equipment</h2>';
@@ -68,9 +76,21 @@ function asi_build_report_email_html($name, $report) {
 <html>
 <head><meta charset="UTF-8" /></head>
 <body style="margin:0;padding:0;background:#f8fafc;font-family:Arial,Helvetica,sans-serif;color:#0f172a;">
+  <div style="display:none;font-size:1px;color:#f8fafc;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;">
+    Here&#39;s your estimate from your online inspection...
+    &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
+  </div>
   <div style="max-width:640px;margin:0 auto;padding:24px;">
     <div style="background-color:#ffffff;background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:24px;">
-      <img src="cid:asi-rede-logo" alt="Red E" width="140" style="display:block;border:0;margin:0 0 16px;width:140px;height:auto;" />
+      <div style="margin:0 0 28px;">
+        <img src="' . esc_attr($logo_src) . '" alt="Red E" width="140" style="display:block;border:0;margin:0 0 8px;width:140px;height:auto;" />
+        <p style="margin:0;font-size:12px;font-style:italic;color:#94a3b8;line-height:1.5;">
+          <a href="tel:+17012051485" style="color:#94a3b8;text-decoration:none;">(701) 205-1485</a>
+          &nbsp;·&nbsp;
+          <a href="https://www.rede.ag" style="color:#94a3b8;text-decoration:underline;">www.rede.ag</a>
+        </p>
+      </div>
+
       <h1 style="margin:0 0 16px;font-size:24px;color:#0f172a;">Air Seeder Inspection Summary</h1>
       <p style="margin:0 0 20px;font-size:15px;color:#475569;line-height:1.5;">Greetings, ' . esc_html($name) . '. Here is your inspection estimate.</p>
 
@@ -87,6 +107,11 @@ function asi_build_report_email_html($name, $report) {
       ' . $equipment_html . '
 
       <p style="margin:24px 0 0;font-size:12px;color:#94a3b8;font-style:italic;">All price estimates are for informational purposes only and are subject to change.</p>
+
+      <p style="margin:28px 0 0;font-size:14px;line-height:1.6;">
+        <a href="https://www.rede.ag" style="color:#e21313;text-decoration:underline;font-weight:bold;">www.rede.ag</a><br />
+        <a href="mailto:sales@gorede.com" style="color:#64748b;text-decoration:none;">sales@gorede.com</a>
+      </p>
     </div>
   </div>
 </body>

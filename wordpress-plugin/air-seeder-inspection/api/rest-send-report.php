@@ -142,7 +142,10 @@ function asi_handle_send_report($request) {
 
    $subject = 'Your Red E Air Seeder Inspection Estimate';
    $body = asi_build_report_email_html($name, $report);
-   $headers = array('Content-Type: text/html; charset=UTF-8');
+   $headers = array(
+      'Content-Type: text/html; charset=UTF-8',
+      'Reply-To: sales@gorede.com',
+   );
 
    $pdf_class = dirname(__DIR__) . '/class-pdf-generator.php';
    if (!is_readable($pdf_class)) {
@@ -170,9 +173,6 @@ function asi_handle_send_report($request) {
    $attachments = array($pdf_path);
    $failed = array();
 
-   // Embed logo inline (CID) so clients don't block it as an external image
-   add_action('phpmailer_init', 'asi_embed_report_logo');
-
    try {
       foreach ($emails as $to) {
          $sent = wp_mail($to, $subject, $body, $headers, $attachments);
@@ -181,7 +181,6 @@ function asi_handle_send_report($request) {
          }
       }
    } finally {
-      remove_action('phpmailer_init', 'asi_embed_report_logo');
       if ($pdf_path && file_exists($pdf_path)) {
          @unlink($pdf_path);
       }
@@ -198,22 +197,4 @@ function asi_handle_send_report($request) {
          'failed' => $failed,
       )
    );
-}
-
-/**
- * Attach the Red E logo as an inline CID image for report emails.
- *
- * @param PHPMailer $phpmailer
- */
-function asi_embed_report_logo($phpmailer) {
-   $logo_path = dirname(__DIR__) . '/assets/rede-logo.png';
-   if (!is_readable($logo_path)) {
-      return;
-   }
-
-   try {
-      $phpmailer->addEmbeddedImage($logo_path, 'asi-rede-logo', 'rede-logo.png');
-   } catch (Exception $e) {
-      // Leave body without logo rather than failing the whole send
-   }
 }

@@ -80,16 +80,83 @@ function AnswerGroup({
 
    if (answerType === "replacement_tally") {
       const hasFixedMax = maxCount != null;
+      const hasSecondary = Boolean(secondaryQuestion && secondaryChoices.length);
+      const tallyValue =
+         hasSecondary && selectedAnswer && typeof selectedAnswer === "object" && !Array.isArray(selectedAnswer)
+            ? "count" in selectedAnswer
+               ? selectedAnswer.count ?? "0"
+               : selectedAnswer
+            : selectedAnswer;
+
+      function handleTallyChange(nextValue) {
+         if (!hasSecondary) {
+            onAnswer(nextValue);
+            return;
+         }
+
+         if (nextValue && typeof nextValue === "object" && ("left" in nextValue || "right" in nextValue)) {
+            onAnswer({
+               ...nextValue,
+               secondary: getSecondaryAnswer(selectedAnswer),
+            });
+            return;
+         }
+
+         onAnswer({
+            count: String(nextValue ?? "0"),
+            secondary: getSecondaryAnswer(selectedAnswer),
+         });
+      }
+
+      function handleSecondarySelect(nextSecondary) {
+         const currentCount =
+            selectedAnswer && typeof selectedAnswer === "object" && "count" in selectedAnswer
+               ? selectedAnswer.count
+               : typeof selectedAnswer === "string" || typeof selectedAnswer === "number"
+                 ? selectedAnswer
+                 : "0";
+
+         onAnswer({
+            count: String(currentCount ?? "0"),
+            secondary: nextSecondary,
+         });
+      }
 
       return (
-         <ReplacementTallyForm
-            quantityCount={hasFixedMax ? maxCount : rowUnitCount}
-            quantityLabel={quantityLabel}
-            value={selectedAnswer}
-            onChange={onAnswer}
-            requireQuantity={!hasFixedMax}
-            tallySides={tallySides}
-         />
+         <>
+            <ReplacementTallyForm
+               quantityCount={hasFixedMax ? maxCount : rowUnitCount}
+               quantityLabel={quantityLabel}
+               value={tallyValue}
+               onChange={handleTallyChange}
+               requireQuantity={!hasFixedMax}
+               tallySides={tallySides}
+            />
+
+            {hasSecondary && (
+               <div className="mt-8 border-t border-slate-200 pt-8">
+                  <label htmlFor={`${stepSlug}-secondary`} className="mb-2 block text-xl font-semibold text-slate-900">
+                     {secondaryQuestion}
+                  </label>
+                  <select
+                     id={`${stepSlug}-secondary`}
+                     value={getSecondaryAnswer(selectedAnswer)}
+                     onChange={(e) => handleSecondarySelect(e.target.value)}
+                     className={selectClass}
+                     style={selectStyle}>
+                     <option value="">Select ports…</option>
+                     {secondaryChoices.map((choice) => {
+                        const choiceValue = getChoiceValue(choice);
+                        return (
+                           <option key={choiceValue} value={choiceValue}>
+                              {choice.label}
+                           </option>
+                        );
+                     })}
+                  </select>
+               </div>
+            )}
+         </>
       );
    }
 
