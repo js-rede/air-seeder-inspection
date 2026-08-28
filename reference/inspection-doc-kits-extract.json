@@ -1,0 +1,403 @@
+{
+  "source": "Master Quote Tool V9.xlsm / Inspection Doc 2.0",
+  "extracted_at": "2026-08-27",
+  "notes": [
+    "ba_catalog = column BA part/kit names used when building section quotes (best QBO Name candidates).",
+    "ui_aliases = form checkbox/radio labels that likely select those BA kits (guessed mapping \u2014 needs your confirm).",
+    "Excluded Labor Only / No Quote / qty helper labels.",
+    "Next: you review this list; then we map confirmed kits to QBO Item Name."
+  ],
+  "counts": {
+    "ba_catalog": 52,
+    "ui_aliases": 23
+  },
+  "ba_catalog_by_section": {
+    "main_arm_and_discs": [
+      {
+        "name": "MOA Kit",
+        "row": 59,
+        "cell": "BA59"
+      },
+      {
+        "name": "Rotate Pins",
+        "row": 60,
+        "cell": "BA60"
+      },
+      {
+        "name": "Left Used Rows",
+        "row": 64,
+        "cell": "BA64"
+      },
+      {
+        "name": "Right Used Rows",
+        "row": 65,
+        "cell": "BA65"
+      },
+      {
+        "name": "18 INGERSOLL HI HARD DISC, EXT WEAR",
+        "row": 71,
+        "cell": "BA71"
+      },
+      {
+        "name": "18-5/8 INGERSOLL HI-HARD DISC, EXT WEAR RZR",
+        "row": 72,
+        "cell": "BA72"
+      },
+      {
+        "name": "19 NOTCHED DISC 30 POINT",
+        "row": 73,
+        "cell": "BA73"
+      },
+      {
+        "name": "18 NIAUX 200 DISC",
+        "row": 74,
+        "cell": "BA74"
+      }
+    ],
+    "closing_system": [
+      {
+        "name": "HD GREASE CLOSING WHL ARM PIVOT KIT",
+        "row": 89,
+        "cell": "BA89"
+      },
+      {
+        "name": "RED E GREASELESS BEARING CLOSING WHL ARM PIVOT KIT",
+        "row": 90,
+        "cell": "BA90"
+      },
+      {
+        "name": "NEEDHAM GREASELESS CLOSING WHL PIVOT KIT",
+        "row": 91,
+        "cell": "BA91"
+      },
+      {
+        "name": "HD Square CW Spring",
+        "row": 101,
+        "cell": "BA101"
+      },
+      {
+        "name": "Round Wire Spring",
+        "row": 102,
+        "cell": "BA102"
+      },
+      {
+        "name": "Replacement Arms",
+        "row": 103,
+        "cell": "BA103"
+      },
+      {
+        "name": "CW Bearings",
+        "row": 104,
+        "cell": "BA104"
+      },
+      {
+        "name": "RED E CAST NOTCHED CLOSING WHEEL",
+        "row": 115,
+        "cell": "BA115"
+      },
+      {
+        "name": "BOLT-ON NOTCHED CLOS WHL PLATE KIT",
+        "row": 116,
+        "cell": "BA116"
+      },
+      {
+        "name": "JD SMOOTH OEM CLOSING WHEEL (USED)",
+        "row": 117,
+        "cell": "BA117"
+      },
+      {
+        "name": "JD SMOOTH OEM CLOSING WHEEL (NEW)",
+        "row": 118,
+        "cell": "BA118"
+      }
+    ],
+    "press_system": [
+      {
+        "name": "Red E Bearing Kit",
+        "row": 130,
+        "cell": "BA130"
+      },
+      {
+        "name": "HD Bushing Kit",
+        "row": 131,
+        "cell": "BA131"
+      },
+      {
+        "name": "Needham Bushings",
+        "row": 132,
+        "cell": "BA132"
+      },
+      {
+        "name": "HD Square PW Spring",
+        "row": 141,
+        "cell": "BA141"
+      },
+      {
+        "name": "Round Wire Spring",
+        "row": 142,
+        "cell": "BA142"
+      },
+      {
+        "name": "Replacement Arms",
+        "row": 143,
+        "cell": "BA143"
+      },
+      {
+        "name": "V8 Wheel",
+        "row": 153,
+        "cell": "BA153"
+      },
+      {
+        "name": "Used OEM",
+        "row": 154,
+        "cell": "BA154"
+      }
+    ],
+    "depth_and_gauge": [
+      {
+        "name": "Full Rebuild Kits",
+        "row": 168,
+        "cell": "BA168"
+      },
+      {
+        "name": "Hub Seal and Wear Ring Kits",
+        "row": 169,
+        "cell": "BA169"
+      },
+      {
+        "name": "Red E HD DA Pivot",
+        "row": 180,
+        "cell": "BA180"
+      },
+      {
+        "name": "Arick's Greaseless",
+        "row": 181,
+        "cell": "BA181"
+      },
+      {
+        "name": "Cover and Handle Kits",
+        "row": 193,
+        "cell": "BA193"
+      },
+      {
+        "name": "Depth Arm Kits",
+        "row": 194,
+        "cell": "BA194"
+      },
+      {
+        "name": "Depth Adjuster Slop Fix Kits",
+        "row": 195,
+        "cell": "BA195"
+      },
+      {
+        "name": "Gauge Wheel",
+        "row": 205,
+        "cell": "BA205"
+      }
+    ],
+    "seed_delivery": [
+      {
+        "name": "Stabilizers",
+        "row": 219,
+        "cell": "BA219"
+      },
+      {
+        "name": "Red E Ext Wear",
+        "row": 232,
+        "cell": "BA232"
+      },
+      {
+        "name": "Standard Wear",
+        "row": 233,
+        "cell": "BA233"
+      },
+      {
+        "name": "OEM Ext Wear",
+        "row": 234,
+        "cell": "BA234"
+      },
+      {
+        "name": "Boot Springs",
+        "row": 244,
+        "cell": "BA244"
+      },
+      {
+        "name": "1/4\" Black",
+        "row": 251,
+        "cell": "BA251"
+      },
+      {
+        "name": "Blue Red E",
+        "row": 252,
+        "cell": "BA252"
+      },
+      {
+        "name": "Blue Bonilla",
+        "row": 253,
+        "cell": "BA253"
+      },
+      {
+        "name": "Split Boot",
+        "row": 254,
+        "cell": "BA254"
+      },
+      {
+        "name": "SS Tubes",
+        "row": 261,
+        "cell": "BA261"
+      },
+      {
+        "name": "Rehose Drill",
+        "row": 262,
+        "cell": "BA262"
+      },
+      {
+        "name": "SS Head 1",
+        "row": 263,
+        "cell": "BA263"
+      },
+      {
+        "name": "SS Head 2",
+        "row": 264,
+        "cell": "BA264"
+      },
+      {
+        "name": "Hyd WS",
+        "row": 265,
+        "cell": "BA265"
+      },
+      {
+        "name": "SS J-Tubes",
+        "row": 266,
+        "cell": "BA266"
+      },
+      {
+        "name": "JD Head/J-Tube 1",
+        "row": 267,
+        "cell": "BA267"
+      },
+      {
+        "name": "JD Head/J-Tube 2",
+        "row": 268,
+        "cell": "BA268"
+      }
+    ]
+  },
+  "ui_aliases": [
+    {
+      "ui_label": "OEM Pivots",
+      "section": "main_arm_and_discs",
+      "likely_maps_to": "OEM pivot kits (confirm SKU)"
+    },
+    {
+      "ui_label": "Red E Pivot",
+      "section": "main_arm_and_discs",
+      "likely_maps_to": "Red E main arm pivot kit (confirm SKU)"
+    },
+    {
+      "ui_label": "MOA Kit (AG-K04)",
+      "section": "main_arm_and_discs",
+      "likely_maps_to": "MOA Kit"
+    },
+    {
+      "ui_label": "18\" Ingersoll Hi-Hard",
+      "section": "main_arm_and_discs",
+      "likely_maps_to": "18 INGERSOLL HI HARD DISC, EXT WEAR"
+    },
+    {
+      "ui_label": "18 5/8\" Ingersoll Hi-Hard",
+      "section": "main_arm_and_discs",
+      "likely_maps_to": "18-5/8 INGERSOLL HI-HARD DISC, EXT WEAR RZR"
+    },
+    {
+      "ui_label": "Red E HD",
+      "section": "closing_system",
+      "likely_maps_to": "HD GREASE CLOSING WHL ARM PIVOT KIT"
+    },
+    {
+      "ui_label": "Red E Bearings",
+      "section": "closing_system",
+      "likely_maps_to": "RED E GREASELESS BEARING CLOSING WHL ARM PIVOT KIT"
+    },
+    {
+      "ui_label": "Needham",
+      "section": "closing_system",
+      "likely_maps_to": "NEEDHAM GREASELESS CLOSING WHL PIVOT KIT"
+    },
+    {
+      "ui_label": "HD Red E Square Wire",
+      "section": "closing_system",
+      "likely_maps_to": "HD Square CW Spring"
+    },
+    {
+      "ui_label": "Red E Cast Notched",
+      "section": "closing_system",
+      "likely_maps_to": "RED E CAST NOTCHED CLOSING WHEEL"
+    },
+    {
+      "ui_label": "Red E Bolt-On Notched",
+      "section": "closing_system",
+      "likely_maps_to": "BOLT-ON NOTCHED CLOS WHL PLATE KIT"
+    },
+    {
+      "ui_label": "Red E Bearing Kit",
+      "section": "press_system",
+      "likely_maps_to": "Red E Bearing Kit / greaseless press pivot"
+    },
+    {
+      "ui_label": "V8-Wheel",
+      "section": "press_system",
+      "likely_maps_to": "V8 Wheel"
+    },
+    {
+      "ui_label": "Seed Lock (Yellow)",
+      "section": "press_system",
+      "likely_maps_to": "Seed Lock wheel (confirm SKU)"
+    },
+    {
+      "ui_label": "Hub Seal and Wear Ring",
+      "section": "depth_and_gauge",
+      "likely_maps_to": "Hub Seal and Wear Ring Kits"
+    },
+    {
+      "ui_label": "Red E HD DA Pivot",
+      "section": "depth_and_gauge",
+      "likely_maps_to": "Red E HD depth adjuster pivot (confirm SKU)"
+    },
+    {
+      "ui_label": "Depth Arm (K08)",
+      "section": "depth_and_gauge",
+      "likely_maps_to": "Depth Arm Kits"
+    },
+    {
+      "ui_label": "DA Pivot Slop Fix (K32)",
+      "section": "depth_and_gauge",
+      "likely_maps_to": "Depth Adjuster Slop Fix Kits"
+    },
+    {
+      "ui_label": "Aricks Greaseless",
+      "section": "depth_and_gauge",
+      "likely_maps_to": "Arick's Greaseless"
+    },
+    {
+      "ui_label": "Blue Red E Ext Wear",
+      "section": "seed_delivery",
+      "likely_maps_to": "Blue Red E / Red E Ext Wear"
+    },
+    {
+      "ui_label": "Black Red E",
+      "section": "seed_delivery",
+      "likely_maps_to": "Black Red E seed tab"
+    },
+    {
+      "ui_label": "Split Boot Flap",
+      "section": "seed_delivery",
+      "likely_maps_to": "Split Boot"
+    },
+    {
+      "ui_label": "Seed Boot Stabilizers",
+      "section": "seed_delivery",
+      "likely_maps_to": "Stabilizers"
+    }
+  ]
+}

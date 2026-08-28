@@ -1,4 +1,5 @@
 import AnswerGroup from "./AnswerGroup";
+import ClosingPricingDevNotes from "./ClosingPricingDevNotes";
 import { getAnswerType } from "../data/discDiameterOptions";
 import { getRecommendationForAnswer, getStepChoices } from "../utils/choices";
 
@@ -149,6 +150,8 @@ function InspectionCard({
          </div>
          {/* Question */}
          {question && <div className="text-xl font-semibold text-slate-900">{question}</div>}
+
+         <ClosingPricingDevNotes stepSlug={step.slug} section={step.section} />
 
          {/* Answers */}
          <AnswerGroup

@@ -1,0 +1,149 @@
+{
+  "source": "Master Quote Tool V9.xlsm + WooCommerce/QBO catalog (Joe verified 2026-08-28)",
+  "extracted_at": "2026-08-28",
+  "price_source_of_truth": "QBO / WooCommerce catalog prices below — NOT spreadsheet AK column (often stale or wrong).",
+  "qbo_convention": "QBO Item Name = SKU (e.g. AG-K01). L/R variants are separate SKUs; online estimate can use base SKU or average until machine rules exist.",
+  "pivot_logic_clarification": {
+    "summary": "The spreadsheet does NOT auto-switch pivot kits by good/maybe/bad. It shows multiple kit options (Red E HD, Red E Bearings, Needham, OEM) as manual quote checkboxes for the tech. Condition (maybe/bad) controls WHETHER and HOW MANY row-units get quoted — not which brand kit.",
+    "app_implication": "Do NOT map maybe→AG-K22 and bad→AG-K01. Use one default pivot SKU per machine series when replacement is needed. Pick the kit your team actually installs as default (likely AG-K36 greaseless or AG-K01 HD grease for 60/90).",
+    "deprecated_skus": ["AG-K22 — replaced by AG-K36 per catalog"]
+  },
+  "machine_dependent_skus": [
+    {
+      "family": "closing_pivot_hd_grease",
+      "default_sku": "AG-K01",
+      "variants": [
+        { "sku": "AG-K01", "price": 65.0, "title": "Heavy Duty Closing Wheel Pivot Kit", "when": "60/90 series (default)" },
+        { "sku": "AG-K01-5060", "price": 75.0, "title": "Heavy Duty Closing Wheel Pivot Kit (50 & 60 series)", "when": "50/60 series machines" }
+      ]
+    },
+    {
+      "family": "closing_pivot_greaseless",
+      "default_sku": "AG-K36",
+      "variants": [
+        { "sku": "AG-K36", "price": 45.87, "title": "Greaseless Closing Wheel Arm Bearing Pivot Fix Kit", "when": "current Red E greaseless (replaces AG-K22)" },
+        { "sku": "AG-K39", "price": 45.37, "title": "Closing Wheel Bearing Pivot Kit (ProSeries)", "when": "ProSeries row units" },
+        { "sku": "NA-K07-FULL", "price": 42.1, "title": "Needham Greaseless Closing and Press Wheel Arm Pivot Fix Kit", "when": "Needham path (manual in spreadsheet)" },
+        { "sku": "PD5-K03", "price": 48.3, "title": "PD500 Greaseless Bearing Closing Wheel Arm Pivot Kit", "when": "PD500 / NH drills" }
+      ]
+    },
+    {
+      "family": "closing_spring_hd",
+      "default_sku": "AG-K14",
+      "variants": [
+        { "sku": "AG-K14", "price_low": 27.48, "price_high": 31.2, "title": "Heavy Duty Closing Wheel Arm Spring" },
+        { "sku": "AG-K14L", "price": 31.2, "title": "HD CW Spring 60/90 Left" },
+        { "sku": "AG-K14R", "price": 31.2, "title": "HD CW Spring 60/90 Right" },
+        { "sku": "AG-K14L-PRO", "price": 27.48, "title": "HD CW Spring ProSeries Left" },
+        { "sku": "AG-K14R-PRO", "price": 27.48, "title": "HD CW Spring ProSeries Right" }
+      ],
+      "estimate_note": "Use $31.20 for 60/90, $27.48 for ProSeries until machine setup drives variant."
+    },
+    {
+      "family": "closing_spring_standard",
+      "default_sku": "CWS-90",
+      "variants": [
+        { "sku": "CWS-90", "price": 14.5, "title": "Closing Wheel Spring" },
+        { "sku": "CWS-90L", "price": 14.5, "title": "Closing Wheel Spring - Left" },
+        { "sku": "CWS-90R", "price": 14.5, "title": "Closing Wheel Spring - Right" }
+      ]
+    },
+    {
+      "family": "closing_arm",
+      "default_sku": "AG-K19-90",
+      "variants": [
+        { "sku": "AG-K19-90", "price": 272.5, "title": "Closing Wheel Arm Assembly", "when": "60/90 series" },
+        { "sku": "AG-K19L-90", "price": 272.5, "title": "Closing Wheel Arm Assembly - Left" },
+        { "sku": "AG-K19R-90", "price": 272.5, "title": "Closing Wheel Arm Assembly - Right" },
+        { "sku": "AG-K19-50", "price": 86.2, "title": "Closing Wheel Arm Assembly (50 Series)" },
+        { "sku": "AG-K19L-50", "price": 86.2, "title": "Closing Wheel Arm Assembly (50 Series) - Left" }
+      ],
+      "estimate_note": "Huge price swing 50 vs 90 series — must tie to machine model from setup step."
+    }
+  ],
+  "items": [
+    {
+      "app_slug": "closing-wheel-pivot",
+      "app_when": "maybe or bad (per row-unit count)",
+      "spreadsheet_ba": ["BA89", "BA90", "BA91"],
+      "spreadsheet_note": "Multiple kit checkboxes are manual quote options, not condition-driven",
+      "recommended_default_sku": "AG-K36",
+      "recommended_default_price": 45.87,
+      "alternates": ["AG-K01 @ $65", "AG-K01-5060 @ $75", "NA-K07-FULL @ $42.10", "AG-K39 @ $45.37 ProSeries"]
+    },
+    {
+      "app_slug": "closing-wheel-spring",
+      "app_when": "maybe or bad (per row-unit count)",
+      "spreadsheet_ba": ["BA101", "BA102"],
+      "recommended_default_sku": "AG-K14",
+      "recommended_default_price": 31.2,
+      "recommended_default_price_proseries": 27.48,
+      "alternates": ["CWS-90 @ $14.50 standard round wire"]
+    },
+    {
+      "app_slug": "closing-wheel-arm",
+      "app_when": "replacement tally (per arm)",
+      "spreadsheet_ba": ["BA103"],
+      "recommended_default_sku": "AG-K19-90",
+      "recommended_default_price": 272.5,
+      "alternates": ["AG-K19-50 @ $86.20 for 50 series"]
+    },
+    {
+      "app_slug": "closing-wheel-bearing",
+      "app_when": "bad (per row-unit count)",
+      "spreadsheet_ba": ["BA104"],
+      "recommended_default_sku": "AG2028X",
+      "recommended_default_price": 19.0,
+      "spreadsheet_had": "AG2028 @ $14 (wrong SKU — use AG2028X SeedXtreme)"
+    },
+    {
+      "app_slug": "closing-wheel",
+      "app_when": "bad (per row-unit count)",
+      "spreadsheet_ba": ["BA115", "BA116", "BA118"],
+      "options": [
+        { "sku": "AG2150", "price": 110.0, "title": "Red E Cast Notched Closing Wheel", "spreadsheet_label": "RED E CAST NOTCHED CLOSING WHEEL" },
+        { "sku": "AG-K20", "price": 76.62, "title": "Extended Wear Bolt-on Spiked Closing Wheel Kit", "spreadsheet_label": "BOLT-ON NOTCHED CLOS WHL PLATE KIT" },
+        { "sku": "AG1032", "price": 46.5, "title": "Smooth Cast Closing Wheel", "spreadsheet_label": "JD SMOOTH OEM CLOSING WHEEL (NEW)" }
+      ],
+      "excluded": ["AG1032-USED — use AG1032 new for online estimate"]
+    }
+  ],
+  "app_current_vs_catalog": [
+    {
+      "slug": "closing-wheel-pivot",
+      "app_today": "$65–75 parts + $65 labor per row-unit",
+      "catalog_default": "AG-K36 @ $45.87/row-unit (+ labor TBD)",
+      "gap": "App overstates parts; labor may still dominate"
+    },
+    {
+      "slug": "closing-wheel-spring",
+      "app_today": "$15–35 + $8 labor",
+      "catalog_default": "AG-K14 @ $31.20 or CWS-90 @ $14.50",
+      "gap": "HD spring close to app high; standard spring much lower"
+    },
+    {
+      "slug": "closing-wheel-arm",
+      "app_today": "$100–350 + $20 labor per arm",
+      "catalog_default": "AG-K19-90 @ $272.50 or AG-K19-50 @ $86.20",
+      "gap": "App range is reasonable for 90-series; 50-series would be underestimated if not machine-aware"
+    },
+    {
+      "slug": "closing-wheel-bearing",
+      "app_today": "$110–180 step-level",
+      "catalog_default": "AG2028X @ $19.00 per bearing × row-units",
+      "gap": "App treats as whole-step cost; catalog is per-unit — need qty multiply"
+    },
+    {
+      "slug": "closing-wheel",
+      "app_today": "$110–180",
+      "catalog_default": "AG2150 $110 | AG-K20 $76.62 | AG1032 $46.50",
+      "gap": "App range aligns with cast notched; smooth wheel much cheaper"
+    }
+  ],
+  "next_steps": [
+    "Pick default pivot SKU for online estimate (AG-K36 vs AG-K01) — same kit for maybe and bad.",
+    "Wire machine series from setup → AG-K19-50 vs AG-K19-90, AG-K14 vs AG-K14-PRO, AG-K01 vs AG-K01-5060.",
+    "Pull these SKUs from QBO Tools weekly cache; use Woo prices above as seed until live sync runs.",
+    "Update closing steps in inspection-steps.json OR add price lookup — per-unit × row count for bearings/springs/pivots."
+  ]
+}
