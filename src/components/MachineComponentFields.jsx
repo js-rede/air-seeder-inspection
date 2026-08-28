@@ -7,6 +7,7 @@ import {
    ROW_SPACINGS,
    ROW_UNIT_SERIES_OPTIONS,
    WORKING_RANKS,
+   getDefaultModelForManufacturer,
    requiresRowUnitSeries,
 } from "../data/machineCatalog";
 import { getSelectClass, selectStyle } from "../utils/selectClass";
@@ -24,6 +25,9 @@ export function ManufacturerModelFields({
    revealAll = false,
    invalidFields = null,
 }) {
+   const autoSelectedModel = getDefaultModelForManufacturer(models);
+   const hideModelSelect = Boolean(values.manufacturer && autoSelectedModel);
+
    return (
       <>
          <div>
@@ -46,7 +50,7 @@ export function ManufacturerModelFields({
             </select>
          </div>
 
-         {(revealAll || values.manufacturer) && (
+         {(revealAll || values.manufacturer) && !hideModelSelect && (
             <div>
                <label htmlFor={`${idPrefix}-model`} className="mb-2 block text-sm font-medium text-slate-700">
                   Model

@@ -566,6 +566,7 @@ function App() {
                            onAnswer={handleAnswer}
                            rowUnitCount={summary.rowUnitCount}
                            workingRanks={summary.workingRanks}
+                           machineSetup={machineSetup}
                            onBack={goBack}
                            onNext={goNext}
                            canGoBack={currentIndex > 0}

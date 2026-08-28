@@ -175,7 +175,11 @@ export function calculateInspectionSummary(steps, answers, rowUnitCountOverride,
          const rating = choice.rating || "bad";
          ratingCounts[rating] = (ratingCounts[rating] || 0) + count;
 
-         const { estimatedLowCost: itemLow, estimatedHighCost: itemHigh } = getReplacementTallyCosts(step, answer);
+         const { estimatedLowCost: itemLow, estimatedHighCost: itemHigh } = getReplacementTallyCosts(
+            step,
+            answer,
+            machineSetup,
+         );
 
          estimatedLow += itemLow;
          estimatedHigh += itemHigh;
@@ -261,6 +265,7 @@ export function calculateInspectionSummary(steps, answers, rowUnitCountOverride,
             answer,
             rowUnitCount,
             rankCount,
+            machineSetup,
          );
 
          estimatedLow += itemLow;
@@ -303,7 +308,7 @@ export function calculateInspectionSummary(steps, answers, rowUnitCountOverride,
             estimatedLowCost: itemLow,
             estimatedHighCost: itemHigh,
             lineItemLabel,
-         } = getWorkingRankChoiceCost(step, choice, secondaryChoice, quantity);
+         } = getWorkingRankChoiceCost(step, choice, secondaryChoice, quantity, machineSetup);
 
          estimatedLow += itemLow;
          estimatedHigh += itemHigh;

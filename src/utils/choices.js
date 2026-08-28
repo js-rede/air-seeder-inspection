@@ -1,4 +1,5 @@
 import { isSkipChoiceValue } from "./skipChoice";
+import { getClosingPartsCostOverride } from "../data/closingPartRules";
 
 export { isSkipChoiceValue, SKIP_CHOICE_VALUE, getSkipChoiceLabel } from "./skipChoice";
 
@@ -124,7 +125,7 @@ export function getChoiceCostRange(choice, extras = {}) {
    // Good condition never contributes to the estimate, even if costs were left on the choice
    if (choice.rating === "good") return { low: 0, high: 0 };
 
-   const parts = getChoicePartsCostRange(choice);
+   const parts = extras.partsCostOverride ?? getChoicePartsCostRange(choice);
    const labor = getChoiceLaborCost(choice);
    const material = Number(extras.materialCost) || 0;
 
@@ -247,13 +248,14 @@ export function getWorkingRankCostMultiplier(step, rowUnitCount, workingRanks, r
    return unitsPerRank[rankIndex] || 0;
 }
 
-export function getWorkingRankChoiceCost(step, choice, secondaryChoice, multiplier) {
+export function getWorkingRankChoiceCost(step, choice, secondaryChoice, multiplier, machineSetup = null) {
    if (!choice || multiplier <= 0) {
       return { estimatedLowCost: 0, estimatedHighCost: 0, lineItemLabel: null };
    }
 
    const materialCost = getRankMaterialCost(step, choice, secondaryChoice);
-   const range = getChoiceCostRange(choice, { materialCost });
+   const partsCostOverride = getClosingPartsCostOverride(step, machineSetup, secondaryChoice);
+   const range = getChoiceCostRange(choice, { materialCost, partsCostOverride });
 
    return {
       estimatedLowCost: range.low * multiplier,
@@ -265,7 +267,7 @@ export function getWorkingRankChoiceCost(step, choice, secondaryChoice, multipli
    };
 }
 
-export function getWorkingRankSelectionCosts(step, answer, rowUnitCount = 0, workingRanks = 1) {
+export function getWorkingRankSelectionCosts(step, answer, rowUnitCount = 0, workingRanks = 1, machineSetup = null) {
    const choices = getStepChoices(step);
    const rankCount = Math.max(1, Number(workingRanks) || 1);
 
@@ -276,7 +278,8 @@ export function getWorkingRankSelectionCosts(step, answer, rowUnitCount = 0, wor
       const badChoice = choices.find((choice) => choice.rating === "bad") || choices[0];
       if (!badChoice) return { estimatedLowCost: 0, estimatedHighCost: 0 };
 
-      const range = getChoiceCostRange(badChoice);
+      const partsCostOverride = getClosingPartsCostOverride(step, machineSetup, null);
+      const range = getChoiceCostRange(badChoice, { partsCostOverride });
       return {
          estimatedLowCost: range.low * count,
          estimatedHighCost: range.high * count,
@@ -299,7 +302,7 @@ export function getWorkingRankSelectionCosts(step, answer, rowUnitCount = 0, wor
       const multiplier = getWorkingRankCostMultiplier(step, rowUnitCount, rankCount, rankIndex);
       if (multiplier <= 0) return;
 
-      const costs = getWorkingRankChoiceCost(step, choice, secondaryChoice, multiplier);
+      const costs = getWorkingRankChoiceCost(step, choice, secondaryChoice, multiplier, machineSetup);
       estimatedLowCost += costs.estimatedLowCost;
       estimatedHighCost += costs.estimatedHighCost;
    });
@@ -755,7 +758,7 @@ export function getReplacementTallyRawCount(answer) {
    return Number.isFinite(count) ? Math.max(0, count) : null;
 }
 
-export function getReplacementTallyCosts(step, answer) {
+export function getReplacementTallyCosts(step, answer, machineSetup = null) {
    const count = getReplacementTallyCount(answer);
    const choice = getReplacementTallyChoice(step);
 
@@ -763,7 +766,8 @@ export function getReplacementTallyCosts(step, answer) {
       return { estimatedLowCost: 0, estimatedHighCost: 0 };
    }
 
-   const range = getChoiceCostRange(choice);
+   const partsCostOverride = getClosingPartsCostOverride(step, machineSetup, null);
+   const range = getChoiceCostRange(choice, { partsCostOverride });
 
    return {
       estimatedLowCost: range.low * count,
@@ -771,7 +775,7 @@ export function getReplacementTallyCosts(step, answer) {
    };
 }
 
-export function getRecommendationForAnswer(step, selectedAnswer, rowUnitCount = 0, workingRanks = 1) {
+export function getRecommendationForAnswer(step, selectedAnswer, rowUnitCount = 0, workingRanks = 1, machineSetup = null) {
    if (step.informational_only) return null;
 
    if (step.answer_type === "replacement_tally") {
@@ -788,7 +792,7 @@ export function getRecommendationForAnswer(step, selectedAnswer, rowUnitCount = 
          };
       }
 
-      const { estimatedLowCost, estimatedHighCost } = getReplacementTallyCosts(step, selectedAnswer);
+      const { estimatedLowCost, estimatedHighCost } = getReplacementTallyCosts(step, selectedAnswer, machineSetup);
       const summaryLine = choice?.summary_line
          ? choice.summary_line.replaceAll("{count}", String(count))
          : `${count} ${count === 1 ? (step.quantity_label === "towers" ? "tower" : "item") : step.quantity_label || "items"} will likely need replacing`;
@@ -898,6 +902,7 @@ export function getRecommendationForAnswer(step, selectedAnswer, rowUnitCount = 
             selectedAnswer,
             rowUnitCount,
             workingRanks,
+            machineSetup,
          );
          const summaryLine = badChoice?.summary_line
             ? badChoice.summary_line.replaceAll("{count}", String(count))
@@ -941,6 +946,7 @@ export function getRecommendationForAnswer(step, selectedAnswer, rowUnitCount = 
          selectedAnswer,
          rowUnitCount,
          Math.max(1, Number(workingRanks) || 1),
+         machineSetup,
       );
 
       const lines =

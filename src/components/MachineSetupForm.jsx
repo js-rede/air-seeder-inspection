@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import {
+   getDefaultModelForManufacturer,
    getMachineChoiceTarget,
    getManufacturers,
    getMissingMachineSetupFields,
@@ -136,6 +137,12 @@ function MachineSetupForm({ value, onChange, showValidation = false }) {
          next.tankSizeOther = "";
          next.shootQuantity = "";
          next.runCount = "";
+         const defaultModel = getDefaultModelForManufacturer(
+            getModels(next.equipmentType, next.component, nextValue),
+         );
+         if (defaultModel) {
+            next.model = defaultModel;
+         }
       }
 
       if (field === "model") {
@@ -178,6 +185,10 @@ function MachineSetupForm({ value, onChange, showValidation = false }) {
          nextDrill.rowSpacing = "";
          nextDrill.rowUnitCount = "";
          nextDrill.workingRanks = "";
+         const defaultModel = getDefaultModelForManufacturer(getModels("air_seeder", "drill", nextValue));
+         if (defaultModel) {
+            nextDrill.model = defaultModel;
+         }
       }
 
       if (field === "model") {
@@ -211,6 +222,10 @@ function MachineSetupForm({ value, onChange, showValidation = false }) {
          nextCart.tankSizeOther = "";
          nextCart.shootQuantity = "";
          nextCart.runCount = "";
+         const defaultModel = getDefaultModelForManufacturer(getModels("air_seeder", "cart", nextValue));
+         if (defaultModel) {
+            nextCart.model = defaultModel;
+         }
       }
 
       if (field === "model") {

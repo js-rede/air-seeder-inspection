@@ -241,9 +241,14 @@ const DRILL_MODELS = {
    "Flexi-Coil": ["5000 Series", "6000 Series", "Other"],
    "Great Plains": ["3S-4010", "3S-5000", "Other"],
    "New Holland": ["P2070", "P2080", "Other"],
-   Amity: ["Other"],
-   Concord: ["Other"],
-   "K-Hart": ["Spyder", "Other"],
+   "Amity / Concord": [
+      "Single Disc Drill",
+      "Double Disc Drill",
+      "Air Till Drill",
+      "Precision Shank Drill",
+      "Other",
+   ],
+   "K-Hart Spyder": ["Spyder", "Other"],
    Pillar: ["Stealth Flex Disc Drill", "DH Series Disc Drill", "Other"],
    Other: ["Other"],
 };
@@ -326,6 +331,26 @@ export function getModels(equipmentType, component, manufacturer) {
 
    const catalog = getCatalogComponent(equipmentType, component) === "cart" ? CART_MODELS : DRILL_MODELS;
    return catalog[manufacturer] || ["Other"];
+}
+
+/** When a manufacturer has exactly one real model (excluding "Other"), return it for auto-selection. */
+export function getDefaultModelForManufacturer(models) {
+   if (!models?.length) return "";
+
+   const selectable = models.filter((model) => model !== "Other");
+   return selectable.length === 1 ? selectable[0] : "";
+}
+
+function normalizeDrillManufacturer(manufacturer) {
+   if (manufacturer === "Amity" || manufacturer === "Concord") {
+      return "Amity / Concord";
+   }
+
+   if (manufacturer === "K-Hart") {
+      return "K-Hart Spyder";
+   }
+
+   return manufacturer || "";
 }
 
 export function createEmptyDrillSetup() {
@@ -851,34 +876,69 @@ export function persistMachineSetupDraft(setup) {
    };
 }
 
+function normalizeDrillSetup(drill) {
+   const merged = { ...createEmptyDrillSetup(), ...(drill || {}) };
+   const manufacturer = normalizeDrillManufacturer(merged.manufacturer);
+   let model = merged.manufacturer === "Amity" || merged.manufacturer === "Concord" ? "" : merged.model;
+
+   if (manufacturer && !model) {
+      model = getDefaultModelForManufacturer(getModels("air_seeder", "drill", manufacturer));
+   }
+
+   return { ...merged, manufacturer, model };
+}
+
+function normalizeCartSetup(cart) {
+   const merged = { ...createEmptyCartSetup(), ...(cart || {}) };
+   let { manufacturer, model } = merged;
+
+   if (manufacturer && !model) {
+      model = getDefaultModelForManufacturer(getModels("air_seeder", "cart", manufacturer));
+   }
+
+   return { ...merged, manufacturer, model };
+}
+
+function normalizeSingleManufacturerModel(setup) {
+   const isCart = setup.component === "cart";
+   const manufacturer = isCart ? setup.manufacturer || "" : normalizeDrillManufacturer(setup.manufacturer);
+   let model = setup.manufacturer === "Amity" || setup.manufacturer === "Concord" ? "" : setup.model || "";
+
+   if (manufacturer && !model) {
+      model = getDefaultModelForManufacturer(getModels(setup.equipmentType, setup.component, manufacturer));
+   }
+
+   return { manufacturer, model };
+}
+
+function buildNormalizedMachineSetup(value) {
+   const merged = { ...createEmptyMachineSetup(), ...value };
+   const { manufacturer, model } = normalizeSingleManufacturerModel(merged);
+
+   return {
+      ...merged,
+      manufacturer,
+      model,
+      drill: normalizeDrillSetup(value.drill),
+      cart: normalizeCartSetup(value.cart),
+      savedSetups: value.savedSetups && typeof value.savedSetups === "object" ? value.savedSetups : {},
+      lastAirSeederComponent: value.lastAirSeederComponent || "",
+   };
+}
+
 export function normalizeMachineSetup(value) {
    if (!value) {
       return { ...createEmptyMachineSetup(), savedSetups: {}, lastAirSeederComponent: "" };
    }
    if (typeof value === "string") {
       try {
-         const parsed = JSON.parse(value);
-         return {
-            ...createEmptyMachineSetup(),
-            ...parsed,
-            drill: { ...createEmptyDrillSetup(), ...(parsed.drill || {}) },
-            cart: { ...createEmptyCartSetup(), ...(parsed.cart || {}) },
-            savedSetups: parsed.savedSetups && typeof parsed.savedSetups === "object" ? parsed.savedSetups : {},
-            lastAirSeederComponent: parsed.lastAirSeederComponent || "",
-         };
+         return buildNormalizedMachineSetup(JSON.parse(value));
       } catch {
          return { ...createEmptyMachineSetup(), otherDetails: value, savedSetups: {}, lastAirSeederComponent: "" };
       }
    }
 
-   return {
-      ...createEmptyMachineSetup(),
-      ...value,
-      drill: { ...createEmptyDrillSetup(), ...(value.drill || {}) },
-      cart: { ...createEmptyCartSetup(), ...(value.cart || {}) },
-      savedSetups: value.savedSetups && typeof value.savedSetups === "object" ? value.savedSetups : {},
-      lastAirSeederComponent: value.lastAirSeederComponent || "",
-   };
+   return buildNormalizedMachineSetup(value);
 }
 
 export function isMachineSetupComplete(value) {

@@ -70,6 +70,7 @@ function InspectionCard({
    onAnswer,
    rowUnitCount = 0,
    workingRanks = 0,
+   machineSetup = null,
    onBack,
    onNext,
    canGoBack = false,
@@ -80,7 +81,13 @@ function InspectionCard({
    const answerType = step.answer_type || getAnswerType(step);
    const choices = getStepChoices(step);
    const effectiveWorkingRanks = step.answer_type === "working_rank_selection" ? Math.max(1, workingRanks) : workingRanks;
-   const recommendation = getRecommendationForAnswer(step, selectedAnswer, rowUnitCount, effectiveWorkingRanks);
+   const recommendation = getRecommendationForAnswer(
+      step,
+      selectedAnswer,
+      rowUnitCount,
+      effectiveWorkingRanks,
+      machineSetup,
+   );
    const costRange = recommendation
       ? formatCostRange(recommendation.estimatedLowCost, recommendation.estimatedHighCost)
       : null;
@@ -151,7 +158,14 @@ function InspectionCard({
          {/* Question */}
          {question && <div className="text-xl font-semibold text-slate-900">{question}</div>}
 
-         <ClosingPricingDevNotes stepSlug={step.slug} section={step.section} />
+         <ClosingPricingDevNotes
+            stepSlug={step.slug}
+            section={step.section}
+            machineSetup={machineSetup}
+            selectedAnswer={selectedAnswer}
+            rowUnitCount={rowUnitCount}
+            workingRanks={effectiveWorkingRanks}
+         />
 
          {/* Answers */}
          <AnswerGroup
