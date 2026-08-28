@@ -1,0 +1,88 @@
+{
+   "source": "Master Quote Tool V9.xlsm + WooCommerce catalog (Joe verified 2026-08-28)",
+   "extracted_at": "2026-08-28",
+   "price_source_of_truth": "QBO / WooCommerce catalog prices below",
+   "qbo_convention": "QBO Item Name = SKU (RE#### series for opener discs)",
+   "app_slug": "cutting-discs",
+   "condition_logic": {
+      "summary": "Diameter rating (good/maybe/bad) controls whether and how many discs get quoted — not which disc brand. Same pattern as closing pivots.",
+      "app_implication": "Pick one default disc SKU per machine/manufacturer when replacement is needed (MAYBE or BAD on a rank)."
+   },
+   "catalog_items": [
+      {
+         "sku": "RE6000",
+         "price": 49.0,
+         "title": "18\" JD Ingersoll Hi-Hard Opener Disc - Standard Edge",
+         "when": "Default for John Deere 60/90 (app default until leadership confirms Niaux vs Ingersoll)"
+      },
+      {
+         "sku": "RE6001RZR",
+         "price": 53.0,
+         "title": "18-5/8\" JD Ingersoll Hi-Hard Opener Disc",
+         "when": "JD drills using 18-5/8\" disc row units"
+      },
+      {
+         "sku": "RE6002RZR",
+         "price": 53.0,
+         "title": "18-5/8\" PD500 Ingersoll Hi-Hard Opener Disc",
+         "when": "JD N500 / PD500-class drills"
+      },
+      {
+         "sku": "RE6003RZR",
+         "price": 53.0,
+         "title": "18-5/8\" Amity Ingersoll Hi-Hard Opener Disc",
+         "when": "Amity / Concord drills"
+      },
+      {
+         "sku": "RE6004",
+         "price": 55.0,
+         "title": "20-1/2\" Bourgault Ingersoll Hi-Hard Opener Disc",
+         "when": "Bourgault drills"
+      },
+      {
+         "sku": "RE4926",
+         "price": 59.0,
+         "title": "19\" JD Notched Opener Disc (30 Pointer)",
+         "when": "Notched disc path — manual in spreadsheet; not auto-selected yet"
+      },
+      {
+         "sku": "RE4930",
+         "price": 49.0,
+         "title": "Forges de Niaux 200 18\" Opener Disc",
+         "when": "JD 50/60/90 and ProSeries (greaseless-friendly alternative to RE6000)"
+      },
+      {
+         "sku": "RE4931RZR",
+         "price": 55.0,
+         "title": "Forges de Niaux 200 18-5/8\" Opener Disc",
+         "when": "JD ProSeries seed-row openers (18-5/8\")"
+      },
+      {
+         "sku": "RE6080",
+         "price": 70.0,
+         "title": "19\" Horsch Avatar Disc (Niaux 200 – Standard edge)",
+         "when": "Horsch — not in machine catalog yet"
+      }
+   ],
+   "spreadsheet_ba_mapping": [
+      { "ba": "BA71", "label": "18 INGERSOLL HI HARD DISC, EXT WEAR", "sku": "RE6000" },
+      { "ba": "BA72", "label": "18-5/8 INGERSOLL HI-HARD DISC, EXT WEAR RZR", "sku": "RE6001RZR" },
+      { "ba": "BA73", "label": "19 NOTCHED DISC 30 POINT", "sku": "RE4926" },
+      { "ba": "BA74", "label": "18 NIAUX 200 DISC", "sku": "RE4930" }
+   ],
+   "app_current_vs_catalog": {
+      "app_today": "$35–75 parts + $30 labor per row-unit",
+      "catalog_default_jd_6090": "RE6000 @ $49.00/disc (+ labor TBD)",
+      "gap": "App uses flat band; catalog is per-disc × row-units"
+   },
+   "open_questions_for_leadership": [
+      "Default for JD 60/90: RE6000 (Ingersoll Hi-Hard) or RE4930 (Niaux 200)? Both are $49.",
+      "When should we quote notched RE4926 ($59) vs smooth hi-hard?",
+      "Labor — double-check $30/row-unit and how it combines with parts."
+   ],
+   "next_steps": [
+      "Confirm default disc family for generic JD 60/90",
+      "Wire ProSeries → RE4931RZR vs RE4930",
+      "Add Horsch to machine catalog if RE6080 should auto-select"
+   ]
+}

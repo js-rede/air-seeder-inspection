@@ -1,0 +1,51 @@
+{
+   "source": "WooCommerce/QBO catalog (Joe verified 2026-08-28)",
+   "extracted_at": "2026-08-28",
+   "app_slug": "depth-cover-handle",
+   "condition_logic": {
+      "summary": "MAYBE/BAD step. Cover/handle condition controls qty per row-unit.",
+      "app_implication": "Default combined Red E kit AG-K10HD; Aricks cover + handle sold separately as alternate."
+   },
+   "spreadsheet_ba_mapping": {
+      "BA193": {
+         "label": "Cover and Handle Kits",
+         "likely_catalog_sku": "AG-K10HD",
+         "note": "Red E Heavy Duty Depth Control Handle and Cover Kit"
+      }
+   },
+   "catalog_items": [
+      {
+         "sku": "AG-K10HD",
+         "price": 49.0,
+         "title": "Heavy Duty Depth Control Handle and Cover Kit",
+         "when": "Red E combined kit — JD 60/90 — app default"
+      },
+      {
+         "sku": "AA120F",
+         "price": 42.99,
+         "title": "Aricks Heavy Duty Cover Plate",
+         "when": "Sold separately from T handle — not auto-selected"
+      },
+      {
+         "sku": "AA710HD",
+         "price": 42.99,
+         "title": "Aricks Heavy Duty T Handle",
+         "when": "Sold separately from cover plate — not auto-selected"
+      }
+   ],
+   "related_not_this_step": [
+      {
+         "sku": "AA05*DA",
+         "note": "Aricks Greaseless Depth Adjustment Handle Kit ($195) — Step 14 pivot ambiguity, not cover/handle"
+      }
+   ],
+   "app_current_vs_catalog": {
+      "app_today": "$40–60 parts + $15 labor per row-unit (MAYBE/BAD)",
+      "catalog_default": "AG-K10HD @ $49.00 (+ $15 labor)",
+      "catalog_aricks_both": "AA120F + AA710HD @ $85.98 if plate and handle quoted separately"
+   },
+   "open_questions_for_leadership": [
+      "Default AG-K10HD combined kit, or Aricks AA120F + AA710HD when both needed?",
+      "Labor — double-check $15/row-unit and how it combines with parts."
+   ]
+}

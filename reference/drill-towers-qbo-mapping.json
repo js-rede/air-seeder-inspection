@@ -1,0 +1,37 @@
+{
+   "source": "WooCommerce/QBO catalog (Joe verified 2026-08-28)",
+   "extracted_at": "2026-08-28",
+   "app_slug": "towers",
+   "condition_logic": {
+      "summary": "Replacement tally step. Port count (secondary) picks JDMANKIT manifold SKU; tally × (parts + labor).",
+      "app_implication": "JDMANKIT-7/8/9/10 wired for matching ports; JDMANKIT-8 default for 4–6 and 11–12 until SKUs confirmed."
+   },
+   "spreadsheet_ba_mapping": {
+      "BA263": { "label": "SS Head 1", "note": "May overlap tower heads — confirm vs JDMANKIT" },
+      "BA266": { "label": "SS J-Tubes", "likely_catalog": "JAS0915 family" },
+      "BA267": { "label": "JD Head/J-Tube 1", "note": "Related tower components" }
+   },
+   "catalog_items": [
+      { "sku": "JDMANKIT-7", "price": 249.0, "title": "John Deere OEM Secondary Tower Manifold Kit - 7" },
+      { "sku": "JDMANKIT-8", "price": 249.0, "title": "John Deere OEM Secondary Tower Manifold Kit - 8" },
+      { "sku": "JDMANKIT-9", "price": 256.0, "title": "John Deere OEM Secondary Tower Manifold Kit - 9" },
+      { "sku": "JDMANKIT-10", "price": 266.0, "title": "John Deere OEM Secondary Tower Manifold Kit - 10" },
+      { "sku": "JAS0915", "price": 170.0, "title": "Secondary Distribution Tower J Tube - 21\" Standard", "note": "J-tube — not full manifold; confirm if this step" },
+      { "sku": "JAS0915-32", "price": 200.0, "title": "Secondary Distribution Tower J Tube - 32\" Extended" }
+   ],
+   "port_to_manifold": {
+      "7": "JDMANKIT-7",
+      "8": "JDMANKIT-8",
+      "9": "JDMANKIT-9",
+      "10": "JDMANKIT-10"
+   },
+   "app_current_vs_catalog": {
+      "app_today": "$300–400 parts + $75 labor per tallied tower (inspection-steps.json)",
+      "catalog_example": "8-port tower → JDMANKIT-8 @ $249 + $75 labor = $324/tower"
+   },
+   "open_questions_for_leadership": [
+      "Is this step asking to replace the whole manifold (JDMANKIT) or just J-tubes (JAS0915)? That changes whether $249–266 or $170–200 is the right parts price.",
+      "Ports 4–6 and 11–12 — any SKU or still JDMANKIT-8 default?",
+      "Labor — double-check $75/tower and how it combines with parts."
+   ]
+}

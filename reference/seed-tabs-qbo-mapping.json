@@ -1,0 +1,37 @@
+{
+   "source": "WooCommerce/QBO catalog (Joe verified 2026-08-28)",
+   "extracted_at": "2026-08-28",
+   "app_slug": "seed-tabs",
+   "condition_logic": {
+      "summary": "MAYBE/BAD step. Machine setup picks default seed tab SKU; one tab per row-unit.",
+      "app_implication": "Default AG-K05-STD ($5.50) for JD; ProSeries → AG-K05-PRO; Case SDX → RE3004."
+   },
+   "spreadsheet_ba_mapping": {
+      "BA251": { "label": "1/4\" Black", "catalog": "AG1057 / AG-K05-STD family (Red E HD)" },
+      "BA252": { "label": "Blue Red E", "catalog": "AG-K05 / AG-K05-STD" },
+      "BA253": { "label": "Blue Bonilla", "catalog": "AG-K05-FIN-LH/RH, AG1057PL/PR" }
+   },
+   "catalog_items": [
+      { "sku": "AG-K05-STD", "price": 5.5, "title": "Heavy Duty Extended Wear Seed Tabs - Seed Tab w/ Hardware" },
+      { "sku": "AG1057", "price": 5.0, "title": "Heavy Duty Extended Wear Seed Tabs - Seed Tab ONLY" },
+      { "sku": "AG-K05", "price": 7.0, "title": "Heavy Duty Extended Wear Seed Tabs - Seed Tab w/ Nut" },
+      { "sku": "AG-K05-PRO", "price": 7.0, "title": "Heavy Duty Extended Wear Seed Tabs - Narrow Seed Tab w/ Hardware (ProSeries)" },
+      { "sku": "AG1057N", "price": 5.0, "title": "Heavy Duty Extended Wear Seed Tabs - Narrow Seed Tab ONLY" },
+      { "sku": "AG-K05-FIN-LH", "price": 11.79, "title": "Pro-Stitch Bonilla Seed Tab - Left w/ Hardware" },
+      { "sku": "AG-K05-FIN-RH", "price": 11.79, "title": "Pro-Stitch Bonilla Seed Tab - Right w/ Hardware" },
+      { "sku": "AG1057PL", "price": 9.79, "title": "Pro-Stitch Bonilla Seed Tab - Left (seed tab ONLY)" },
+      { "sku": "AG1057PR", "price": 9.79, "title": "Pro-Stitch Bonilla Seed Tab - Right (seed tab ONLY)" },
+      { "sku": "RE3004", "price": 5.0, "title": "SDX Seed Tab for Case SDX" }
+   ],
+   "machine_mapping": {
+      "default_jd": "AG-K05-STD",
+      "proseries": "AG-K05-PRO",
+      "case_sdx": "RE3004"
+   },
+   "open_questions_for_leadership": [
+      "Bonilla (AG-K05-FIN*) vs Red E (AG-K05*) — need Current setup question?",
+      "Tab only vs with hardware — AG1057 vs AG-K05-STD?",
+      "Left vs right per row-unit?",
+      "Labor — double-check $3.50/row-unit and how it combines with parts."
+   ]
+}

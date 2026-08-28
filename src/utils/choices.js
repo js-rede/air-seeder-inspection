@@ -1,5 +1,5 @@
 import { isSkipChoiceValue } from "./skipChoice";
-import { getClosingPartsCostOverride } from "../data/closingPartRules";
+import { getPartsCostOverride, getMultiSelectChoicePartsCostOverride } from "../data/partRules";
 
 export { isSkipChoiceValue, SKIP_CHOICE_VALUE, getSkipChoiceLabel } from "./skipChoice";
 
@@ -159,7 +159,8 @@ export function getMultiSelectionCosts(step, answer, rowUnitCount = 0) {
       const key = getChoiceValue(choice);
       if (!selectedValues.includes(key)) return;
 
-      const range = getChoiceCostRange(choice);
+      const partsCostOverride = getMultiSelectChoicePartsCostOverride(step, key);
+      const range = getChoiceCostRange(choice, { partsCostOverride });
       estimatedLowCost += range.low * multiplier;
       estimatedHighCost += range.high * multiplier;
    });
@@ -248,13 +249,13 @@ export function getWorkingRankCostMultiplier(step, rowUnitCount, workingRanks, r
    return unitsPerRank[rankIndex] || 0;
 }
 
-export function getWorkingRankChoiceCost(step, choice, secondaryChoice, multiplier, machineSetup = null) {
+export function getWorkingRankChoiceCost(step, choice, secondaryChoice, multiplier, machineSetup = null, followUps = null) {
    if (!choice || multiplier <= 0) {
       return { estimatedLowCost: 0, estimatedHighCost: 0, lineItemLabel: null };
    }
 
    const materialCost = getRankMaterialCost(step, choice, secondaryChoice);
-   const partsCostOverride = getClosingPartsCostOverride(step, machineSetup, secondaryChoice);
+   const partsCostOverride = getPartsCostOverride(step, machineSetup, secondaryChoice, followUps);
    const range = getChoiceCostRange(choice, { materialCost, partsCostOverride });
 
    return {
@@ -278,7 +279,7 @@ export function getWorkingRankSelectionCosts(step, answer, rowUnitCount = 0, wor
       const badChoice = choices.find((choice) => choice.rating === "bad") || choices[0];
       if (!badChoice) return { estimatedLowCost: 0, estimatedHighCost: 0 };
 
-      const partsCostOverride = getClosingPartsCostOverride(step, machineSetup, null);
+      const partsCostOverride = getPartsCostOverride(step, machineSetup, null);
       const range = getChoiceCostRange(badChoice, { partsCostOverride });
       return {
          estimatedLowCost: range.low * count,
@@ -288,6 +289,7 @@ export function getWorkingRankSelectionCosts(step, answer, rowUnitCount = 0, wor
 
    const selections = normalizeWorkingRankSelections(answer, rankCount);
    const secondaryChoice = getSecondaryChoice(step, answer);
+   const followUps = getFollowUpAnswers(answer);
 
    let estimatedLowCost = 0;
    let estimatedHighCost = 0;
@@ -302,7 +304,14 @@ export function getWorkingRankSelectionCosts(step, answer, rowUnitCount = 0, wor
       const multiplier = getWorkingRankCostMultiplier(step, rowUnitCount, rankCount, rankIndex);
       if (multiplier <= 0) return;
 
-      const costs = getWorkingRankChoiceCost(step, choice, secondaryChoice, multiplier, machineSetup);
+      const costs = getWorkingRankChoiceCost(
+         step,
+         choice,
+         secondaryChoice,
+         multiplier,
+         machineSetup,
+         followUps,
+      );
       estimatedLowCost += costs.estimatedLowCost;
       estimatedHighCost += costs.estimatedHighCost;
    });
@@ -766,7 +775,8 @@ export function getReplacementTallyCosts(step, answer, machineSetup = null) {
       return { estimatedLowCost: 0, estimatedHighCost: 0 };
    }
 
-   const partsCostOverride = getClosingPartsCostOverride(step, machineSetup, null);
+   const secondaryChoice = getSecondaryChoice(step, answer);
+   const partsCostOverride = getPartsCostOverride(step, machineSetup, secondaryChoice, null);
    const range = getChoiceCostRange(choice, { partsCostOverride });
 
    return {

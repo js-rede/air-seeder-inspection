@@ -1,0 +1,47 @@
+{
+   "source": "WooCommerce/QBO catalog (Joe verified 2026-08-28)",
+   "extracted_at": "2026-08-28",
+   "app_slug": "gauge-wheel",
+   "condition_logic": {
+      "summary": "MAYBE/BAD step. Follow-up answers (style, width, material, lip) pick gauge wheel SKU.",
+      "app_implication": "Default RE6032R until follow-ups answered; wire double-shoot RE6034R by machine."
+   },
+   "spreadsheet_ba_mapping": {
+      "BA205": { "label": "Gauge Wheel", "note": "Multiple Red E families in Woo — follow-ups select SKU" }
+   },
+   "catalog_items": [
+      { "sku": "RE6019R", "price": 90.0, "title": "Red E HD Steel/Steel Gauge Wheels - 3\" x 16\" Rubber" },
+      { "sku": "RE6019U", "price": 135.0, "title": "Red E HD Steel/Steel Gauge Wheels - 3\" x 16\" Urethane" },
+      { "sku": "RE6023R", "price": 95.0, "title": "Red E HD Steel/Steel Gauge Wheels - 4-1/2\" x 16\" Rubber" },
+      { "sku": "RE6005R", "price": 110.0, "title": "Spoked 3/8\" Inner Lip Rubber Gauge Wheel - 3\"" },
+      { "sku": "RE6007R", "price": 135.0, "title": "Spoked 3/8\" Inner Lip Rubber Gauge Wheel - 4 1/2\"" },
+      { "sku": "RE6032R", "price": 135.0, "title": "Red E HD Spoked Gauge Wheels - 3\" X 16\" Rubber" },
+      { "sku": "RE6032U", "price": 165.0, "title": "Red E HD Spoked Gauge Wheels - 3\" X 16\" Urethane" },
+      { "sku": "RE6033R", "price": 135.0, "title": "Red E HD Spoked Gauge Wheels - 4-1/2\" X 16\" Rubber" },
+      { "sku": "RE6034R", "price": 295.0, "title": "Red E HD Spoked 18\" Gauge Wheel", "when": "Double-shoot Case/NH" }
+   ],
+   "follow_up_mapping": {
+      "steel-steel": {
+         "3-inches_rubber": "RE6019R",
+         "3-inches_urethane": "RE6019U",
+         "4-5-inches_rubber": "RE6023R"
+      },
+      "spoked_3-8-inches": {
+         "3-inches": "RE6005R",
+         "4-5-inches": "RE6007R"
+      },
+      "spoked_hd_16": {
+         "3-inches_rubber": "RE6032R",
+         "3-inches_urethane": "RE6032U",
+         "4-5-inches_rubber": "RE6033R"
+      }
+   },
+   "app_current_vs_catalog": {
+      "app_today": "$100–220 parts + $30 labor per row-unit (MAYBE/BAD)",
+      "catalog_default": "RE6032R @ $135.00 until follow-ups answered (+ $30 labor)"
+   },
+   "open_questions_for_leadership": [
+      "Steel/steel 4.5\" urethane — no SKU in catalog; use range or RE6032U?",
+      "Labor — double-check $30/row-unit and how it combines with parts."
+   ]
+}

@@ -1,0 +1,64 @@
+{
+   "source": "WooCommerce/QBO catalog (Joe verified 2026-08-28)",
+   "extracted_at": "2026-08-28",
+   "app_slug": "air-cart-couplers",
+   "condition_logic": {
+      "summary": "Whole-cart selection step (MAYBE/BAD). Flat estimate from inspection-steps.json today — catalog documents coupler SKUs for leadership review.",
+      "app_implication": "2-port kits split by 2.5\" vs 3\" coupler; QCSS32.5 family is coupler-only vs with-hardware. Per-coupler count × SKU not wired yet."
+   },
+   "catalog_items": [
+      {
+         "sku": "L-01-O",
+         "price": 294.6,
+         "price_high": 322.2,
+         "title": "QCSS32.5",
+         "group": "3_in_coupler",
+         "note": "Woo variant — overlaps QCSS32.5 / SSK-CPLR-3P range"
+      },
+      {
+         "sku": "QCSS32.5",
+         "price": 294.6,
+         "title": "QCSS32.5 - Coupler Only",
+         "group": "3_in_coupler"
+      },
+      {
+         "sku": "SSK-CPLR-3P",
+         "price": 322.2,
+         "title": "QCSS32.5 - Coupler with Hardware",
+         "group": "3_in_coupler"
+      },
+      {
+         "sku": "QCSS-2-3",
+         "price": 307.48,
+         "title": "Stainless Steel 2-Port Coupling Kit - 3\" Coupler",
+         "group": "2_port_3_in"
+      },
+      {
+         "sku": "QCSS22.5",
+         "price": 248.43,
+         "title": "Stainless Steel 2-Port Coupling Kit - 2.5\" Coupler",
+         "group": "2_port_2_5_in"
+      },
+      {
+         "sku": "SSK-CPLR-2P",
+         "price": 309.03,
+         "title": "Stainless Steel 2-Port Coupling Kit - 2.5\" Coupler w/ hardware",
+         "group": "2_port_2_5_in"
+      },
+      {
+         "sku": "SSK-CPLR-2P--QCSS22.5",
+         "price": 248.43,
+         "price_high": 309.03,
+         "title": "Stainless Steel 2-Port Coupling Kit",
+         "group": "2_port_2_5_in",
+         "note": "Woo variant group"
+      }
+   ],
+   "open_questions_for_leadership": [
+      "Default coupler quote — 3\" with hardware (SSK-CPLR-3P), coupler only (QCSS32.5), or 2-port kit?",
+      "2.5\" vs 3\" — driven by cart hose diameter, run count, or cart model?",
+      "Coupler only vs with hardware — which do you usually sell on MAYBE/BAD?",
+      "How many couplers per cart — multiply catalog price × count or keep flat step band?",
+      "L-01-O vs QCSS32.5 — same part, which SKU is canonical?"
+   ]
+}

@@ -51,7 +51,7 @@ function formatPartsList(skus, selectedSku) {
       const noteEntry = ALL_CLOSING_PARTS.find((item) => item.sku === sku);
       return {
          sku,
-         price: catalog ? formatClosingPartPrice(catalog.price) : "—",
+         price: catalog ? formatClosingPartPrice(catalog.price) : null,
          note: noteEntry?.note ?? catalog?.title ?? "",
          selected: sku === selectedSku,
       };
@@ -174,7 +174,7 @@ function buildSpringNotes(selection, drill, context) {
          }),
          "GOOD → $0.",
       ],
-      openQuestions: ["Same cost for MAYBE and BAD?", "Should round-wire CWS-90 ever auto-select for certain drills?"],
+      openQuestions: ["Should round-wire CWS-90 ever auto-select for certain drills?"],
       assumptions: drill?.manufacturer
          ? [`HD spring auto-selected; round wire (CWS-90) is not used unless we add a rule.`]
          : ["Complete machine setup to auto-select spring part."],
@@ -244,7 +244,7 @@ function buildWheelNotes(selection, drill, context) {
          setupNote,
          "GOOD → $0.",
       ],
-      openQuestions: ["Quote wheels on MAYBE, or only on BAD?"],
+      openQuestions: [],
       assumptions: [],
    };
 }

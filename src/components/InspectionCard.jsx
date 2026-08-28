@@ -1,5 +1,5 @@
 import AnswerGroup from "./AnswerGroup";
-import ClosingPricingDevNotes from "./ClosingPricingDevNotes";
+import PricingDevNotes from "./PricingDevNotes";
 import { getAnswerType } from "../data/discDiameterOptions";
 import { getRecommendationForAnswer, getStepChoices } from "../utils/choices";
 
@@ -158,9 +158,8 @@ function InspectionCard({
          {/* Question */}
          {question && <div className="text-xl font-semibold text-slate-900">{question}</div>}
 
-         <ClosingPricingDevNotes
-            stepSlug={step.slug}
-            section={step.section}
+         <PricingDevNotes
+            step={step}
             machineSetup={machineSetup}
             selectedAnswer={selectedAnswer}
             rowUnitCount={rowUnitCount}

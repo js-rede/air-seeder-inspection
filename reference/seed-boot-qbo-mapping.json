@@ -1,0 +1,33 @@
+{
+   "source": "WooCommerce/QBO catalog (Joe verified 2026-08-28)",
+   "extracted_at": "2026-08-28",
+   "app_slug": "seed-boot",
+   "condition_logic": {
+      "summary": "MAYBE/BAD step. Current setup (OEM Ext / Red E Ext) picks ext-wear boot SKU.",
+      "app_implication": "Default AG2657L (Red E ext wear) until setup answered; one boot per row-unit."
+   },
+   "spreadsheet_ba_mapping": {
+      "BA232": { "label": "Red E Ext Wear", "sku": "AG2657L/R" },
+      "BA234": { "label": "OEM Ext Wear", "sku": "AG1059L/R" }
+   },
+   "catalog_items": [
+      { "sku": "AG2657L", "price": 110.0, "title": "Red E Extended Wear Seed Boot - Left" },
+      { "sku": "AG2657R", "price": 110.0, "title": "Red E Extended Wear Seed Boot - Right" },
+      { "sku": "AG1059L", "price": 135.95, "title": "John Deere OEM Extended Wear Seed Boot - Left" },
+      { "sku": "AG1059R", "price": 135.95, "title": "John Deere OEM Extended Wear Seed Boot - Right" }
+   ],
+   "secondary_setup_mapping": {
+      "red-e-ext": "AG2657L",
+      "oem-ext": "AG1059L",
+      "other": "AG2657L"
+   },
+   "excluded_from_step": [
+      {
+         "sku": "NA90L/R",
+         "note": "Needham bushing-style boots — hidden/OOS, removed from Step 19"
+      }
+   ],
+   "open_questions_for_leadership": [
+      "Left vs right boot — quote one side or both per row-unit?"
+   ]
+}

@@ -1,0 +1,37 @@
+{
+   "source": "WooCommerce/QBO catalog (Joe verified 2026-08-28)",
+   "extracted_at": "2026-08-28",
+   "app_slug": "seed-boot-pivot",
+   "condition_logic": {
+      "summary": "MAYBE/BAD step. No catalog parts override — step JSON band ($15–50 parts + $40 labor).",
+      "app_implication": "NA90HDW pivot kit hidden/OOS — excluded. AG-K07-ST stabilizers removed from this step (separate product)."
+   },
+   "spreadsheet_ba_mapping": {
+      "BA219": { "label": "Stabilizers", "note": "AG-K07-ST family — not mapped to pivot step" }
+   },
+   "catalog_items": [
+      {
+         "sku": "NA90HDW",
+         "price": 17.0,
+         "title": "Seed Boot Pivot Kit",
+         "status": "hidden_out_of_stock",
+         "note": "Likely not coming back — excluded from app"
+      }
+   ],
+   "excluded_from_step": [
+      {
+         "sku": "AG-K07-ST",
+         "price": 51.24,
+         "title": "Pro-Stitch Seed Boot Stabilizer",
+         "reason": "Stabilizer, not pivot — removed from Step 18 per Joe"
+      }
+   ],
+   "app_current_vs_catalog": {
+      "app_today": "$15–50 parts + $40 labor per row-unit (MAYBE/BAD)",
+      "catalog_override": "None — no wired SKU"
+   },
+   "open_questions_for_leadership": [
+      "OEM / drill bushings pivot work — any SKU besides dead NA90HDW?",
+      "Labor — double-check $40/row-unit and how it combines with parts band."
+   ]
+}

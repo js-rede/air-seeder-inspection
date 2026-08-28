@@ -782,10 +782,6 @@
                {
                   "label": "Steel / Steel",
                   "value": "steel-steel"
-               },
-               {
-                  "label": "Poly / Steel",
-                  "value": "poly-steel"
                }
             ]
          }
@@ -850,10 +846,6 @@
             "value": "drill-bushings"
          },
          {
-            "label": "Stabilizers",
-            "value": "stabilizers"
-         },
-         {
             "label": "Needham Boot",
             "value": "needham-boot"
          },
@@ -911,20 +903,12 @@
       "secondary_question": "Current setup",
       "secondary_choices": [
          {
-            "label": "Standard",
-            "value": "standard"
-         },
-         {
             "label": "OEM Ext",
             "value": "oem-ext"
          },
          {
             "label": "Red E Ext",
             "value": "red-e-ext"
-         },
-         {
-            "label": "Needham",
-            "value": "needham"
          },
          {
             "label": "Other",

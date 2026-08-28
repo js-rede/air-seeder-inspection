@@ -1,0 +1,57 @@
+{
+   "source": "WooCommerce/QBO catalog (Joe verified 2026-08-28)",
+   "extracted_at": "2026-08-28",
+   "app_slug": "air-cart",
+   "inspection_section": "current-meter-housing",
+   "condition_logic": {
+      "summary": "Per-tank Meter Housing section. Too many catalog SKUs to auto-pick — need leadership to define usual SKU per Current setup choice.",
+      "app_implication": "Step secondary (OEM / Airseeder Parts / Romafa / Romafa IR / Kanpar / Other) should eventually pick default SKU; run count may narrow Morris/JAS 6 vs 8 run variants."
+   },
+   "step_secondary_choices": [
+      "oem",
+      "airseeder-parts",
+      "romafa",
+      "romafa-ir",
+      "kanpar",
+      "other"
+   ],
+   "candidate_skus_by_setup_tbd": {
+      "oem": ["9-0031-0A", "9-0032-0A", "9-0001-1W", "9-0055-0A", "9-0063-0A", "BRG1124A"],
+      "airseeder-parts": ["FAS0931A", "JAS0980A", "JAS1100A", "JAS2771A", "JAS2774A"],
+      "romafa": ["SSK-MH-GD-RO", "JAS0168A", "JAS4832A"],
+      "romafa-ir": ["JAS0006A"],
+      "kanpar": ["SSK-MH-GD-KP", "SSAA67290", "KANPAR-MH", "SSK-MH-HD-KP"]
+   },
+   "catalog_items": [
+      { "sku": "9-0001-1W", "price": 1563.88, "title": "Morris 7000 Stainless Steel Meter Housing, 8 Run", "brand": "morris/oem" },
+      { "sku": "9-0031-0A", "price": 1622.45, "title": "Stainless Steel Meter Housing, 6 Run", "brand": "generic/oem" },
+      { "sku": "9-0032-0A", "price": 1712.24, "title": "Stainless Steel Meter Housing, 8 Run", "brand": "generic/oem" },
+      { "sku": "9-0055-0A", "price": 3328.26, "title": "Morris 8000 Stainless Steel Meter Housing", "brand": "morris/oem" },
+      { "sku": "9-0063-0A", "price": 3391.65, "title": "Morris 8000XL & 9000 Stainless Steel Meter Housing", "brand": "morris/oem" },
+      { "sku": "BRG1124A", "price": 2242.0, "title": "Bourgault Meter Housing Assembly", "brand": "bourgault/oem" },
+      { "sku": "FAS0931A", "price": 2898.62, "title": "Stainless Steel Meter Housing", "brand": "airseeder-parts" },
+      { "sku": "JAS0006A", "price": 4697.37, "title": "Romafa Section Command Stainless Steel Meter Housing", "brand": "romafa-ir" },
+      { "sku": "JAS0168A", "price": 4580.0, "title": "Romafa Stainless Steel Ground Drive Meter Housing", "brand": "romafa" },
+      { "sku": "JAS0980A", "price": 2898.62, "title": "Stainless Steel Meter Housing (8 run)", "brand": "airseeder-parts" },
+      { "sku": "JAS1087", "price": 153.73, "title": "50 Series Top Seal for Meter Housing", "brand": "component", "note": "Seal only — not full housing" },
+      { "sku": "JAS1100A", "price": 2566.37, "title": "Stainless Steel Meter Housing (6 run)", "brand": "airseeder-parts" },
+      { "sku": "JAS2771A", "price": 2975.0, "title": "Stainless Steel 40 Series Meter Housing (1st serial)", "brand": "airseeder-parts" },
+      { "sku": "JAS2774A", "price": 2975.0, "title": "Stainless Steel 40 Series Meter Housing (2nd serial)", "brand": "airseeder-parts" },
+      { "sku": "JAS4832A", "price": 4860.2, "title": "Romafa Premium 316 Stainless Meter Housing", "brand": "romafa" },
+      { "sku": "KANPAR-MH", "price": 4180.0, "price_high": 4195.0, "title": "Kanpar Stainless Steel Meter Housing - Ground Drive", "brand": "kanpar" },
+      { "sku": "SSAA67290", "price": 4180.0, "title": "Kanpar Stainless Steel Meter Housing - Ground Drive", "brand": "kanpar" },
+      { "sku": "SSK-MH-GD-KP", "price": 4195.0, "title": "Kanpar Stainless Steel Meter Housing - Ground Drive", "brand": "kanpar" },
+      { "sku": "SSA62224", "price": 38.0, "title": "John Deere OEM Meter Housing Seal", "brand": "component", "note": "Seal only" },
+      { "sku": "SSA70600", "price": 70.0, "title": "Top Seal for Meter Housing", "brand": "component", "note": "Seal only" },
+      { "sku": "SSK-MH-GD-RO", "price": 4212.08, "title": "Romafa Stainless Steel Meter Housing - Ground Drive", "brand": "romafa" },
+      { "sku": "SSK-MH-HD-KP", "price": 4715.0, "title": "Kanpar Stainless Steel Meter Housing - Hydraulic Drive", "brand": "kanpar" }
+   ],
+   "open_questions_for_leadership": [
+      "Which meter housing SKU do you usually quote for each Current setup choice (OEM / Airseeder Parts / Romafa / Romafa IR / Kanpar)?",
+      "Does run count (4/6/8/10) pick 6-run vs 8-run variants (9-0031 vs 9-0032, JAS1100 vs JAS0980)?",
+      "Romafa IR — always JAS0006A Section Command, or something else?",
+      "Kanpar ground drive vs hydraulic (SSK-MH-HD-KP) — how does the app know?",
+      "Are seal SKUs (JAS1087, SSA62224, SSA70600) ever the right answer for this step, or always full housing?",
+      "Morris 7000 vs 8000 vs 8000XL/9000 — driven by cart model in setup?"
+   ]
+}

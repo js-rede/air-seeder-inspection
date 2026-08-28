@@ -1,0 +1,79 @@
+{
+   "source": "WooCommerce/QBO catalog (Joe verified 2026-08-28)",
+   "extracted_at": "2026-08-28",
+   "app_slug": "disc-hubs",
+   "condition_logic": {
+      "summary": "BAD-only step. Hub condition controls whether and how many row-units get quoted — not which kit variant.",
+      "app_implication": "Default to full rebuild kit when BAD unless leadership prefers seal-only path."
+   },
+   "catalog_items": [
+      {
+         "sku": "AG-K15",
+         "price": 20.0,
+         "title": "Opening Disc Hub Seal and Wear Ring Kit",
+         "when": "Seal-only — John Deere 1890, 1895 air seeders"
+      },
+      {
+         "sku": "AG-K15-FULL",
+         "price": 79.5,
+         "title": "Opening Disc Hub Seal, Wear Ring and Bearing Kit",
+         "when": "Full rebuild — John Deere 1890, 1895 (app default for JD when BAD)"
+      },
+      {
+         "sku": "SDX-K08-SM",
+         "price": 95.35,
+         "title": "SDX Disc Hub Rebuild Kit - Small",
+         "when": "Case IH SDX — spindle shoulder 1.25–1.31\" (no shoulder)"
+      },
+      {
+         "sku": "SDX-K08-MD",
+         "price": 139.85,
+         "title": "SDX Disc Hub Rebuild Kit - Medium",
+         "when": "Case IH SDX — spindle shoulder 1.50\""
+      },
+      {
+         "sku": "SDX-K08-LG",
+         "price": 107.85,
+         "title": "SDX Disc Hub Rebuild Kit - Large",
+         "when": "Case IH SDX — spindle shoulder 1.75\""
+      }
+   ],
+   "case_sdx_sizing": {
+      "summary": "Hub size is NOT determined by drill model — measure spindle shoulder diameter or match serial number breakpoints.",
+      "spindle_shoulder_diameter": {
+         "SM": "1.25–1.31\" (no shoulder)",
+         "MD": "1.50\"",
+         "LG": "1.75\""
+      },
+      "serial_breakpoints_example": {
+         "SDX40": { "before_CBJ0017332": "MD", "after_CBJ0017333": "LG" },
+         "SDX30": {
+            "before_CKB0028188": "SM",
+            "before_CBJ0007174": "SM",
+            "between_CBJ0007175_CBJ0007197": "MD",
+            "after_CBJ0007201": "LG"
+         }
+      },
+      "app_strategy": "Online estimate uses parts range $95.35–$139.85 (SM through MD catalog prices; LG at $107.85 falls within) — too burdensome to ask spindle measure or serial in wizard."
+   },
+   "excluded_from_online_estimate": [
+      {
+         "sku": "AG2532",
+         "price": 150.0,
+         "title": "Opening Disc Hub Seal and Wear Ring Install Tool",
+         "reason": "Install tool — not a per-row-unit parts quote"
+      }
+   ],
+   "spreadsheet_note": "BA168 Full Rebuild Kits / BA169 Hub Seal and Wear Ring in extract are depth_and_gauge — opener disc hubs use AG-K15 family per catalog.",
+   "app_current_vs_catalog": {
+      "app_today": "$50–65 parts + $120 labor per row-unit (BAD only)",
+      "catalog_default_jd": "AG-K15-FULL @ $79.50 (+ $120 labor)",
+      "catalog_default_case_sdx": "SDX-K08 SM–MD parts range $95.35–$139.85 (+ $120 labor)"
+   },
+   "open_questions_for_leadership": [
+      "BAD hubs: always AG-K15-FULL ($79.50), or sometimes seal-only AG-K15 ($20)?",
+      "Case SDX: is a price range OK (variations are SM, MD, LG)? Range is from $95.35–$139.85.",
+      "Do 1860/1990 use the same AG-K15 kits as 1890/1895?",
+      "Labor still $120/row-unit on top of parts?"
+   ]
+}

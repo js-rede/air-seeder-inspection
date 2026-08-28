@@ -1,0 +1,60 @@
+{
+   "source": "WooCommerce/QBO catalog (Joe verified 2026-08-28)",
+   "extracted_at": "2026-08-28",
+   "app_slug": "press-wheel-spring",
+   "condition_logic": {
+      "summary": "MAYBE/BAD step. Spring condition controls qty; Current setup (HD vs round wire) picks SKU.",
+      "app_implication": "Secondary answer drives AG1076 vs AG2658; defaults to HD when not answered."
+   },
+   "spreadsheet_ba_mapping": {
+      "BA141": { "label": "HD Square PW Spring", "catalog_sku": "AG1076" },
+      "BA142": { "label": "Round Wire Spring", "catalog_sku": "AG2658" }
+   },
+   "catalog_items": [
+      {
+         "sku": "AG1076",
+         "price": 24.0,
+         "title": "Heavy Duty Press/Firming Wheel Arm Spring",
+         "when": "HD square wire — Current setup or default"
+      },
+      {
+         "sku": "AG1076L",
+         "price": 24.0,
+         "title": "Heavy Duty Press/Firming Wheel Arm Spring - Left",
+         "when": "Square wire (HD Red E) — Current setup or default; JD 60/90"
+      },
+      {
+         "sku": "AG1076R",
+         "price": 24.0,
+         "title": "Heavy Duty Press/Firming Wheel Arm Spring - Right",
+         "when": "Square wire (HD Red E) — Current setup or default; JD 60/90"
+      },
+      {
+         "sku": "AG2658",
+         "price": 14.5,
+         "title": "Press/Firming Wheel Spring",
+         "when": "Standard round wire — Current setup"
+      },
+      {
+         "sku": "AG2658L",
+         "price": 14.5,
+         "title": "Press/Firming Wheel Spring - Left",
+         "when": "Standard OEM round wire replacement — Current setup; JD 60/90"
+      },
+      {
+         "sku": "AG2658R",
+         "price": 14.5,
+         "title": "Press/Firming Wheel Spring - Right",
+         "when": "Standard OEM round wire replacement — Current setup; JD 60/90"
+      }
+   ],
+   "app_current_vs_catalog": {
+      "app_today": "$15–25 parts + $7 labor per row-unit (MAYBE/BAD)",
+      "catalog_hd": "AG1076 @ $24.00 (+ $7 labor)",
+      "catalog_standard": "AG2658 @ $14.50 (+ $7 labor)"
+   },
+   "open_questions_for_leadership": [
+      "50 series / ProSeries press spring SKUs?",
+      "Labor — double-check $7/row-unit and how it combines with parts."
+   ]
+}

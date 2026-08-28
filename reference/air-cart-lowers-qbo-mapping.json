@@ -1,0 +1,104 @@
+{
+   "source": "WooCommerce/QBO catalog (Joe verified 2026-08-28)",
+   "extracted_at": "2026-08-28",
+   "app_slug": "air-cart",
+   "inspection_section": "current-lower",
+   "condition_logic": {
+      "summary": "Per-tank Lower section on air cart tank steps. Cart setup shoot quantity + run count pick stainless lower kit SKU when mapped.",
+      "app_implication": "SSK-SS* for single-shoot and SSK-DS* for double-shoot by run count (4/6/8). RE3680 family is Red E single-shoot alternate. Estimate still uses inspection-steps.json bands until section pricing is wired."
+   },
+   "cart_setup_drives_sku": {
+      "shootQuantity": {
+         "single": "SSK-SS* or RE3680*",
+         "double": "SSK-DS*",
+         "triple": "No catalog SKU in this list — open question"
+      },
+      "runCount": {
+         "4": "SSK-SS4 / SSK-DS4",
+         "6": "SSK-SS6 / SSK-DS6",
+         "8": "SSK-SS8 / SSK-DS8",
+         "2": "No exact SKU — open question",
+         "10": "No exact SKU — open question (SSK-DS5 exists for 5 runs only)"
+      }
+   },
+   "catalog_items": [
+      {
+         "sku": "JAS1032W",
+         "price": 533.32,
+         "title": "Stainless Steel Intermediate Manifold Weldment",
+         "note": "Component — not the full lower kit"
+      },
+      {
+         "sku": "JAS1037A",
+         "price": 1750.24,
+         "title": "Stainless Steel Lower Tank Hopper/Cradle",
+         "note": "Hopper/cradle — confirm vs full lower kit"
+      },
+      {
+         "sku": "RE3680",
+         "price": 1750.0,
+         "title": "Red E Stainless Steel Single Shoot Lower Kit",
+         "note": "Red E branded single-shoot — alternate to SSK-SS*"
+      },
+      {
+         "sku": "RE3680-TBH",
+         "price": 1750.0,
+         "title": "Red E Stainless Steel Single Shoot Lower Kit - Tow Behind (BH)",
+         "note": "Tow-behind variant — when to use vs RE3680?"
+      },
+      {
+         "sku": "RE3680-TBT",
+         "price": 1750.0,
+         "title": "Red E Stainless Steel Single Shoot Lower Kit - Tow Behind (BT)",
+         "note": "Tow-behind variant — when to use vs RE3680?"
+      },
+      {
+         "sku": "SSK-DS4",
+         "price": 1567.34,
+         "title": "Stainless Steel Double Shoot Lower Kit - 4"
+      },
+      {
+         "sku": "SSK-DS5",
+         "price": 1541.11,
+         "title": "Stainless Steel Double Shoot Lower Kit - 5",
+         "note": "5 runs — cart setup only offers 2/4/6/8/10 today"
+      },
+      {
+         "sku": "SSK-DS6",
+         "price": 1604.03,
+         "title": "Stainless Steel Double Shoot Lower Kit - 6"
+      },
+      {
+         "sku": "SSK-DS8",
+         "price": 1628.11,
+         "title": "Stainless Steel Double Shoot Lower Kit - 8"
+      },
+      {
+         "sku": "SSK-SS4",
+         "price": 1111.83,
+         "title": "Stainless Steel Single Shoot Lower Kit - 4"
+      },
+      {
+         "sku": "SSK-SS6",
+         "price": 1098.73,
+         "title": "Stainless Steel Single Shoot Lower Kit - 6"
+      },
+      {
+         "sku": "SSK-SS8",
+         "price": 1057.83,
+         "title": "Stainless Steel Single Shoot Lower Kit - 8"
+      }
+   ],
+   "shoot_and_run_to_sku": {
+      "single": { "4": "SSK-SS4", "6": "SSK-SS6", "8": "SSK-SS8" },
+      "double": { "4": "SSK-DS4", "6": "SSK-DS6", "8": "SSK-DS8" }
+   },
+   "open_questions_for_leadership": [
+      "RE3680 ($1,750) vs SSK-SS* ($1,058–1,112) — when is Red E kit the right default?",
+      "Triple-shoot lowers — catalog SKU?",
+      "2-run and 10-run carts — which lower kit (if any)?",
+      "JAS1037A hopper/cradle vs SSK/RE3680 full lower kit — what does this step mean by Lower?",
+      "Per-tank: if Lower is MAYBE/BAD, multiply catalog kit × number of tanks needing work?",
+      "Lower Current setup (OEM / Romafa / Kanpar) — should that pick brand/SKU instead of shoot+runs?"
+   ]
+}

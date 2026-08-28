@@ -1,0 +1,47 @@
+{
+   "source": "WooCommerce/QBO catalog (Joe verified 2026-08-28)",
+   "extracted_at": "2026-08-28",
+   "app_slug": "air-cart",
+   "inspection_sections": ["tank-lid-and-hardware", "ladder"],
+   "condition_logic": {
+      "summary": "Trailing sections per tank step. Lid frame by JD cart model; ladder by estimated per-tank bushels + tank position.",
+      "app_implication": "Tentative mapping — cart tank size is total capacity split by tank count; confirm per-tank bushel sizes with leadership."
+   },
+   "catalog_items": [
+      { "sku": "JAS4765A", "price": 752.4, "title": "Lid Frame Assembly for John Deere 1900 Cart", "type": "lid" },
+      { "sku": "JAS4799A", "price": 1007.0, "title": "Lid Frame Assembly for 1900 & 1910 Carts", "type": "lid" },
+      { "sku": "JAS4813A", "price": 703.0, "title": "John Deere Tank Lid Screen", "type": "lid_component" },
+      { "sku": "JAS0164K", "price": 397.25, "title": "Stainless Steel Top Ladder & Lid Mount Kit", "type": "ladder_lid" },
+      { "sku": "JAS0161W", "price": 1331.3, "title": "Stainless Steel 80 Bushel Tank Ladder", "type": "ladder" },
+      { "sku": "JAS0162W", "price": 737.36, "title": "Stainless Steel 150 Bushel Front Tank Ladder", "type": "ladder" },
+      { "sku": "JAS0163W", "price": 737.36, "title": "Stainless Steel 200 Bushel Tank Ladder", "type": "ladder" },
+      { "sku": "JAS4015W", "price": 581.44, "title": "Stainless Steel 75 Bushel Tank Ladder", "type": "ladder" },
+      { "sku": "JAS4025W", "price": 737.36, "title": "Stainless Steel 150 Bushel Rear Tank Ladder", "type": "ladder" },
+      { "sku": "JAS4026W", "price": 737.36, "title": "Stainless Steel 120 Bushel Tank Ladder", "type": "ladder" },
+      { "sku": "SSK-LDR-EXT", "price": 150.0, "title": "1900 Tank Ladder Extension Kit", "type": "ladder_addon" }
+   ],
+   "tentative_lid_by_model": {
+      "1900": "JAS4765A",
+      "1910": "JAS4799A",
+      "C-Series": "JAS4799A"
+   },
+   "tentative_ladder_rules": {
+      "top_tank_3_cart": "JAS0164K",
+      "by_estimated_per_tank_bu": {
+         "75": "JAS4015W",
+         "80": "JAS0161W",
+         "120": "JAS4026W",
+         "150_front": "JAS0162W",
+         "150_rear": "JAS4025W",
+         "200": "JAS0163W"
+      },
+      "1900_extension_addon": "SSK-LDR-EXT"
+   },
+   "open_questions_for_leadership": [
+      "Cart tank size in setup — total cart bu or per-tank bu?",
+      "Lid replace — frame only (JAS4765/4799) or include screen (JAS4813A)?",
+      "JAS0164K — ladder section, lid section, or top tank only?",
+      "Non-JD carts — any lid/ladder SKUs?",
+      "SSK-LDR-EXT — always add to 1900 ladder quotes or optional?"
+   ]
+}

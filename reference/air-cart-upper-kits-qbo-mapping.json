@@ -1,0 +1,45 @@
+{
+   "source": "WooCommerce/QBO catalog (Joe verified 2026-08-28)",
+   "extracted_at": "2026-08-28",
+   "app_slug": "air-cart",
+   "inspection_section": "current-upper-kit",
+   "condition_logic": {
+      "summary": "Per-tank Upper Kit section. Red E stainless upper kits — SSK-UPR vs SSK-UPR-NEW by cart/tank config.",
+      "app_implication": "SSK-UPR-NEW for 550-middle (and related configs); SSK-UPR for all other JD models. Step secondary Stainless Steel triggers SS kit; OEM/Other not mapped yet."
+   },
+   "step_secondary_choices": ["oem", "stainless-steel", "other"],
+   "catalog_items": [
+      {
+         "sku": "SSK-UPR",
+         "price": 1824.73,
+         "title": "Stainless Steel Upper Kit",
+         "when": "All other JD models"
+      },
+      {
+         "sku": "SSK-UPR-NEW",
+         "price": 1824.73,
+         "title": "Stainless Steel Upper Kit",
+         "when": "550-Middle & related configs (confirm full title in Woo)"
+      },
+      {
+         "sku": "SSK-UPR-*",
+         "price": 1824.73,
+         "title": "Stainless Steel Upper Kit",
+         "note": "Parent/variant group in Woo — not a separate order SKU"
+      }
+   ],
+   "tentative_selection": {
+      "requires_secondary": "stainless-steel",
+      "550_middle_tank": "SSK-UPR-NEW",
+      "default_jd": "SSK-UPR",
+      "signals": {
+         "550_middle": "Middle tank step + 550 bu cart size (tentative — confirm)"
+      }
+   },
+   "open_questions_for_leadership": [
+      "SSK-UPR-NEW — full 'For:' list from Woo (550-Middle & what else)?",
+      "Non-JD carts with Stainless Steel upper — always SSK-UPR or different kit?",
+      "OEM upper — catalog SKU or step JSON band only?",
+      "Per-tank: middle vs front/rear on 3-tank 550 bu carts — always SSK-UPR-NEW on middle only?"
+   ]
+}

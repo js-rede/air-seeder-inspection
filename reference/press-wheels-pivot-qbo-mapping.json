@@ -1,0 +1,84 @@
+{
+   "source": "WooCommerce/QBO catalog (Joe verified 2026-08-28)",
+   "extracted_at": "2026-08-28",
+   "app_slug": "press-wheel-pivot",
+   "condition_logic": {
+      "summary": "MAYBE/BAD step. Pivot condition controls whether and how many row-units get quoted — not which kit variant.",
+      "app_implication": "Use one default press pivot SKU per machine series when replacement is needed (greaseless Red E default)."
+   },
+   "spreadsheet_ba_mapping": {
+      "BA130": {
+         "label": "Red E Bearing Kit",
+         "likely_catalog_skus": ["AG-K37", "AG-K23-50", "AG-K40"],
+         "note": "Greaseless press pivot family — confirm with leadership"
+      },
+      "BA131": {
+         "label": "HD Bushing Kit",
+         "likely_catalog_sku": "AG-K02-50",
+         "note": "50 series HD press pivot only in catalog so far — no 60/90 HD press SKU found"
+      },
+      "BA132": {
+         "label": "Needham Bushings",
+         "likely_catalog_skus": ["NA-K08-FULL", "NA-K08-50"],
+         "note": "Press-specific Needham kits (NA-K07 is closing-oriented)"
+      }
+   },
+   "catalog_items": [
+      {
+         "sku": "AG-K37",
+         "price": 46.01,
+         "title": "Greaseless Press Wheel Arm Bearing Pivot Fix Kit",
+         "when": "John Deere 60/90 series — app default greaseless"
+      },
+      {
+         "sku": "AG-K40",
+         "price": 44.87,
+         "title": "Press Wheel Bearing Pivot Fix Kit",
+         "when": "ProSeries row units"
+      },
+      {
+         "sku": "AG-K23-50",
+         "price": 44.85,
+         "title": "Press Wheel Bearing Pivot Fix Kit",
+         "when": "John Deere 50 series — app default greaseless"
+      },
+      {
+         "sku": "AG-K02-50",
+         "price": 77.87,
+         "title": "Heavy Duty Firming/Press Wheel Pivot Kit",
+         "when": "John Deere 50 series HD — not auto-selected"
+      },
+      {
+         "sku": "NA-K08-FULL",
+         "price": 41.6,
+         "title": "Needham Greaseless Closing and Press Wheel Arm Pivot Fix Kit",
+         "when": "60/90 firming/press wheel — not auto-selected"
+      },
+      {
+         "sku": "NA-K08-50",
+         "price": 53.5,
+         "title": "Needham Greaseless Closing and Press Wheel Arm Pivot Fix Kit",
+         "when": "50 series firming/press wheel — not auto-selected"
+      }
+   ],
+   "related_not_auto_selected": [
+      {
+         "sku": "NA-K07-FULL",
+         "price": 42.1,
+         "title": "Needham Greaseless Closing and Press Wheel Arm Pivot Fix Kit",
+         "when": "Catalog lists 50/60/90 closing wheel — press uses NA-K08 family"
+      }
+   ],
+   "app_current_vs_catalog": {
+      "app_today": "$45–60 parts + $70 labor per row-unit (MAYBE/BAD)",
+      "catalog_default_jd_6090": "AG-K37 @ $46.01 (+ $70 labor)",
+      "catalog_default_jd_50": "AG-K23-50 @ $44.85 (+ $70 labor)",
+      "catalog_default_proseries": "AG-K40 @ $44.87 (+ $70 labor)"
+   },
+   "open_questions_for_leadership": [
+      "Confirm BA130 / BA131 / BA132 → AG-K37 / AG-K02-50 / NA-K08-FULL mapping?",
+      "50 series default: greaseless AG-K23-50 ($44.85) or HD AG-K02-50 ($77.87)?",
+      "PD500 / other manufacturers — press pivot SKU?",
+      "Labor — double-check $70/row-unit and how it combines with parts."
+   ]
+}

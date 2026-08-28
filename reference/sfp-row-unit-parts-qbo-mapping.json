@@ -1,0 +1,31 @@
+{
+   "source": "WooCommerce/QBO catalog (Joe verified 2026-08-28)",
+   "extracted_at": "2026-08-28",
+   "app_slug": "other-sfp-row-unit-parts",
+   "condition_logic": {
+      "summary": "Multi-select step. Each checked item × row-unit count; catalog SKU per checkbox where mapped.",
+      "app_implication": "Springs and NH3 tubes keep step JSON band — no clear catalog match."
+   },
+   "choice_to_sku": {
+      "bumper-stops": { "sku": "AG2622", "price": 35.0, "title": "Bumper Stop" },
+      "ss-liquid-tubes": { "sku": "AG-K29", "price": 34.89, "title": "Stainless SFP Tube Rebuild Kit" },
+      "ss-dry-tubes": { "sku": "AG2620", "price": 179.62, "title": "SFP Dry Fertilizer Tube" },
+      "ss-nh3-tubes": { "note": "No SKU from Joe — step JSON band" },
+      "sfp-cruiser-cw": { "sku": "SFP CRUISER", "price": 159.5, "title": "SFP Cruiser Spiked Wheel" },
+      "sfp-springs": { "note": "No clear catalog match — step JSON band" }
+   },
+   "catalog_alternates": [
+      { "sku": "AG1254", "price": 115.0, "title": "Copperhead Ag Drill Cruiser Closing Wheel", "note": "Alternate vs SFP CRUISER $159.50" },
+      { "sku": "AG2620L", "price": 179.62, "title": "SFP Dry Fertilizer Tube - Left" },
+      { "sku": "AG2620R", "price": 179.62, "title": "SFP Dry Fertilizer Tube - Right" }
+   ],
+   "labor_per_item": 5,
+   "open_questions_for_leadership": [
+      "SFP springs — which SKU (if any)? Joe saw no clear match in spring catalog.",
+      "SS NH3 tubes — catalog SKU?",
+      "Dry tube AG2620 vs L/R — one per row-unit or both sides?",
+      "SFP CRUISER ($159.50) vs AG1254 Copperhead cruiser ($115)?",
+      "AG-K29 rebuild kit — correct for 'SS liquid tubes' checkbox?",
+      "Labor — double-check $5/row-unit per selected item."
+   ]
+}

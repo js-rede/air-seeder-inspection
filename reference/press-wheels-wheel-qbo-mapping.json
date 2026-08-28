@@ -1,0 +1,47 @@
+{
+   "source": "WooCommerce/QBO catalog (Joe verified 2026-08-28)",
+   "extracted_at": "2026-08-28",
+   "app_slug": "press-wheel",
+   "condition_logic": {
+      "summary": "MAYBE/BAD step. Wheel condition controls qty — one V8 wheel SKU for online estimate.",
+      "app_implication": "Default NA-K01 with hardware unless leadership prefers V8-WHEEL or a price range."
+   },
+   "spreadsheet_ba_mapping": {
+      "BA153": { "label": "V8 Wheel", "catalog_sku": "V8-WHEEL" },
+      "BA154": { "label": "Used OEM", "excluded": "Not for online estimate" }
+   },
+   "catalog_items": [
+      {
+         "sku": "NA-K01",
+         "price": 50.0,
+         "title": "Heavy Duty Needham V8 Press/Firming Wheel - With Hardware",
+         "when": "App default for online estimate"
+      },
+      {
+         "sku": "V8-WHEEL",
+         "price": 43.05,
+         "title": "Heavy Duty Needham V8 Press/Firming Wheel - No Hardware",
+         "when": "Alternate — not auto-selected"
+      },
+      {
+         "sku": "NA-K01-V8-WHEEL",
+         "price_low": 43.05,
+         "price_high": 50.0,
+         "title": "Heavy Duty Needham V8 Press/Firming Wheel",
+         "when": "Catalog variant listing"
+      }
+   ],
+   "machine_fit": "John Deere 50, 60 & 90 series; Case IH SDX; Bourgault 3820 air drills — app applies NA-K01 to all drills with machine setup until brand rules added.",
+   "excluded_from_online_estimate": [
+      { "label": "Used OEM", "spreadsheet_ba": "BA154", "reason": "Used parts not quoted online" },
+      { "label": "Seed Lock (Yellow)", "note": "UI alias in spreadsheet — no SKU confirmed yet" }
+   ],
+   "app_current_vs_catalog": {
+      "app_today": "$45–55 parts + $8 labor per row-unit (MAYBE/BAD)",
+      "catalog_default": "NA-K01 @ $50.00 (+ $8 labor)"
+   },
+   "open_questions_for_leadership": [
+      "Is NA-K01 the only thing needed here?",
+      "Labor — double-check $8/row-unit and how it combines with parts."
+   ]
+}

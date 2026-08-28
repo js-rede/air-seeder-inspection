@@ -1,0 +1,46 @@
+{
+   "source": "WooCommerce/QBO catalog (Joe verified 2026-08-28)",
+   "extracted_at": "2026-08-28",
+   "app_slug": "depth-arm",
+   "condition_logic": {
+      "summary": "BAD-only step (or optional arm count). Loose arm on shaft → parts × affected row-units or tallied count.",
+      "app_implication": "AG-K08 is Universal Depth Adjuster Arm Kit — maps to spreadsheet BA194 / UI alias K08."
+   },
+   "spreadsheet_ba_mapping": {
+      "BA194": {
+         "label": "Depth Arm Kits",
+         "catalog_sku": "AG-K08",
+         "note": "Universal Depth Adjuster Arm Kit"
+      }
+   },
+   "catalog_items": [
+      {
+         "sku": "AG-K08",
+         "price": 88.8,
+         "title": "Universal Depth Adjuster Arm Kit",
+         "when": "John Deere — app default (BA194 / K08)"
+      },
+      {
+         "sku": "RE3040L / RE3040R",
+         "price": 225.0,
+         "title": "SDX Depth Adjuster Pivot Arm",
+         "when": "Case IH SDX — provisional default"
+      }
+   ],
+   "not_depth_arm_from_search": [
+      { "sku": "AG-K03", "note": "Depth arm pivot kit — Step 14, not Step 15 arm" },
+      { "sku": "AG1030", "note": "Firming/press wheel arm — press wheels section" },
+      { "sku": "AG-K19-*", "note": "Closing wheel arm — closing system section" }
+   ],
+   "app_current_vs_catalog": {
+      "app_today": "$40–60 parts + $25 labor per row-unit (BAD or tally)",
+      "catalog_default_jd": "AG-K08 @ $88.80 (+ $25 labor)",
+      "catalog_default_case_sdx": "RE3040 @ $225.00 (+ $25 labor)"
+   },
+   "open_questions_for_leadership": [
+      "Confirm AG-K08 is the depth arm for Step 15 (loose arm on shaft)?",
+      "Case SDX: RE3040 pivot arm vs separate depth arm SKU?",
+      "Optional arm count vs rank BAD — same kit and price?",
+      "Labor still $25/row-unit (or per arm) on top of parts?"
+   ]
+}

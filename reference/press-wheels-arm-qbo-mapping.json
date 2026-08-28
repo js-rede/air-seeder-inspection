@@ -1,0 +1,34 @@
+{
+   "source": "WooCommerce/QBO catalog (Joe verified 2026-08-28)",
+   "extracted_at": "2026-08-28",
+   "app_slug": "press-wheel-arm",
+   "condition_logic": {
+      "summary": "Replacement tally step — user enters count of bent/broken firming (press) wheel arms.",
+      "app_implication": "Catalog parts price × arm count; labor from step JSON per arm."
+   },
+   "catalog_items": [
+      {
+         "sku": "AG1030",
+         "price": 30.0,
+         "title": "Firming Wheel Arm",
+         "when": "John Deere 60 & 90 series air drills — app default for non-50-series JD"
+      },
+      {
+         "sku": "AG1142",
+         "price": 30.0,
+         "title": "Firming Wheel Arm – 50 Series",
+         "when": "John Deere 50 series (1850, 750, 1830/1835 class)"
+      }
+   ],
+   "spreadsheet_note": "Inspection Doc BA143 Replacement Arms — maps to firming/press wheel arms, not closing arms (AG-K19).",
+   "app_current_vs_catalog": {
+      "app_today": "$15–25 parts + $10 labor per tallied arm",
+      "catalog_default_jd_6090": "AG1030 @ $30.00 (+ $10 labor)",
+      "catalog_default_jd_50": "AG1142 @ $30.00 (+ $10 labor)"
+   },
+   "open_questions_for_leadership": [
+      "ProSeries on 1890 — AG1030 or different SKU?",
+      "Labor still $10/arm on top of parts?",
+      "Press/firming arms for Case IH, Bourgault, etc. — which SKUs?"
+   ]
+}

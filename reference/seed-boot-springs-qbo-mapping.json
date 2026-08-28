@@ -1,0 +1,22 @@
+{
+   "source": "WooCommerce/QBO catalog (Joe verified 2026-08-28)",
+   "extracted_at": "2026-08-28",
+   "app_slug": "seed-boot-springs",
+   "condition_logic": {
+      "summary": "MAYBE/BAD step. Single spring SKU for extended-wear boot family.",
+      "app_implication": "Default AG2631 @ $6.00 per row-unit (+ $35 labor)."
+   },
+   "spreadsheet_ba_mapping": {
+      "BA244": { "label": "Boot Springs", "sku": "AG2631" }
+   },
+   "catalog_items": [
+      {
+         "sku": "AG2631",
+         "price": 6.0,
+         "title": "Heavy Duty Extended Wear Seed Boot Spring"
+      }
+   ],
+   "open_questions_for_leadership": [
+      "Labor — double-check $35/row-unit and how it combines with parts."
+   ]
+}

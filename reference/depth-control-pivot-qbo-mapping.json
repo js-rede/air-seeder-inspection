@@ -1,0 +1,60 @@
+{
+   "source": "WooCommerce/QBO catalog (Joe verified 2026-08-28)",
+   "extracted_at": "2026-08-28",
+   "app_slug": "depth-adjustment-pivot",
+   "condition_logic": {
+      "summary": "MAYBE/BAD step. Pivot condition controls qty — not which kit variant.",
+      "app_implication": "Default Red E HD pivot (AG-K03) for JD 60/90/ProSeries; Aricks AA05* is alternate path (BA181)."
+   },
+   "spreadsheet_ba_mapping": {
+      "BA180": {
+         "label": "Red E HD DA Pivot",
+         "catalog_sku": "AG-K03",
+         "note": "Heavy Duty Depth Arm Pivot Kit — complete pivot assembly rebuild"
+      },
+      "BA181": {
+         "label": "Arick's Greaseless",
+         "likely_catalog_skus": ["AA050DA", "AA051DA", "AA05*DA"],
+         "note": "Woo title says Depth Adjustment Handle Kit — likely Step 16 or alternate greaseless path, not auto-selected"
+      },
+      "BA195": {
+         "label": "Depth Adjuster Slop Fix Kits",
+         "catalog_sku": null,
+         "note": "UI alias DA Pivot Slop Fix (K32) — no SKU yet"
+      }
+   },
+   "catalog_items": [
+      {
+         "sku": "AG-K03",
+         "price": 135.24,
+         "title": "Heavy Duty Depth Arm Pivot Kit",
+         "when": "Red E HD pivot — JD 60/90/ProSeries — app default (BA180)"
+      },
+      {
+         "sku": "AA050DA",
+         "price": 195.0,
+         "title": "Aricks Greaseless Depth Adjustment Handle Kit - Right",
+         "when": "Alternate BA181 — not auto-selected; may belong Step 16"
+      },
+      {
+         "sku": "AA051DA",
+         "price": 195.0,
+         "title": "Aricks Greaseless Depth Adjustment Handle Kit - Left",
+         "when": "Alternate BA181 L/R"
+      }
+   ],
+   "step_cross_reference": {
+      "depth_adjustment_pivot_step_14": "AG-K03 — pivot assembly when adjuster is stiff/seized (matches inspection question)",
+      "depth_arm_step_15": "Separate — loose arm on shaft; BA194 Depth Arm Kits (K08), not AG-K03",
+      "depth_cover_handle_step_16": "AA05* handle kits may belong here (BA193) — confirm with leadership"
+   },
+   "app_current_vs_catalog": {
+      "app_today": "$100–150 parts + $65 labor per row-unit (MAYBE/BAD)",
+      "catalog_default": "AG-K03 @ $135.24 (+ $65 labor)"
+   },
+   "open_questions_for_leadership": [
+      "Are AA05* Aricks kits Step 16 (cover/handle) or an alternate for Step 14 (BA181)?",
+      "Depth Adjuster Slop Fix (BA195 / K32) — separate SKU for this step?",
+      "Labor — double-check $65/row-unit and how it combines with parts."
+   ]
+}
